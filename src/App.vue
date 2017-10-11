@@ -28,6 +28,7 @@
 <style>
   html, body, #all {
     height: 100%;
+    background-color: #ececec;
   }
 
   #app {
@@ -41,5 +42,18 @@
   .ant-menu-dark .ant-menu-inline.ant-menu-sub{
     background-color: #06101F;
     color: #7f8ea7;
+  }
+
+  .ant-dropdown-menu{
+    left: -15px !important;
+  }
+  .ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title{
+    padding: 7px 12px;
+  }
+
+  .position-right {
+    margin: 15px;
+    background: #fff;
+    min-height: 500px;
   }
 </style>

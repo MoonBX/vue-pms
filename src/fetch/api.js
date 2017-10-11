@@ -6,16 +6,34 @@ axios.defaults.baseURL = 'http://114.55.143.170:8082';
 
 axios.interceptors.request.use(function (config) {    // 这里的config包含每次请求的内容
   if (localStorage.vueToken) {
-    config.headers.token = localStorage.vueToken;
+    if(config.url.split('/')[config.url.split('/').length-1]!=='login'){
+
+      // 给login请求之外的所有请求添加header: token
+      config.headers.token = localStorage.vueToken;
+    }
   }
   return config;
 }, function (err) {
   return Promise.reject(err);
 });
 
-export function fetch(url, params) {
+export function login(url, params) {
   return new Promise((resolve, reject) => {
     axios.post(url, params)
+      .then(response => {
+        resolve(response.data);
+      }, err => {
+        reject(err);
+      })
+      .catch((error) => {
+        reject(error)
+      })
+  })
+}
+
+export function post(url, data) {
+  return new Promise((resolve, reject) => {
+    axios.post(url, data)
       .then(response => {
         resolve(response.data);
       }, err => {
@@ -45,11 +63,17 @@ export default {
   /**
    * 用户登录
    */
-  Login(params) {
-    return fetch('/account/login', params)
+  Login(data) {
+    return post('/account/login', data)
   },
 
   Logout() {
     return get('/account/logout')
+  },
+
+  getComplaint(pageNo, limit, params) {
+    return get('/estate/complaint/list/'+pageNo+'/'+limit, params);
   }
+
+
 }

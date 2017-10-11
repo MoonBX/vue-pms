@@ -31,7 +31,6 @@
             <v-input placeholder="请输入密码" v-model="loginObj.pwd" size="large" class="m-b-sm"></v-input>
             <div class="form-group text-center m-t-lg">
               <v-button type="primary" class="p-h-md" :loading="loading" @click="login">{{ loading ? "登录中" : "登录" }}</v-button>
-              <v-button type="primary" class="p-h-md" @click="logout">登出</v-button>
             </div>
           </v-input-group>
         </form>
@@ -314,23 +313,13 @@
             console.log(res);
             if(res.success){
               localStorage.vueToken = res.data.token;
+              localStorage.vueUsername = res.data.community.name;
               this.$router.push('/wk/home');
             }
           })
         .catch(error => {
           console.log(error)
         })
-      },
-      logout(){
-        console.log(localStorage.vueToken)
-        api.Logout()
-          .then(res => {
-            console.log(res);
-            localStorage.removeItem('vueToken');
-          })
-          .catch(error => {
-            console.log(error)
-          })
       }
     }
   }

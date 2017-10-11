@@ -3,9 +3,10 @@
     <v-layout>
       <v-header>
         {{title}}
-        <v-dropdown :data="data" trigger="click" class="pull-right">
+        <v-dropdown :data="dropdown" trigger="click" class="pull-right" @item-click="dropdownClick" position="fixed">
           <a href="javascript:void(0)" class="ant-dropdown-link ant-dropdown-trigger">
-            Click me <v-icon type="down"></v-icon>
+            {{userName}}
+            <v-icon type="down" class="m-l-xs"></v-icon>
           </a>
         </v-dropdown>
       </v-header>
@@ -15,10 +16,11 @@
             <img class="brand-img" src="../assets/logo.png" width="27%">
             <div class="brand-text text-lt">Weker物业管理平台</div>
           </div>
-          <v-menu style="width:230px;background-color:#0c1729" mode="inline" :data="themeMenuData" :theme="theme" selected>
+          <v-menu style="width:230px;background-color:#0c1729" mode="inline" :data="themeMenuData" :theme="theme"
+                  selected>
             <template scope="{data}">
               <i v-if="data.icon" :class="'fa fa-' + data.icon"></i>
-              <router-link style="margin-left: 5px;display: inline" :to="{path: data.path}" >{{data.name}}</router-link>
+              <router-link style="margin-left: 5px;display: inline" :to="{path: data.href}">{{data.name}}</router-link>
             </template>
             <template scope="{data}" slot="sub">
               <i v-if="data.icon" :class="'fa fa-' + data.icon"></i>
@@ -27,29 +29,28 @@
           </v-menu>
         </v-sider>
         <v-content>
-          <div class="position-right">
-            <router-view></router-view>
-          </div>
+          <router-view></router-view>
         </v-content>
       </v-layout>
     </v-layout>
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
+  import api from '../fetch/api'
   export default {
     name: 'hello',
     data () {
       return {
-        msg: 'Welcome to Your Vue.js App',
+        userName: localStorage.vueUsername,
         theme: 'dark',
         themeMenuData: [
-          {name: '首页', path: 'home', icon: 'home'},
+          {name: '首页',  icon: 'home', href: 'home'},
           {
             name: '物业中心', icon: 'building', children: [
-            {name: "公告管理", path: 'announce'},
-            {name: "投诉", path: 'complain'},
-            {name: "维修", path: 'repair'}
+            {name: "公告管理", href: 'announce'},
+            {name: "投诉", href: 'complain'},
+            {name: "维修", href: 'repair'}
           ]
           },
           {name: '设备管理', icon: 'cog'},
@@ -66,24 +67,44 @@
           ]
           }
         ],
-        title: ''
+        title: '',
+        dropdown: [
+          {content: '退出登录'}
+        ]
       }
     },
     methods: {
       fetchTitle(){
         this.title = this.$route.name;
+      },
+      dropdownClick(data){
+        if(data.content == '退出登录'){
+          this.logout();
+        }
+      },
+      logout(){
+        api.Logout()
+          .then(res => {
+            console.log('登出:', res);
+            localStorage.removeItem('vueToken');
+            localStorage.removeItem('vueUsername');
+            this.$router.push('/login');
+          })
+          .catch(error => {
+            console.log(error)
+          })
       }
     },
     created(){
       this.title = this.$route.name;
       var routePath = this.$route.path.split('/')[2];
-      for(let i=0;i<this.themeMenuData.length; i++){
-        if(this.themeMenuData[i].path == routePath){
+      for (let i = 0; i < this.themeMenuData.length; i++) {
+        if (this.themeMenuData[i].path == routePath) {
           this.themeMenuData[i].selected = true;
-        }else{
-          if(this.themeMenuData[i].children){
-            for(let j=0;j<this.themeMenuData[i].children.length;j++){
-              if(this.themeMenuData[i].children[j].path == routePath){
+        } else {
+          if (this.themeMenuData[i].children) {
+            for (let j = 0; j < this.themeMenuData[i].children.length; j++) {
+              if (this.themeMenuData[i].children[j].path == routePath) {
                 this.themeMenuData[i].children[j].selected = true;
                 this.themeMenuData[i].expand = true;
               }
@@ -105,46 +126,54 @@
 <style lang="scss" scoped>
   .hello {
     height: 100%;
-    .ant-layout {
-      height: 100%;
-      .ant-layout-header{
-        position: fixed;
-        top: 0;
-        height: 50px;
-        width: 100%;
-        background-color: #fff;
-        padding-left: 240px;
-        line-height: 50px;
-      }
-      .ant-layout-sider{
-        background-color: #0c1729;
-        padding-top: 40px;
-        overflow-y: auto;
-        .sdn-brand {
-          text-align: center;
-          margin-bottom: 40px;
-          .brand-img {
-            margin-bottom: 8px;
-          }
-          .brand-text {
-            color: #ffffff;
-            font-weight: 700;
-          }
-        }
-      }
-      .ant-layout-content{
-        margin-top: 50px;
-        width: auto;
-        padding-left: 230px;
-        .position-right{
-          margin: 15px;
-          background: #fff;
-          min-height: 500px;
-        }
-      }
-    }
+    margin-bottom: 20px;
+
+  .ant-layout {
+    height: 100%;
+
+  .ant-layout-header {
+    position: fixed;
+    top: 0;
+    height: 50px;
+    width: 100%;
+    background-color: #fff;
+    padding-left: 240px;
+    padding-right: 20px;
+    line-height: 50px;
+    z-index: 999;
   }
 
+  .ant-layout-sider {
+    background-color: #0c1729;
+    padding-top: 40px;
+    overflow-y: auto;
+    z-index: 1000;
+
+  .sdn-brand {
+    text-align: center;
+    margin-bottom: 40px;
+
+  .brand-img {
+    margin-bottom: 8px;
+  }
+
+  .brand-text {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  }
+  }
+  .ant-layout-content {
+    margin-top: 50px;
+    width: auto;
+    padding-left: 230px;
+
+
+
+  }
+  }
+  }
 
 
 </style>
