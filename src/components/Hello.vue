@@ -88,6 +88,7 @@
             console.log('登出:', res);
             localStorage.removeItem('vueToken');
             localStorage.removeItem('vueUsername');
+            localStorage.removeItem('vueEstate');
             this.$router.push('/login');
           })
           .catch(error => {
@@ -111,7 +112,9 @@
             }
           }
         }
-      }
+      };
+
+
     },
     watch: {
 //      "$route": "fetchTitle"

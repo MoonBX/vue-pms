@@ -7,7 +7,9 @@ import App from './App'
 import router from './router'
 
 import 'vue-beauty/package/style/vue-beauty.min.css'
-// import 'font-awesome/css/font-awesome.css'
+
+import * as filters from './util/filter'
+Object.keys(filters).forEach(k => Vue.filter(k, filters[k])) //注册过滤器
 
 import vueBeauty from 'vue-beauty'
 Vue.use(vueBeauty);

@@ -73,7 +73,18 @@ export default {
 
   getComplaint(pageNo, limit, params) {
     return get('/estate/complaint/list/'+pageNo+'/'+limit, params);
-  }
+  },
 
+  getAlarmInfo(){
+    return get('/device/alarmInfo/list')
+  },
+
+  getStatistics(){
+    return get('/community/statistics/homepage')
+  },
+
+  dealComplaint(id, data){
+    return get('/estate/complaint/'+id+'/updateStatus/'+data)
+  }
 
 }

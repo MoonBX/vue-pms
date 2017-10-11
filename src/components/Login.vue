@@ -36,7 +36,6 @@
         </form>
       </div>
     </div>
-
   </div>
 </template>
 <style lang="scss" scoped>
@@ -313,6 +312,7 @@
             console.log(res);
             if(res.success){
               localStorage.vueToken = res.data.token;
+              localStorage.vueEstate = res.data.community.eatateName;
               localStorage.vueUsername = res.data.community.name;
               this.$router.push('/wk/home');
             }

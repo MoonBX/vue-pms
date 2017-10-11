@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="announce position-right">
     Announce
   </div>
 </template>
