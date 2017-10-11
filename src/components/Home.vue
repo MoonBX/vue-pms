@@ -126,202 +126,207 @@
 </template>
 <style lang="scss" scoped>
   .home {
+    .outline-banner {
+      width: 100%;
+      min-width: 1000px;
+      height: 148px;
+      padding-top: 30px;
+      padding-left: 26px;
+      background-color: #fff;
+      background: url("../assets/home_bg.png") no-repeat center center;
+
+      .left {
+        float: left;
+        margin-right: 120px;
+
+        .divide {
+          border-bottom: 2px solid #4E85DE;
+          width: 28px;
+          margin-bottom: 8px;
+        }
+
+        .title {
+          color: #4E85DE;
+          margin-bottom: 26px;
+        }
+
+        .address {
+          color: #1C1C1C;
+          font-size: 20px;
+          font-weight: 900;
+        }
+      }
+
+      .right {
+
+        .count-list {
+          list-style: none;
+          margin-top: 26px;
+
+          li {
+            float: left;
+            width: 106px;
+            height: 36px;
+            border-left: 1px solid #646464;
+            padding-left: 20px;
+
+            .title {
+              font-size: 14px;
+              color: #4E85DE;
+              margin-top: -5px;
+            }
+
+            .count {
+              font-size: 24px;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
+
+    .func-group {
+      display: flex;
+
+      .left {
+        width: 67%;
+        height: 510px;
+        margin-right: 2%;
+        display: flex;
+        flex-direction: column;
+
+        .home-complain, .home-func {
+          .home-title {
+            position: relative;
+            margin: 16px;
+            font-size: 14px;
+            padding-left: 8px;
+            border-left: 2px solid #4E85DE;
+            color: #1C1C1C;
+            line-height: 14px;
+          }
+        }
+
+        .home-func {
+          width: 100%;
+          height: 176px;
+          background: #fff;
+          margin-bottom: 20px;
+
+          .func-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+            margin-left: 68px;
+
+            li {
+              float: left;
+              margin-right: 60px;
+              cursor: pointer;
+              padding: 10px;
+              transition: 0.2s linear;
+
+              &:hover {
+                background: #F0F6FF;
+              }
+
+              .icon {
+                width: 40px;
+                height: 40px;
+                margin: 0 auto 12px;
+              }
+
+              .icon-user {
+                background: url("../assets/adduser.png") no-repeat center center;
+              }
+
+              .icon-admin {
+                background: url("../assets/administration_user.png") no-repeat center center;
+              }
+
+              .icon-card {
+                background: url("../assets/addcard.png") no-repeat center center;
+              }
+
+              .icon-adver {
+                background: url("../assets/advertise.png") no-repeat center center;
+              }
+
+              .name {
+                font-size: 15px;
+                text-align: center;
+                color: #4E85DE;
+              }
+            }
+          }
+        }
+
+        .home-complain {
+          width: 100%;
+          min-height: 494px;
+          background: #fff;
+          margin-bottom: 20px;
+
+        }
+
+      }
+
+      .right {
+        width: 31%;
+        min-height: 510px;
+
+        .home-device {
+          width: 100%;
+          height: 100%;
+          background: #fff;
+
+          .device-list {
+            list-style: none;
+            margin: 0;
+            margin-top: 4px;
+            padding: 0;
+
+            li {
+              width: 100%;
+              height: auto;
+              display: flex;
+              justify-content: space-between;
+              background: #F0F6FF;
+              margin-bottom: 8px;
+
+              .info {
+                margin: 12px;
+                width: 140px;
+                max-width: 140px;
+                font-size: 14px;
+                color: #1C1C1C;
+
+                .address {
+                  margin-bottom: 2px;
+                  word-break: break-all;
+                  word-wrap: break-word;
+                }
+
+                .time {
+                  margin-bottom: 15px;
+                }
+              }
+
+              .thumb {
+                margin: 8px 12px 8px 0;
+                width: 120px;
+                height: 84px;
+                background: url("../assets/mingpian.png") no-repeat center center;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   .position-right {
     background-color: #ececec;
-  }
-
-  .outline-banner {
-    width: 100%;
-    min-width: 1000px;
-    height: 148px;
-    padding-top: 30px;
-    padding-left: 26px;
-    background-color: #fff;
-    background: url("../assets/home_bg.png") no-repeat center center;
-  }
-
-  .outline-banner .left {
-    float: left;
-    margin-right: 120px;
-  }
-
-  .outline-banner .left .divide {
-    border-bottom: 2px solid #4E85DE;
-    width: 28px;
-    margin-bottom: 8px;
-  }
-
-  .outline-banner .left .title {
-    color: #4E85DE;
-    margin-bottom: 26px;
-  }
-
-  .outline-banner .left .address {
-    color: #1C1C1C;
-    font-size: 20px;
-    font-weight: 900;
-  }
-
-  .outline-banner .right .count-list {
-    list-style: none;
-    margin-top: 26px;
-  }
-
-  .outline-banner .right .count-list li {
-    float: left;
-    width: 106px;
-    height: 36px;
-    border-left: 1px solid #646464;
-    padding-left: 20px;
-  }
-
-  .outline-banner .right .count-list li .title {
-    font-size: 14px;
-    color: #4E85DE;
-    margin-top: -5px;
-  }
-
-  .outline-banner .right .count-list li .count {
-    font-size: 24px;
-    font-weight: 600;
-  }
-
-  .func-group {
-    display: flex;
-  }
-
-  .func-group .left {
-    width: 67%;
-    height: 510px;
-    margin-right: 2%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .func-group .left .home-func {
-    width: 100%;
-    height: 176px;
-    background: #fff;
-    margin-bottom: 20px;
-  }
-
-  .home-title {
-    position: relative;
-    margin: 16px;
-    font-size: 14px;
-    padding-left: 8px;
-    border-left: 2px solid #4E85DE;
-    color: #1C1C1C;
-    line-height: 14px;
-  }
-
-  .func-group .left .home-func .func-list {
-    list-style: none;
-    padding: 0;
-    margin-top: 20px;
-    margin-left: 68px;
-  }
-
-  .func-group .left .home-func .func-list li {
-    float: left;
-    margin-right: 60px;
-    cursor: pointer;
-    padding: 10px;
-    transition: 0.2s linear;
-  }
-
-  .func-group .left .home-func .func-list li:hover {
-    background: #F0F6FF;
-  }
-
-  .func-group .left .home-func .func-list li .icon {
-    width: 40px;
-    height: 40px;
-    margin: 0 auto 12px;
-  }
-
-  .func-group .left .home-func .func-list li .icon-user {
-    background: url("../assets/adduser.png") no-repeat center center;
-  }
-
-  .func-group .left .home-func .func-list li .icon-admin {
-    background: url("../assets/administration_user.png") no-repeat center center;
-  }
-
-  .func-group .left .home-func .func-list li .icon-card {
-    background: url("../assets/addcard.png") no-repeat center center;
-  }
-
-  .func-group .left .home-func .func-list li .icon-adver {
-    background: url("../assets/advertise.png") no-repeat center center;
-  }
-
-  .func-group .left .home-func .func-list li .name {
-    font-size: 15px;
-    text-align: center;
-    color: #4E85DE;
-  }
-
-  .func-group .left .home-complain {
-    width: 100%;
-    min-height: 494px;
-    background: #fff;
-    margin-bottom: 20px;
-  }
-
-  .func-group .right {
-    width: 31%;
-    min-height: 510px;
-  }
-
-  .func-group .right .home-device {
-    width: 100%;
-    height: 100%;
-    background: #fff;
-  }
-
-  .func-group .right .home-device .device-list {
-    list-style: none;
-    margin: 0;
-    margin-top: 4px;
-    padding: 0;
-  }
-
-  .func-group .right .home-device .device-list li {
-    width: 100%;
-    height: auto;
-    display: flex;
-    justify-content: space-between;
-    background: #F0F6FF;
-    margin-bottom: 8px;
-
-  }
-
-  .func-group .right .home-device .device-list li .info {
-    margin: 12px;
-    width: 140px;
-    max-width: 140px;
-    font-size: 14px;
-    color: #1C1C1C;
-  }
-
-  .func-group .right .home-device .device-list li .info .address {
-    margin-bottom: 2px;
-    word-break: break-all;
-    word-wrap: break-word;
-  }
-
-  .func-group .right .home-device .device-list li .info .time {
-    margin-bottom: 15px;
-  }
-
-  .func-group .right .home-device .device-list li .thumb {
-    margin: 8px 12px 8px 0;
-    width: 120px;
-    height: 84px;
-    background: url("../assets/mingpian.png") no-repeat center center;
   }
 
   .unline {
