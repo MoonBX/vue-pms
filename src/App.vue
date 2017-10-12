@@ -39,6 +39,18 @@
     height: 100%;
   }
 
+  .ant-input:focus {
+    border-color: #49a9ee;
+    outline: 0;
+     box-shadow: 0 0 0 0px rgba(16, 142, 233, 0.2);
+  }
+
+  .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+    padding: 16px 8px;
+    word-break: break-all;
+    white-space: normal;
+  }
+
   .ant-menu-dark .ant-menu-inline.ant-menu-sub{
     background-color: #06101F;
     color: #7f8ea7;

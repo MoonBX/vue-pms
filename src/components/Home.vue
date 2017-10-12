@@ -44,7 +44,6 @@
             <div style="border-bottom: 1px solid #ececec">
               <div class="home-title">常用功能</div>
             </div>
-
             <ul class="func-list clearfix">
               <li>
                 <div class="icon icon-user"></div>
@@ -137,22 +136,12 @@
                           </tr>
                           </tbody>
                         </table>
-                        <v-modal title="详情"
-                                 :visible="customTextVisible"
-                                 @ok="customTextOk"
-                                 @cancel="customTextCancel"
-                                 ok-text="确定"
-                                 cancel-text="取消">
-                          <div class="main-info">
-                            <div class="row m-b-sm">
-                              <span class="title">{{singleComplaint.proposerName}}</span>
-                              <span class="phone">{{singleComplaint.proposerMobile}}</span>
-                              <span class="date pull-right" style="width: 180px;">投诉时间：{{singleComplaint.gmtCreated}}</span>
-                            </div>
-                            <div class="row m-b-sm">
-                              <span class="address">{{singleComplaint.location}}</span>
-                              <span class="pull-right text-primary" style="width: 180px;">处理时间：{{singleComplaint.processTime}}</span>
-                            </div>
+                        <v-modal title="详情" :visible="customTextVisible" @cancel="handleCancel">
+                          <home-details :single-complaint="singleComplaint" ref="homeDetailsRef"></home-details>
+                          <div slot="footer">
+                            <v-button key="confirm" type="primary" @click="customTextOk">
+                              确 定
+                            </v-button>
                           </div>
                         </v-modal>
                       </div>
@@ -200,7 +189,7 @@
 </template>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
-  import axios from 'axios'
+  import HomeDetails from '@/components/HomeDetails'
 
   export default{
     name: 'home',
@@ -218,13 +207,16 @@
         singleComplaint: {}
       }
     },
+    components: {
+      HomeDetails
+    },
     methods: {
       showTotal(total){
         return `全部 ${total} 条`;
       },
       loadPage(i){
         console.log(i);
-        this._getComplaint();
+        this._getComplaint(i);
       },
       confirm(id) {
         this._dealComplaint(id);
@@ -243,23 +235,15 @@
 
       customTextOk () {
         this.customTextVisible = false;
+//        this.$refs.homeDetailsRef.show();
       },
-
-      customTextCancel () {
+      handleCancel () {
         this.customTextVisible = false;
       },
 
-      showCustomTextConfirm() {
-        this.$modal.confirm({
-          title: 'Confirm',
-          content: 'Bla bla ...',
-          okText: 'OK',
-          cancelText: 'Cancel'
-        })
-      },
-
-      _getComplaint(){
-        api.getComplaint(1, 6, {status: 0})
+      _getComplaint(pageNo, params){
+        params = {status: 0}
+        api.getComplaint(pageNo, 6, params)
           .then(res => {
             console.log('投诉保修', res);
             if (res.success) {
@@ -321,7 +305,7 @@
     },
     created(){
 
-      this._getComplaint();
+      this._getComplaint(1);
       this._getAlarmInfo();
       this._getStatistics();
 

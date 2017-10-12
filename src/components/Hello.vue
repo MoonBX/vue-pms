@@ -100,12 +100,12 @@
       this.title = this.$route.name;
       var routePath = this.$route.path.split('/')[2];
       for (let i = 0; i < this.themeMenuData.length; i++) {
-        if (this.themeMenuData[i].path == routePath) {
+        if (this.themeMenuData[i].href == routePath) {
           this.themeMenuData[i].selected = true;
         } else {
           if (this.themeMenuData[i].children) {
             for (let j = 0; j < this.themeMenuData[i].children.length; j++) {
-              if (this.themeMenuData[i].children[j].path == routePath) {
+              if (this.themeMenuData[i].children[j].href == routePath) {
                 this.themeMenuData[i].children[j].selected = true;
                 this.themeMenuData[i].expand = true;
               }

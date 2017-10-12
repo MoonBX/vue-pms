@@ -85,6 +85,14 @@ export default {
 
   dealComplaint(id, data){
     return get('/estate/complaint/'+id+'/updateStatus/'+data)
+  },
+
+  // 公告管理
+  getAnnounce(pageNo, limit, params){
+    return get('/community/announcement/list/' + pageNo + '/' + limit, params);
+  },
+  getDeviceDetail(){
+    return get('/community/device/detail/');
   }
 
 }
