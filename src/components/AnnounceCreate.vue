@@ -41,7 +41,7 @@
       },
       cleanData(){
         console.log(this.model);
-        `
+
       },
       _getDeviceDetail(){
         var originArr = [];
