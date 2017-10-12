@@ -20,8 +20,14 @@
     <div class="g-table-content m-t-sm m-b-md p-h-md">
       <div class="prop-button-group pull-right m-b-sm">
         <v-button type="primary" class="m-r-sm" @click="showCreateModal">新建公告</v-button>
-        <v-modal title="新建公告" :visible="announceModalVisible" @ok="createAnnounce" @cancel="handleCancel" :width="700">
+        <v-modal title="新建公告" :visible="announceModalVisible" :width="700">
           <announce-create ref="announceCreateRef"></announce-create>
+          <v-button key="cancel" @click="createAnnounce">
+            qu xiao
+          </v-button>
+          <v-button key="confirm" type="primary" @click="createAnnounce">
+            确 定
+          </v-button>
         </v-modal>
       </div>
       <div class="ant-table ant-table-large" style="width: 100%;">
