@@ -11,7 +11,7 @@
         <v-input type="textarea" placeholder="请输入公告内容" autosize v-model="model.content"></v-input>
       </v-form-item>
       <v-form-item label="公告时间" :label-col="labelCol" :wrapper-col="wrapperCol" prop="dateTime">
-        <v-date-picker placeholder="请输入公告时间" v-model="model.dateTime" range clearable></v-date-picker>
+        <v-date-picker placeholder="请输入公告时间" v-model="dateTime" range clearable></v-date-picker>
       </v-form-item>
     </v-form>
     <div class="pull-left b-l" style="width: 35%;">
@@ -26,7 +26,8 @@
   export default{
     data(){
       return{
-        model: {title: "", range: "", content: "", dateTime: ""},
+        model: {title: "", fenceIds: "", unitIds: "", content: "", effectiveEndTime: "", effectiveStartTime: ""},
+        dateTime: "",
         labelCol: { span: 4 },
         wrapperCol: { span: 15 },
         treeData: []
@@ -40,8 +41,33 @@
         console.log(data);
       },
       cleanData(){
-        console.log(this.model);
+        var a = this.getTreeNode();
+        this.model.fenceIds = a.fenceIds;
+        this.model.unitIds = a.unitIds;
 
+        this.model.effectiveStartTime = this.dateTime[0];
+        this.model.effectiveEndTime = this.dateTime[1];
+
+        console.log(this.model);
+      },
+      getTreeNode(){
+        var fenceIdsArr = [], fenceIds = '';
+        var unitIdsArr = [], unitIds = '';
+        var checkedArr = this.$refs.rangeTree.getCheckedNodes();
+        for(var i=0;i<checkedArr.length;i++){
+          if(checkedArr[i].type == 2){
+            unitIdsArr.push(checkedArr[i].id)
+          }
+          if(checkedArr[i].type == 0){
+            fenceIdsArr.push(checkedArr[i].id);
+          }
+        }
+        fenceIds = fenceIdsArr.join(',');
+        unitIds = unitIdsArr.join(',');
+        return {
+          fenceIds: fenceIds,
+          unitIds: unitIds
+        };
       },
       _getDeviceDetail(){
         var originArr = [];

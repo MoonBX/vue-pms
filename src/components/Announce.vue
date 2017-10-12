@@ -1,6 +1,6 @@
 <template>
   <div class="announce position-right">
-    <div class="g-table-banner p-v-md p-h-md b-b">
+    <div class="g-table-banner p-v-lg p-h-md b-b">
       <v-form>
         <v-form-item label="发布标题">
           <v-input v-model="filterList.title" placeholder="请输入公告标题" style="width: 240px;"></v-input>
@@ -21,7 +21,7 @@
       <div class="prop-button-group pull-right m-b-sm">
         <v-button type="primary" class="m-r-sm" @click="showCreateModal">新建公告</v-button>
         <v-modal title="新建公告" :visible="announceModalVisible" @ok="createAnnounce" @cancel="handleCancel" :width="700">
-          <announce-create></announce-create>
+          <announce-create ref="announceCreateRef"></announce-create>
         </v-modal>
       </div>
       <div class="ant-table ant-table-large" style="width: 100%;">
@@ -126,7 +126,8 @@
         this._getAnnounce(i)
       },
       createAnnounce(){
-        console.log('create')
+        console.log('create');
+        this.$refs.announceCreateRef.cleanData();
       },
       handleCancel () {
         this.announceModalVisible = false;
