@@ -15,7 +15,7 @@
       </v-form-item>
     </v-form>
     <div class="pull-left b-l" style="width: 35%;">
-      <v-tree :data="treeData" checkable multiple @select="selectFn" @check="checkFn" ref="rangeTree"></v-tree>
+      <v-tree :data="treeData" checkable multiple ref="rangeTree"></v-tree>
     </div>
   </div>
 </template>
@@ -34,21 +34,15 @@
       }
     },
     methods: {
-      selectFn(data) {
-        console.log(data);
-      },
-      checkFn(data) {
-        console.log(data);
-      },
       cleanData(){
         var a = this.getTreeNode();
         this.model.fenceIds = a.fenceIds;
         this.model.unitIds = a.unitIds;
 
-        this.model.effectiveStartTime = this.dateTime[0];
-        this.model.effectiveEndTime = this.dateTime[1];
+        this.model.effectiveStartTime = Date.parse(new Date(this.dateTime[0]));
+        this.model.effectiveEndTime = Date.parse(new Date(this.dateTime[1])) + 24 * 60 * 60 * 1000 - 1000;
 
-        console.log(this.model);
+        return this.model;
       },
       getTreeNode(){
         var fenceIdsArr = [], fenceIds = '';

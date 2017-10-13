@@ -126,7 +126,7 @@
                             <td><span>{{item.proposerMobile}}</span></td>
                             <td><span>{{item.location}}</span></td>
                             <td>
-                              <v-popconfirm placement="left" title="确定处理吗?" @confirm="confirm(item.id)" @cancel="cancel">
+                              <v-popconfirm placement="left" title="确定处理吗?" @confirm="confirm(item.id)">
                                 <a class="m-r-xs">处理</a>
                               </v-popconfirm>
                               <a @click="showCustomTextModal(item)">
@@ -134,6 +134,7 @@
                               </a>
                             </td>
                           </tr>
+                          <div style="width: 100%;height: 20px;"></div>
                           </tbody>
                         </table>
                         <v-modal title="详情" :visible="customTextVisible" @cancel="handleCancel">
@@ -220,12 +221,6 @@
       },
       confirm(id) {
         this._dealComplaint(id);
-      },
-      cancel(){
-//        this.dealState.fail = true;
-//        setTimeout(()=>{
-//          this.dealState.fail = false;
-//        }, 2000)
       },
 
       showCustomTextModal (item) {
@@ -446,7 +441,7 @@
 
         .home-complain {
           width: 100%;
-          min-height: 494px;
+          min-height: 514px;
           background: #fff;
           margin-bottom: 20px;
 

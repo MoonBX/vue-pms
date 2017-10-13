@@ -7,7 +7,6 @@ axios.defaults.baseURL = 'http://114.55.143.170:8082';
 axios.interceptors.request.use(function (config) {    // 这里的config包含每次请求的内容
   if (localStorage.vueToken) {
     if(config.url.split('/')[config.url.split('/').length-1]!=='login'){
-
       // 给login请求之外的所有请求添加header: token
       config.headers.token = localStorage.vueToken;
     }
@@ -93,6 +92,18 @@ export default {
   },
   getDeviceDetail(){
     return get('/community/device/detail/');
+  },
+  createAnnounce(data){
+    return post('/community/announcement/add', data);
+  },
+  deleteAnnounce(id){
+    return post('/community/announcement/'+id+'/delete')
+  },
+  editAnnounce(id){
+    return post('/community/announcement/'+id+'/edit')
+  },
+  editAnnounceSave(data){
+    return post('/community/announcement/editSave', data)
   }
 
 }

@@ -1,6 +1,4 @@
 export const formatDate = (value, type) => {
-  value = '1507689735000';
-  type = 'YMD';
   var dataTime="";
   var data = new Date();
   data.setTime(value);
