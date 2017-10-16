@@ -12,8 +12,12 @@
           <v-select v-model="filterList.status" tags style="width: 120px;" :data="selectOptions" ></v-select>
         </v-form-item>
         <div class="row text-center m-t-sm">
-          <v-button type="primary" style="margin-right:10px">提交</v-button>
-          <v-button type="ghost">重置</v-button>
+          <v-button type="primary" style="margin-right:10px">
+            提交
+          </v-button>
+          <v-button type="ghost">
+            重置
+          </v-button>
         </div>
       </v-form>
     </div>
@@ -25,13 +29,15 @@
             <span>
               <div transition="message" class="ant-message-notice">
                 <div class="ant-message-notice-content" >
-                  <div v-if="noticeToggle.success.check" class="ant-message-custom-content ant-message-success">
+                  <div v-if="noticeToggle.success.check"
+                       class="ant-message-custom-content ant-message-success">
                     <i class="anticon anticon-check-circle"></i>
                     <span v-if="noticeToggle.success.create">新建公告成功！</span>
                     <span v-if="noticeToggle.success.delete">删除公告成功！</span>
                     <span v-if="noticeToggle.success.edit">编辑公告成功！</span>
                   </div>
-                  <div v-if="noticeToggle.fail.check" class="ant-message-custom-content ant-message-error">
+                  <div v-if="noticeToggle.fail.check"
+                       class="ant-message-custom-content ant-message-error">
                     <i class="anticon anticon-exclamation-circle"></i>
                     <span v-if="noticeToggle.fail.create">新建公告失败！</span>
                     <span v-if="noticeToggle.fail.delete">删除公告失败！</span>
@@ -44,7 +50,11 @@
           </div>
         </transition>
         <div class="prop-button-group pull-right m-b-sm">
-          <v-button type="primary" class="m-r-sm" @click="showModal('create')">新建公告</v-button>
+          <v-button type="primary"
+                    class="m-r-sm"
+                    @click="showModal('create')">
+            新建公告
+          </v-button>
         </div>
       </div>
 
@@ -53,6 +63,7 @@
           <div class="ant-table-body">
             <div class="ant-spin-nested-loading" style="min-height: auto;">
               <div class="ant-spin-container">
+
                 <table class="wk-table" style="table-layout:fixed;">
                   <thead class="ant-table-thead">
                   <tr>
@@ -76,9 +87,17 @@
                     <td>{{item.effectiveEndTime | formatDate('YMD') }}</td>
                     <td>{{item.status}}</td>
                     <td>
-                      <a href="javascript:;" class="m-r-xs">详情</a>
-                      <a href="javascript:;" class="m-r-xs" @click="showModal('edit', item.id)">编辑</a>
-                      <v-popconfirm placement="left" title="确定删除吗?" @confirm="deleteAnnounce(item.id)">
+                      <a href="javascript:;" class="m-r-xs"
+                         @click="showModal('detail', item)">
+                        详情
+                      </a>
+                      <a href="javascript:;" class="m-r-xs"
+                         @click="showModal('edit', item.id)">
+                        编辑
+                      </a>
+                      <v-popconfirm placement="left"
+                                    title="确定删除吗?"
+                                    @confirm="deleteAnnounce(item.id)">
                         <a href="javascript:;">删除</a>
                       </v-popconfirm>
                     </td>
@@ -86,12 +105,15 @@
                   <div style="width: 100%;height: 20px;"></div>
                   </tbody>
                 </table>
+
               </div>
             </div>
           </div>
         </div>
       </div>
-      <v-pagination class="m-t-md m-b-md" v-model="page.value"
+
+      <v-pagination class="m-t-md m-b-md"
+                    v-model="page.value"
                     :pageSize="10"
                     :showTotal="showTotal"
                     @change="loadPage"
@@ -100,20 +122,61 @@
       </v-pagination>
     </div>
     <div class="g-modal">
-      <v-modal title="新建公告" :visible="modalVisible.create" :width="700" @cancel="handleCancel('create')">
+
+      <v-modal title="新建公告"
+               :visible="modalVisible.create"
+               :width="500"
+               @cancel="handleCancel('create')">
         <announce-create ref="announceCreateRef"></announce-create>
         <div slot="footer">
-          <v-button key="cancel" @click="handleCancel('create')">取 消</v-button>
-          <v-button key="confirm" type="primary" @click="createAnnounce">提 交</v-button>
+          <v-button key="cancel"
+                    @click="handleCancel('create')">
+            取 消
+          </v-button>
+          <v-button key="confirm"
+                    type="primary"
+                    @click="createAnnounce">
+            提 交
+          </v-button>
         </div>
       </v-modal>
-      <v-modal title="编辑公告" :visible="modalVisible.edit" :width="700" @cancel="handleCancel('edit')">
-        <announce-edit :id="singleId" ref="announceEditRef"></announce-edit>
+
+      <v-modal title="编辑公告"
+               :visible="modalVisible.edit"
+               :width="700"
+               @cancel="handleCancel('edit')">
+        <announce-edit :id="idParam" ref="announceEditRef"></announce-edit>
         <div slot="footer">
-          <v-button key="cancel" @click="handleCancel('edit')">取 消</v-button>
-          <v-button key="confirm" type="primary" @click="editAnnounce">提 交</v-button>
+          <v-button key="cancel"
+                    @click="handleCancel('edit')">
+            取 消
+          </v-button>
+          <v-button key="confirm"
+                    type="primary"
+                    @click="editAnnounce">
+            提 交
+          </v-button>
         </div>
       </v-modal>
+
+      <v-modal title="公告详情"
+               :visible="modalVisible.detail"
+               ref="announceEditRef"
+               :width="600"
+               @cancel="handleCancel('detail')">
+        <announce-details :item="itemParam" ></announce-details>
+        <div slot="footer">
+          <v-button key="cancel"
+                    @click="handleCancel('detail')">
+            取 消
+          </v-button>
+          <v-button key="confirm"
+                    type="primary">
+            确 定
+          </v-button>
+        </div>
+      </v-modal>
+
     </div>
   </div>
 </template>
@@ -146,6 +209,7 @@
   import api from '../fetch/api'
   import AnnounceCreate from '@/components/AnnounceCreate'
   import AnnounceEdit from '@/components/AnnounceEdit'
+  import AnnounceDetails from '@/components/AnnounceDetails'
 
   export default{
     name: 'announce',
@@ -166,6 +230,7 @@
           value: '3',
           label: '未生效'
         }],
+
         page: {total: 0, value: 1},
         announceList: [],
         modalVisible: {create: false, edit: false, detail: false},
@@ -173,20 +238,30 @@
           success: {check: false, create: false, edit: false, delete: false},
           fail: {check: false, create: false, edit: false, delete: false}
         },
-        singleId: ""
+        idParam: "",
+        itemParam: {}
       }
     },
     components: {
       AnnounceCreate,
-      AnnounceEdit
+      AnnounceEdit,
+      AnnounceDetails
     },
     methods: {
       showTotal(total){
         return `全部 ${total} 条`;
       },
-      showModal(value, id){
+      showModal(value, param){
+        if(typeof param == 'number'){
+          this.idParam = param;
+        }else{
+//          param = JSON.stringify(param);
+//        typeof param == 'number'?this.idParam = param:this.itemParam = param;
+          this.itemParam = param;
+          console.log(this.itemParam)
+        }
         this.modalVisible[value] = true;
-        this.singleId = id;
+//        this.param = param;
       },
       loadPage(i){
         this._getAnnounce(i)

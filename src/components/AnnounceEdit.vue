@@ -14,8 +14,8 @@
         <v-date-picker placeholder="请输入公告时间" v-model="dateTime" range clearable></v-date-picker>
       </v-form-item>
     </v-form>
-    <div class="pull-left b-l" style="width: 35%;min-height: 240px;height: auto;">
-      <v-tree :data="treeData" checkable multiple ref="rangeTree" @select="selectFn"></v-tree>
+    <div class="pull-left b-l" style="width: 35%;min-height: 300px;height: auto;">
+      <v-tree :data="treeData" checkable multiple ref="rangeTree"></v-tree>
     </div>
   </div>
 </template>
@@ -31,6 +31,38 @@
         labelCol: { span: 4 },
         wrapperCol: { span: 15 },
         treeData: [],
+//        treeData: [{
+//          title: 1,
+//          id: 10,
+//          children: [{
+//            title: 2,
+//            type: 1,
+//            id: 25,
+//            children: [{
+//              title: 3,
+//              type: 2,
+//              id: 35,
+//              checked: true
+//            }]
+//          }]
+//        },{
+//          title: 11,
+//          id: 101,
+//          children: [{
+//            title: 21,
+//            type: 1,
+//            id: 251,
+//            children: [{
+//              title: 31,
+//              type: 2,
+//              id: 351
+//            },{
+//              title: 41,
+//              type: 2,
+//              id: 451
+//            }]
+//          }]
+//        }],
         fuArr: [],
       }
     },
@@ -70,7 +102,7 @@
       renameArr(originArr){
         for (var i = 0; i < originArr.length; i++) {
           originArr[i].children = originArr[i].blockDevices.concat(originArr[i].fenceLocations);
-          
+
           for (var j = 0; j < originArr[i].children.length; j++) {
             if (originArr[i].children[j].units) {
               originArr[i].children[j].children = originArr[i].children[j].units;
@@ -103,9 +135,6 @@
             console.log(this.treeData)
           }
         }
-      },
-      selectFn(data) {
-        console.log(data);
       }
     },
 

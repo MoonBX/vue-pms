@@ -7,8 +7,14 @@
 </style>
 <script type="text/ecmascript-6">
   export default{
-    data(){},
+    data(){
+      return{
+      }
+    },
     methods: {},
-    created(){}
+    props: ['item'],
+    created(){
+      console.log(this.item)
+    }
   }
 </script>
