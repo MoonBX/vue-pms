@@ -77,7 +77,8 @@
     created(){
       this.title = this.$route.name;
       var routePath = this.$route.path.split('/')[2];
-      var data = [{name: '首页',  icon: 'home', href: 'home'},
+      var data = [
+        {name: '首页',  icon: 'home', href: 'home'},
         { name: '物业中心', icon: 'building', children: [
           {name: "公告管理", href: 'announce'},
           {name: "投诉", href: 'complain'},
@@ -91,7 +92,8 @@
         {name: '日志管理', icon: 'file-text-o', children: [
           {name: "开门日志"},
           {name: "防拆日志"}]
-        }]
+        }
+      ];
       for (let i = 0; i < data.length; i++) {
         if (data[i].href == routePath) {
           data[i].selected = true;
@@ -105,7 +107,7 @@
             }
           }
         }
-      };
+      }
       this.themeMenuData = data;
     },
     watch: {

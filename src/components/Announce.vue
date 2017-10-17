@@ -66,6 +66,7 @@
 
                 <table class="wk-table" style="table-layout:fixed;">
                   <thead class="ant-table-thead">
+
                   <tr>
                     <th width="15%">标题</th>
                     <th width="24%">内容</th>
