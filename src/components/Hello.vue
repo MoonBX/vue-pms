@@ -44,29 +44,7 @@
       return {
         userName: localStorage.vueUsername,
         theme: 'dark',
-        themeMenuData: [
-          {name: '首页',  icon: 'home', href: 'home'},
-          {
-            name: '物业中心', icon: 'building', children: [
-            {name: "公告管理", href: 'announce'},
-            {name: "投诉", href: 'complain'},
-            {name: "维修", href: 'repair'}
-          ]
-          },
-          {name: '设备管理', icon: 'cog'},
-          {
-            name: '门禁管理', icon: 'unlock-alt', children: [
-            {name: "住户管理"},
-            {name: "公卡管理"}
-          ]
-          },
-          {
-            name: '日志管理', icon: 'file-text-o', children: [
-            {name: "开门日志"},
-            {name: "防拆日志"}
-          ]
-          }
-        ],
+        themeMenuData: [],
         title: '',
         dropdown: [
           {content: '退出登录'}
@@ -99,25 +77,38 @@
     created(){
       this.title = this.$route.name;
       var routePath = this.$route.path.split('/')[2];
-      for (let i = 0; i < this.themeMenuData.length; i++) {
-        if (this.themeMenuData[i].href == routePath) {
-          this.themeMenuData[i].selected = true;
+      var data = [{name: '首页',  icon: 'home', href: 'home'},
+        { name: '物业中心', icon: 'building', children: [
+          {name: "公告管理", href: 'announce'},
+          {name: "投诉", href: 'complain'},
+          {name: "维修", href: 'repair'}]
+        },
+        {name: '设备管理', icon: 'cog'},
+        {name: '门禁管理', icon: 'unlock-alt', children: [
+          {name: "住户管理"},
+          {name: "公卡管理"}]
+        },
+        {name: '日志管理', icon: 'file-text-o', children: [
+          {name: "开门日志"},
+          {name: "防拆日志"}]
+        }]
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].href == routePath) {
+          data[i].selected = true;
         } else {
-          if (this.themeMenuData[i].children) {
-            for (let j = 0; j < this.themeMenuData[i].children.length; j++) {
-              if (this.themeMenuData[i].children[j].href == routePath) {
-                this.themeMenuData[i].children[j].selected = true;
-                this.themeMenuData[i].expand = true;
+          if (data[i].children) {
+            for (let j = 0; j < data[i].children.length; j++) {
+              if (data[i].children[j].href == routePath) {
+                data[i].children[j].selected = true;
+                data[i].expand = true;
               }
             }
           }
         }
       };
-
-
+      this.themeMenuData = data;
     },
     watch: {
-//      "$route": "fetchTitle"
       $route(){
         this.fetchTitle()
       }
@@ -130,53 +121,41 @@
   .hello {
     height: 100%;
     margin-bottom: 20px;
-
-  .ant-layout {
-    height: 100%;
-
-  .ant-layout-header {
-    position: fixed;
-    top: 0;
-    height: 50px;
-    width: 100%;
-    background-color: #fff;
-    padding-left: 240px;
-    padding-right: 20px;
-    line-height: 50px;
-    z-index: 999;
+    .ant-layout {
+      height: 100%;
+      .ant-layout-header {
+        position: fixed;
+        top: 0;
+        height: 50px;
+        width: 100%;
+        background-color: #fff;
+        padding-left: 240px;
+        padding-right: 20px;
+        line-height: 50px;
+        z-index: 999;
+      }
+      .ant-layout-sider {
+        background-color: #0c1729;
+        padding-top: 40px;
+        overflow-y: auto;
+        z-index: 1000;
+        .sdn-brand {
+          text-align: center;
+          margin-bottom: 40px;
+          .brand-img {
+            margin-bottom: 8px;
+          }
+          .brand-text {
+            color: #ffffff;
+            font-weight: 700;
+          }
+        }
+      }
+      .ant-layout-content {
+        margin-top: 50px;
+        width: auto;
+        padding-left: 230px;
+      }
+    }
   }
-
-  .ant-layout-sider {
-    background-color: #0c1729;
-    padding-top: 40px;
-    overflow-y: auto;
-    z-index: 1000;
-
-  .sdn-brand {
-    text-align: center;
-    margin-bottom: 40px;
-
-  .brand-img {
-    margin-bottom: 8px;
-  }
-
-  .brand-text {
-    color: #ffffff;
-    font-weight: 700;
-  }
-
-  }
-  }
-  .ant-layout-content {
-    margin-top: 50px;
-    width: auto;
-    padding-left: 230px;
-
-
-
-  }
-  }
-  }
-
-
 </style>
