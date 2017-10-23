@@ -1,14 +1,14 @@
 <template>
-  <div class="repair position-right">
+  <div class="remove position-right">
     <div class="g-table-banner p-v-lg p-h-md b-b">
       <v-form>
-        <v-form-item label="报修人" class="m-b-sm">
-          <v-input v-model="filterList.title" placeholder="请输入报修人姓名" style="width: 240px;"></v-input>
+        <v-form-item label="投诉人" class="m-b-sm">
+          <v-input v-model="filterList.title" placeholder="请输入投诉人姓名" style="width: 240px;"></v-input>
         </v-form-item>
         <v-form-item label="联系方式" class="m-b-sm">
           <v-input v-model="filterList.mobile" placeholder="请输入联系方式" style="width: 240px;"></v-input>
         </v-form-item>
-        <v-form-item label="报修时间" class="m-b-sm">
+        <v-form-item label="投诉时间" class="m-b-sm">
           <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
         </v-form-item>
         <v-form-item label="处理状态" class="m-b-sm">
@@ -35,34 +35,21 @@
                   <thead class="ant-table-thead">
 
                   <tr>
-                    <th width="10%">投诉人</th>
-                    <th width="15%">联系方式</th>
-                    <th width="24%">地址</th>
-                    <th width="14%">投诉时间</th>
-                    <th width="14%">处理时间</th>
-                    <th width="11%">处理状态</th>
-                    <th width="12%">操作</th>
+                    <th>单元信息</th>
+                    <th>门口编号</th>
+                    <th>设备类型</th>
+                    <th>呼叫时间</th>
+                    <th>缩略图</th>
                   </tr>
                   </thead>
                   <tbody class="ant-table-tbody">
-                  <tr v-for="item in repairList">
-                    <td>{{item.proposerName}}</td>
-                    <td>{{item.proposerMobile}}</td>
+                  <tr v-for="item in removeList">
+                    <td>{{item.name}}</td>
                     <td>{{item.location}}</td>
-                    <td>{{item.gmtCreated | formatDate('YMD') }}</td>
-                    <td>{{item.processTime | formatDate('YMD') }}</td>
-                    <td>{{item.status}}</td>
-                    <td>
-                      <v-popconfirm placement="left"
-                                    title="确定删除吗?"
-                                    @confirm="deleteAnnounce(item.id)">
-                        <a href="javascript:;" class="m-r-xs">处理</a>
-                      </v-popconfirm>
-                      <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('edit', item.id)">
-                        详情
-                      </a>
-                    </td>
+                    <td>{{item.type}}</td>
+                    <td>{{item.gmtCreated | formatDate('YMD')}}</td>
+                    <td></td>
+
                   </tr>
                   <div style="width: 100%;height: 20px;"></div>
                   </tbody>
@@ -88,9 +75,9 @@
 </style>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
-  export default{
-    data(){
-      return{
+  export default {
+    data() {
+      return {
         filterList:{title:"", mobile:"", dateTime: "", status: ""},
         selectOptions: [{
           value: '0',
@@ -100,7 +87,7 @@
           label: '已处理'
         }],
         page: {total: 0, value: 1},
-        repairList: []
+        removeList: []
       }
     },
     methods: {
@@ -108,38 +95,41 @@
         return `全部 ${total} 条`;
       },
       loadPage(i){
-        this._getRepair(i, {type: 1})
+        this._getAlarmInfo(i)
       },
-      _getRepair(pageNo, params){
-        api.getComplaint(pageNo, 10, params)
+      _getAlarmInfo(pageNo, params){
+        api.getAlarmInfo(pageNo, 10, params)
           .then(res => {
             console.log(res);
             if(res.success){
               if(res.data.list){
                 for (var i = 0; i < res.data.list.length; i++) {
-                  switch (res.data.list[i].status) {
+                  switch (res.data.list[i].type) {
                     case 0:
-                      res.data.list[i].status = '未处理';
+                      res.data.list[i].type = '呼叫';
                       break;
                     case 1:
-                      res.data.list[i].status = '处理中';
+                      res.data.list[i].type = '刷卡';
                       break;
                     case 2:
-                      res.data.list[i].status = '已处理';
+                      res.data.list[i].type = '密码';
+                      break;
+                    case 3:
+                      res.data.list[i].type = 'APP';
                       break;
                     default:
-                      res.data.list[i].status = '';
+                      res.data.list[i].type = '';
                   }
                 }
                 this.page.total = res.data.total;
-                this.repairList = res.data.list;
+                this.removeList = res.data.list;
               }
             }
           })
       },
     },
-    created(){
-      this._getRepair(1, {type:1});
+    created() {
+      this._getAlarmInfo(1);
     }
   }
 </script>

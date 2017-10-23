@@ -39,6 +39,14 @@
     height: 100%;
   }
 
+  .g-table-banner{
+    background: #F1F6FF;
+  }
+  .g-table-content{
+    padding-bottom: 15px;
+  }
+
+
   .ant-input:focus {
     border-color: #49a9ee;
     outline: 0;
@@ -70,18 +78,18 @@
   }
 
   /*select tree start*/
-  .ant-select-dropdown{
-    top:29px !important;
-    min-width: 273px !important;
-  }
-  form .has-feedback > .ant-select .ant-select-arrow{
-    right:8px !important;
-  }
-  .ant-select-search__field__placeholder{
-    padding-left: 0 !important;
-  }
-  .ant-select-open .ant-select-selection {
-    box-shadow: 0 0 0 0px rgba(16, 142, 233, 0.2);
-  }
+  /*.ant-select-dropdown{*/
+    /*top:29px !important;*/
+    /*min-width: 273px !important;*/
+  /*}*/
+  /*form .has-feedback > .ant-select .ant-select-arrow{*/
+    /*right:8px !important;*/
+  /*}*/
+  /*.ant-select-search__field__placeholder{*/
+    /*padding-left: 0 !important;*/
+  /*}*/
+  /*.ant-select-open .ant-select-selection {*/
+    /*box-shadow: 0 0 0 0px rgba(16, 142, 233, 0.2);*/
+  /*}*/
   /*select tree end*/
 </style>

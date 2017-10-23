@@ -6,6 +6,11 @@ import Announce from '@/components/Announce'
 import Complain from '@/components/Complain'
 import Repair from '@/components/Repair'
 import Login from '@/components/Login'
+import Device from '@/components/Device'
+import Household from '@/components/Household'
+import Common from '@/components/Common'
+import Open from '@/components/Open'
+import Remove from '@/components/Remove'
 
 Vue.use(Router);
 
@@ -36,7 +41,32 @@ export default new Router({
           path: 'repair',
           name: '物业中心 - 维修',
           component: Repair
-        }
+        },
+        {
+          path: 'device',
+          name: '设备管理',
+          component: Device
+        },
+        {
+          path: 'household',
+          name: '门禁管理 - 住户管理',
+          component: Household
+        },
+        {
+          path: 'common',
+          name: '门禁管理 - 公卡管理',
+          component: Common
+        },
+        {
+          path: 'open',
+          name: '日志管理 - 开门日志',
+          component: Open
+        },
+        {
+          path: 'remove',
+          name: '日志管理 - 防拆日志',
+          component: Remove
+        },
       ]
     },
     {

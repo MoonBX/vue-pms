@@ -33,10 +33,6 @@
         dateTime: "",
         labelCol: { span: 4 },
         wrapperCol: { span: 14 },
-        under(){
-          console.log(document.getElementById('djd'));
-          return document.getElementById('djd');
-        },
         treeData: [],
       }
     },

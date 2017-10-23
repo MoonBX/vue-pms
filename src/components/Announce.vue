@@ -257,13 +257,10 @@
         if(typeof param == 'number'){
           this.idParam = param;
         }else{
-//          param = JSON.stringify(param);
-//        typeof param == 'number'?this.idParam = param:this.itemParam = param;
           this.itemParam = param;
           console.log(this.itemParam)
         }
         this.modalVisible[value] = true;
-//        this.param = param;
       },
       loadPage(i){
         this._getAnnounce(i)

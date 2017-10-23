@@ -1,14 +1,14 @@
 <template>
-  <div class="repair position-right">
+  <div class="device position-right">
     <div class="g-table-banner p-v-lg p-h-md b-b">
       <v-form>
-        <v-form-item label="报修人" class="m-b-sm">
-          <v-input v-model="filterList.title" placeholder="请输入报修人姓名" style="width: 240px;"></v-input>
+        <v-form-item label="投诉人" class="m-b-sm">
+          <v-input v-model="filterList.title" placeholder="请输入投诉人姓名" style="width: 240px;"></v-input>
         </v-form-item>
         <v-form-item label="联系方式" class="m-b-sm">
           <v-input v-model="filterList.mobile" placeholder="请输入联系方式" style="width: 240px;"></v-input>
         </v-form-item>
-        <v-form-item label="报修时间" class="m-b-sm">
+        <v-form-item label="投诉时间" class="m-b-sm">
           <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
         </v-form-item>
         <v-form-item label="处理状态" class="m-b-sm">
@@ -35,23 +35,31 @@
                   <thead class="ant-table-thead">
 
                   <tr>
-                    <th width="10%">投诉人</th>
-                    <th width="15%">联系方式</th>
-                    <th width="24%">地址</th>
-                    <th width="14%">投诉时间</th>
-                    <th width="14%">处理时间</th>
-                    <th width="11%">处理状态</th>
-                    <th width="12%">操作</th>
+                    <th>设备SN</th>
+                    <th>设备类型</th>
+                    <th>单元信息</th>
+                    <th>门口编号</th>
+                    <th>版本信息</th>
+                    <th>锁类型</th>
+                    <th>安装时间</th>
+                    <th>锁状态</th>
+                    <th>设备状态</th>
+                    <th>用户/人</th>
+                    <th>操作</th>
                   </tr>
                   </thead>
                   <tbody class="ant-table-tbody">
-                  <tr v-for="item in repairList">
-                    <td>{{item.proposerName}}</td>
-                    <td>{{item.proposerMobile}}</td>
-                    <td>{{item.location}}</td>
+                  <tr v-for="item in deviceList">
+                    <td>{{item.sn || '-'}}</td>
+                    <td>{{item.type || '-'}}</td>
+                    <td>{{item.blockName || '-'}}</td>
+                    <td>{{item.location || '-'}}</td>
+                    <td>{{item.apkVersion || '-'}}</td>
+                    <td>{{item.lockType_cn || '-'}}</td>
                     <td>{{item.gmtCreated | formatDate('YMD') }}</td>
-                    <td>{{item.processTime | formatDate('YMD') }}</td>
-                    <td>{{item.status}}</td>
+                    <td>{{item.lockStatus_cn || '-'}}</td>
+                    <td> {{item.status_cn || '-'}}</td>
+                    <td>{{item.amount}}</td>
                     <td>
                       <v-popconfirm placement="left"
                                     title="确定删除吗?"
@@ -88,9 +96,9 @@
 </style>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
-  export default{
-    data(){
-      return{
+  export default {
+    data() {
+      return {
         filterList:{title:"", mobile:"", dateTime: "", status: ""},
         selectOptions: [{
           value: '0',
@@ -100,7 +108,7 @@
           label: '已处理'
         }],
         page: {total: 0, value: 1},
-        repairList: []
+        deviceList: []
       }
     },
     methods: {
@@ -108,38 +116,65 @@
         return `全部 ${total} 条`;
       },
       loadPage(i){
-        this._getRepair(i, {type: 1})
+        this._getDevice(i)
       },
-      _getRepair(pageNo, params){
-        api.getComplaint(pageNo, 10, params)
+      _getDevice(pageNo, params){
+        api.getDevice(pageNo, 10, params)
           .then(res => {
             console.log(res);
             if(res.success){
               if(res.data.list){
                 for (var i = 0; i < res.data.list.length; i++) {
-                  switch (res.data.list[i].status) {
+                  switch (res.data.list[i].type) {
                     case 0:
-                      res.data.list[i].status = '未处理';
+                      res.data.list[i].type = '围墙机';
                       break;
                     case 1:
-                      res.data.list[i].status = '处理中';
-                      break;
-                    case 2:
-                      res.data.list[i].status = '已处理';
+                      res.data.list[i].type = '单元机';
                       break;
                     default:
-                      res.data.list[i].status = '';
+                      res.data.list[i].type = '';
+                  }
+                  switch (res.data.list[i].status) {
+                    case 0:
+                      res.data.list[i].status_cn = '离线';
+                      break;
+                    case 1:
+                      res.data.list[i].status_cn = '在线';
+                      break;
+                    default:
+                      res.data.list[i].status_cn = '';
+                  }
+                  switch (res.data.list[i].lockType) {
+                    case 0:
+                      res.data.list[i].lockType_cn = '磁力锁';
+                      break;
+                    case 1:
+                      res.data.list[i].lockType_cn = '电控锁';
+                      break;
+                    default:
+                      res.data.list[i].lockType_cn = '';
+                  }
+                  switch (res.data.list[i].lockStatus) {
+                    case 0:
+                      res.data.list[i].lockStatus_cn = '关门';
+                      break;
+                    case 1:
+                      res.data.list[i].lockStatus_cn = '开门';
+                      break;
+                    default:
+                      res.data.list[i].lockStatus_cn = '';
                   }
                 }
                 this.page.total = res.data.total;
-                this.repairList = res.data.list;
+                this.deviceList = res.data.list;
               }
             }
           })
       },
     },
-    created(){
-      this._getRepair(1, {type:1});
+    created() {
+      this._getDevice(1);
     }
   }
 </script>

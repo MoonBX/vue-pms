@@ -84,14 +84,14 @@
           {name: "投诉", href: 'complain'},
           {name: "维修", href: 'repair'}]
         },
-        {name: '设备管理', icon: 'cog'},
+        {name: '设备管理', icon: 'cog', href: 'device'},
         {name: '门禁管理', icon: 'unlock-alt', children: [
-          {name: "住户管理"},
-          {name: "公卡管理"}]
+          {name: "住户管理", href: 'household'},
+          {name: "公卡管理", href: 'common'}]
         },
         {name: '日志管理', icon: 'file-text-o', children: [
-          {name: "开门日志"},
-          {name: "防拆日志"}]
+          {name: "开门日志", href: 'open'},
+          {name: "防拆日志", href: 'remove'}]
         }
       ];
       for (let i = 0; i < data.length; i++) {

@@ -104,6 +104,33 @@ export default {
   },
   editAnnounceSave(data){
     return post('/community/announcement/editSave', data)
+  },
+  // 投诉
+  getComplaint(pageNo, limit, params){
+    return get('/estate/complaint/list/'+ pageNo + '/' + limit, params);
+  },
+  dealComplaint(id, data){
+    return get('/estate/complaint/'+id+'/updateStatus/'+data);
+  },
+  getComplaintDetail(id){
+    return get('/estate/complaint/'+id+'/detail');
+  },
+  // 设备管理
+  getDevice(pageNo, limit, obj){
+    return get('/device/list/' + pageNo + '/' + limit, obj)
+  },
+  // 门禁管理
+  getResident(pageNo, limit, obj){
+    return get('/community/resident/list/' + pageNo + '/' + limit, obj)
+  },
+  getPublicCard(pageNo, limit, obj){
+    return get('/public/card/list/' + pageNo + '/' + limit, obj)
+  },
+  // 日志管理
+  getIntercom(pageNo, limit, obj){
+    return get('/log/intercom/' + pageNo + '/' + limit, obj)
+  },
+  getAlarmInfo(pageNo, limit, obj){
+    return get('/device/alarmInfo/log/list/' + pageNo + '/' + limit, obj)
   }
-
 }
