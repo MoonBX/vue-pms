@@ -15,7 +15,7 @@
       </v-form-item>
     </v-form>
     <div class="pull-left b-l" style="width: 35%;min-height: 300px;height: auto;">
-      <v-tree :data="treeData" checkable multiple ref="rangeTree"></v-tree>
+      <v-tree :data="treeData3" checkable multiple ref="rangeTree"></v-tree>
     </div>
   </div>
 </template>
@@ -31,38 +31,25 @@
         labelCol: { span: 4 },
         wrapperCol: { span: 15 },
         treeData: [],
-//        treeData: [{
-//          title: 1,
-//          id: 10,
-//          children: [{
-//            title: 2,
-//            type: 1,
-//            id: 25,
-//            children: [{
-//              title: 3,
-//              type: 2,
-//              id: 35,
-//              checked: true
-//            }]
-//          }]
-//        },{
-//          title: 11,
-//          id: 101,
-//          children: [{
-//            title: 21,
-//            type: 1,
-//            id: 251,
-//            children: [{
-//              title: 31,
-//              type: 2,
-//              id: 351
-//            },{
-//              title: 41,
-//              type: 2,
-//              id: 451
-//            }]
-//          }]
-//        }],
+        treeData2: [{
+          title:"分区二",
+          id: 6,
+          children: [{
+            title: "1幢",
+            type: 1,
+            id: 15,
+            children:[{
+              title:'一单元',
+              type: 2,
+              id: 35,
+              checked: true
+            },{
+              title: '二单元',
+              id: 36,
+              type: 2
+            }]
+          }]
+        }],
         fuArr: [],
       }
     },
@@ -78,6 +65,7 @@
             console.log(res);
             if(res.success){
               this.model = res.data;
+              this.dateTime = [this.model.effectiveStartTime, this.model.effectiveEndTime]
               fenceIdsArr = this.model.fenceIds.split(',');
               unitIdsArr = this.model.unitIds.split(',');
               this.fuArr = fenceIdsArr.concat(unitIdsArr);
@@ -89,14 +77,14 @@
           .then(res => {
             console.log('获取围墙机和单元机信息', res.data.partition);
             var arr = this.renameArr(res.data.partition);
+            console.log(arr);
             for(let i=0;i<arr.length;i++){
               this.traverseTree(arr[i]);
               if(i==arr.length-1){
-                this.treeData = arr;
-                console.log(this.treeData)
+                console.log(arr);
+//                this.treeData = arr;
               }
             }
-
           })
       },
       renameArr(originArr){
@@ -112,6 +100,7 @@
           delete originArr[i].blockDevices;
           delete originArr[i].fenceLocations;
         }
+        console.log('originArr', originArr)
         return originArr;
       },
       // 递归遍历树
@@ -129,19 +118,19 @@
       traverseNode(node){
         node.title = node.name;
         delete node.name;
+        console.log(node);
         for(let i=0;i<this.fuArr.length;i++){
           if(this.fuArr[i] == node.id){
             node.checked = true;
-            console.log(this.treeData)
           }
         }
       }
     },
 
-    created() {
+    created () {
+      console.log(this.treeData2)
       this.getData();
       this._getDeviceDetail();
-
     }
   }
 </script>

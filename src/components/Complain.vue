@@ -1,57 +1,39 @@
 <template>
-  <div class="announce position-right">
-    <v-tree-select :data="treeData2" allow-clear multiple :popupContainer="under"></v-tree-select>
-    <button @click="go()"></button>
-    <v-modal title="编辑公告"
-             :visible="show"
-             @cancel="handleCancel()"
-             :width="700">
-      <modal></modal>
-    </v-modal>
+  <div class="complain position-right">
+    <div class="g-table-banner p-v-lg p-h-md b-b">
+      <v-form>
+        <v-form-item label="发布标题">
+          <v-input v-model="filterList.title" placeholder="请输入公告标题" style="width: 240px;"></v-input>
+        </v-form-item>
+        <v-form-item label="发布时间">
+          <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
+        </v-form-item>
+        <v-form-item label="发布状态">
+          <v-select v-model="filterList.status" tags style="width: 120px;" :data="selectOptions" ></v-select>
+        </v-form-item>
+        <div class="row text-center m-t-sm">
+          <v-button type="primary" style="margin-right:10px">
+            提交
+          </v-button>
+          <v-button type="ghost">
+            重置
+          </v-button>
+        </div>
+      </v-form>
+    </div>
   </div>
 </template>
 <style lang="scss" scoped>
 </style>
 <script>
-  import Modal from '@/components/Modal'
   export default{
     data(){
       return{
-        treeData2: [{
-          title: 'parent 1',
-          expanded: true,
-          children: [{
-            title: 'parent 1-0',
-            expanded: true,
-            children: [{
-              title: 'my leaf',
-            }, {
-              title: 'your leaf',
-            }, {
-              title: 'self leaf',
-            }]
-          }, {
-            title: 'parent 1-1',
-            children: [{
-              title: "<span style='color: #08c'>sss</span>"
-            }]
-          }, {
-            title: 'parent 1-2',
-          }]
-        }],
-        show: false
+
       }
     },
-    components: {
-      Modal
-    },
     methods:{
-      go(){
-        this.show = true;
-      },
-      handleCancel (value) {
-        this.show = false;
-      },
+
     }
 
   }

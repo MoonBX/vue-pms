@@ -21,6 +21,7 @@
         </div>
       </v-form>
     </div>
+
     <div class="g-table-content m-t-sm m-b-md p-h-md">
       <div>
         <transition name="fade" v-if="noticeToggle.success.check || noticeToggle.fail.check">
@@ -126,7 +127,7 @@
 
       <v-modal title="新建公告"
                :visible="modalVisible.create"
-               :width="500"
+               :width="700"
                @cancel="handleCancel('create')">
         <announce-create ref="announceCreateRef"></announce-create>
         <div slot="footer">
@@ -269,6 +270,7 @@
       },
       createAnnounce(){
         var obj = this.$refs.announceCreateRef.cleanData();
+        console.log(obj);
         api.createAnnounce(obj)
           .then(res => {
             console.log(res);
