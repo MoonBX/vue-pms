@@ -26,111 +26,21 @@
   export default {
     data() {
       return{
-        model: {title: "", fenceIds: "", unitIds: "", content: "", effectiveEndTime: "", effectiveStartTime: ""},
-        dateTime: "",
+        dateTime: "1",
         labelCol: { span: 4 },
         wrapperCol: { span: 15 },
-        treeData: [],
-        treeData2: [{
-          title:"分区二",
-          id: 6,
-          children: [{
-            title: "1幢",
-            type: 1,
-            id: 15,
-            children:[{
-              title:'一单元',
-              type: 2,
-              id: 35,
-              checked: true
-            },{
-              title: '二单元',
-              id: 36,
-              type: 2
-            }]
-          }]
-        }],
-        fuArr: [],
+        treeData3: []
       }
     },
-    props: ['id'],
+    props: ['model', 'treeData'],
     methods: {
       editAnnounceSave(){
 
-      },
-      getData(){
-        var fenceIdsArr = [], unitIdsArr = [];
-        api.editAnnounce(this.id)
-          .then(res => {
-            console.log(res);
-            if(res.success){
-              this.model = res.data;
-              this.dateTime = [this.model.effectiveStartTime, this.model.effectiveEndTime]
-              fenceIdsArr = this.model.fenceIds.split(',');
-              unitIdsArr = this.model.unitIds.split(',');
-              this.fuArr = fenceIdsArr.concat(unitIdsArr);
-            }
-          })
-      },
-      _getDeviceDetail(){
-        api.getDeviceDetail()
-          .then(res => {
-            console.log('获取围墙机和单元机信息', res.data.partition);
-            var arr = this.renameArr(res.data.partition);
-            console.log(arr);
-            for(let i=0;i<arr.length;i++){
-              this.traverseTree(arr[i]);
-              if(i==arr.length-1){
-                console.log(arr);
-//                this.treeData = arr;
-              }
-            }
-          })
-      },
-      renameArr(originArr){
-        for (var i = 0; i < originArr.length; i++) {
-          originArr[i].children = originArr[i].blockDevices.concat(originArr[i].fenceLocations);
-
-          for (var j = 0; j < originArr[i].children.length; j++) {
-            if (originArr[i].children[j].units) {
-              originArr[i].children[j].children = originArr[i].children[j].units;
-              delete originArr[i].children[j].units;
-            }
-          }
-          delete originArr[i].blockDevices;
-          delete originArr[i].fenceLocations;
-        }
-        console.log('originArr', originArr)
-        return originArr;
-      },
-      // 递归遍历树
-      traverseTree(node) {
-        if (!node) {
-          return;
-        }
-        this.traverseNode(node);
-        if (node.children && node.children.length > 0) {
-          for (var i = 0; i < node.children.length; i++) {
-            this.traverseTree(node.children[i]);
-          }
-        }
-      },
-      traverseNode(node){
-        node.title = node.name;
-        delete node.name;
-        console.log(node);
-        for(let i=0;i<this.fuArr.length;i++){
-          if(this.fuArr[i] == node.id){
-            node.checked = true;
-          }
-        }
       }
     },
 
     created () {
-      console.log(this.treeData2)
-      this.getData();
-      this._getDeviceDetail();
+      this.treeData3 = this.treeData
     }
   }
 </script>

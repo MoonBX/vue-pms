@@ -147,7 +147,7 @@
                :visible="modalVisible.edit"
                :width="700"
                @cancel="handleCancel('edit')">
-        <announce-edit :id="idParam" ref="announceEditRef"></announce-edit>
+        <announce-edit :model="model" :tree-data="treeData" ref="announceEditRef"></announce-edit>
         <div slot="footer">
           <v-button key="cancel"
                     @click="handleCancel('edit')">
@@ -241,7 +241,10 @@
           fail: {check: false, create: false, edit: false, delete: false}
         },
         idParam: "",
-        itemParam: {}
+        itemParam: {},
+        treeData: [],
+        model: {},
+        fuArr: []
       }
     },
     components: {
@@ -255,15 +258,13 @@
       },
       showModal(value, param){
         if(typeof param == 'number'){
-          this.idParam = param;
+          this.getData(param);
+          this._getDeviceDetail();
         }else{
-//          param = JSON.stringify(param);
-//        typeof param == 'number'?this.idParam = param:this.itemParam = param;
           this.itemParam = param;
           console.log(this.itemParam)
         }
         this.modalVisible[value] = true;
-//        this.param = param;
       },
       loadPage(i){
         this._getAnnounce(i)
@@ -351,6 +352,76 @@
             }
           })
       },
+
+
+
+
+      getData(id){
+        var fenceIdsArr = [], unitIdsArr = [];
+        api.editAnnounce(id)
+          .then(res => {
+            console.log(res);
+            if(res.success){
+              this.model = res.data;
+              fenceIdsArr = this.model.fenceIds.split(',');
+              unitIdsArr = this.model.unitIds.split(',');
+              this.fuArr = fenceIdsArr.concat(unitIdsArr);
+            }
+          })
+      },
+      _getDeviceDetail(){
+        api.getDeviceDetail()
+          .then(res => {
+            console.log('获取围墙机和单元机信息', res.data.partition);
+            var arr = this.renameArr(res.data.partition);
+            console.log(arr);
+            for(let i=0;i<arr.length;i++){
+              this.traverseTree(arr[i]);
+              if(i==arr.length-1){
+                console.log(arr);
+                this.treeData = arr;
+              }
+            }
+          })
+      },
+      renameArr(originArr){
+        for (var i = 0; i < originArr.length; i++) {
+          originArr[i].children = originArr[i].blockDevices.concat(originArr[i].fenceLocations);
+
+          for (var j = 0; j < originArr[i].children.length; j++) {
+            if (originArr[i].children[j].units) {
+              originArr[i].children[j].children = originArr[i].children[j].units;
+              delete originArr[i].children[j].units;
+            }
+          }
+          delete originArr[i].blockDevices;
+          delete originArr[i].fenceLocations;
+        }
+        console.log('originArr', originArr)
+        return originArr;
+      },
+      // 递归遍历树
+      traverseTree(node) {
+        if (!node) {
+          return;
+        }
+        this.traverseNode(node);
+        if (node.children && node.children.length > 0) {
+          for (var i = 0; i < node.children.length; i++) {
+            this.traverseTree(node.children[i]);
+          }
+        }
+      },
+      traverseNode(node){
+        node.title = node.name;
+        delete node.name;
+        console.log(node);
+        for(let i=0;i<this.fuArr.length;i++){
+          if(this.fuArr[i] == node.id){
+            node.checked = true;
+          }
+        }
+      }
 
     },
     created(){
