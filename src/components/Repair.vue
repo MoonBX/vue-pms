@@ -3,10 +3,10 @@
     <div class="g-table-banner p-v-lg p-h-md b-b">
       <v-form>
         <v-form-item label="报修人" class="m-b-sm">
-          <v-input v-model="filterList.title" placeholder="请输入报修人姓名" style="width: 240px;"></v-input>
+          <v-input v-model="filterList.proposerName" placeholder="请输入报修人姓名" style="width: 240px;"></v-input>
         </v-form-item>
         <v-form-item label="联系方式" class="m-b-sm">
-          <v-input v-model="filterList.mobile" placeholder="请输入联系方式" style="width: 240px;"></v-input>
+          <v-input v-model="filterList.proposerMobile" placeholder="请输入联系方式" style="width: 240px;"></v-input>
         </v-form-item>
         <v-form-item label="报修时间" class="m-b-sm">
           <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
@@ -15,10 +15,10 @@
           <v-select v-model="filterList.status" position="fixed" style="width: 120px;" :data="selectOptions" ></v-select>
         </v-form-item>
         <div class="row text-center">
-          <v-button type="primary" style="margin-right:10px">
+          <v-button type="primary m-r-sm" @click="filterTable">
             提交
           </v-button>
-          <v-button type="ghost">
+          <v-button type="ghost" @click="resetTable">
             重置
           </v-button>
         </div>
@@ -88,10 +88,20 @@
 </style>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
+  import { checkFilter } from '../util/option'
+
   export default{
     data(){
       return{
-        filterList:{title:"", mobile:"", dateTime: "", status: ""},
+        filterList:{
+          proposerName:null,
+          proposerMobile:null,
+          dateTime: "",
+          status: null,
+          type: "1",
+          startTime: null,
+          endTime: null
+        },
         selectOptions: [{
           value: '0',
           label: '未处理'
@@ -108,7 +118,7 @@
         return `全部 ${total} 条`;
       },
       loadPage(i){
-        this._getRepair(i, {type: 1})
+        this._getRepair(i, this.filterList)
       },
       _getRepair(pageNo, params){
         api.getComplaint(pageNo, 10, params)
@@ -136,6 +146,29 @@
               }
             }
           })
+      },
+      filterTable(){
+        var newObj = checkFilter(this.filterList);
+        if(newObj.dateTime){
+          if(newObj.dateTime[0]&&newObj.dateTime[1]){
+            newObj.startTime = Date.parse(new Date(newObj.dateTime[0]));
+            newObj.endTime = Date.parse(new Date(newObj.dateTime[1]));
+          }
+        }
+        console.log(newObj)
+        this._getRepair(1, newObj)
+      },
+      resetTable(){
+        this.filterList = {
+          proposerName:null,
+          proposerMobile:null,
+          dateTime: "",
+          status: null,
+          type: "1",
+          startTime: null,
+          endTime: null
+        };
+        this._getRepair(1, {type:1});
       },
     },
     created(){

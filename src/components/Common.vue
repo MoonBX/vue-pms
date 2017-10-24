@@ -2,23 +2,23 @@
   <div class="common position-right">
     <div class="g-table-banner p-v-lg p-h-md b-b">
       <v-form>
-        <v-form-item label="投诉人" class="m-b-sm">
-          <v-input v-model="filterList.title" placeholder="请输入投诉人姓名" style="width: 240px;"></v-input>
+        <v-form-item label="人员姓名" class="m-b-sm">
+          <v-input v-model="filterList.userName" placeholder="请输入人员姓名" style="width: 180px;"></v-input>
         </v-form-item>
-        <v-form-item label="联系方式" class="m-b-sm">
-          <v-input v-model="filterList.mobile" placeholder="请输入联系方式" style="width: 240px;"></v-input>
+        <v-form-item label="手机号码" class="m-b-sm">
+          <v-input v-model="filterList.mobile" placeholder="请输入手机号码" style="width: 180px;"></v-input>
         </v-form-item>
-        <v-form-item label="投诉时间" class="m-b-sm">
-          <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
+        <v-form-item label="人员身份" class="m-b-sm">
+          <v-select v-model="filterList.userStatus" style="width: 150px;" :data="userStatusOptions"></v-select>
         </v-form-item>
-        <v-form-item label="处理状态" class="m-b-sm">
-          <v-select v-model="filterList.status" position="fixed" style="width: 120px;" :data="selectOptions" ></v-select>
+        <v-form-item label="卡片状态" class="m-b-sm">
+          <v-select v-model="filterList.status" style="width: 150px;" :data="statusOptions" ></v-select>
         </v-form-item>
         <div class="row text-center">
-          <v-button type="primary" style="margin-right:10px">
+          <v-button type="primary m-r-sm" @click="filterTable">
             提交
           </v-button>
-          <v-button type="ghost">
+          <v-button type="ghost" @click="resetTable">
             重置
           </v-button>
         </div>
@@ -90,19 +90,35 @@
 </style>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
+  import { checkFilter } from '../util/option'
   export default {
     data() {
       return {
-        filterList:{title:"", mobile:"", dateTime: "", status: ""},
-        selectOptions: [{
+        filterList:{
+          userName:"",
+          mobile:"",
+          userStatus: "",
+          status: ""
+        },
+        page: {
+          total: 0,
+          value: 1
+        },
+        publicCardList: [],
+        userStatusOptions: [{
           value: '0',
-          label: '未处理'
-        }, {
-          value: '2',
-          label: '已处理'
+          label: '物业人员'
+        },{
+          value: '1',
+          label: '外部人员'
         }],
-        page: {total: 0, value: 1},
-        publicCardList: []
+        statusOptions: [{
+          value: '0',
+          label: '正常'
+        }, {
+          value: '1',
+          label: '过期'
+        }]
       }
     },
     methods: {
@@ -110,7 +126,7 @@
         return `全部 ${total} 条`;
       },
       loadPage(i){
-        this._getPublicCard(i)
+        this._getPublicCard(i, this.filterList)
       },
       _getPublicCard(pageNo, params){
         api.getPublicCard(pageNo, 10, params)
@@ -168,6 +184,21 @@
               }
             }
           })
+      },
+      filterTable(){
+        var newObj = checkFilter(this.filterList);
+        this._getPublicCard(1, newObj)
+      },
+      resetTable(){
+        this.filterList = {
+          userName:"",
+          mobile:"",
+          userStatus: "",
+          status: ""
+        };
+        this.blockOptions = [];
+        this.unitOptions = [];
+        this._getPublicCard(1);
       },
     },
     created() {

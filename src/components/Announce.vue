@@ -12,10 +12,10 @@
           <v-select v-model="filterList.status" tags style="width: 120px;" :data="selectOptions" ></v-select>
         </v-form-item>
         <div class="row text-center m-t-sm">
-          <v-button type="primary" style="margin-right:10px">
+          <v-button type="primary" style="margin-right:10px" @click="filterTable">
             提交
           </v-button>
-          <v-button type="ghost">
+          <v-button type="ghost" @click="resetTable">
             重置
           </v-button>
         </div>
@@ -209,6 +209,8 @@
 </style>
 <script>
   import api from '../fetch/api'
+  import { checkFilter } from '../util/option'
+
   import AnnounceCreate from '@/components/AnnounceCreate'
   import AnnounceEdit from '@/components/AnnounceEdit'
   import AnnounceDetails from '@/components/AnnounceDetails'
@@ -218,9 +220,11 @@
     data(){
       return {
         filterList:{
-          title: "",
+          title: null,
           dateTime: "",
-          status: ""
+          status: null,
+          et: null,
+          st: null
         },
         selectOptions: [{
           value: '1',
@@ -232,7 +236,6 @@
           value: '3',
           label: '未生效'
         }],
-
         page: {total: 0, value: 1},
         announceList: [],
         modalVisible: {create: false, edit: false, detail: false},
@@ -263,7 +266,7 @@
         this.modalVisible[value] = true;
       },
       loadPage(i){
-        this._getAnnounce(i)
+        this._getAnnounce(i, this.filterList)
       },
       createAnnounce(){
         var obj = this.$refs.announceCreateRef.cleanData();
@@ -348,9 +351,29 @@
             }
           })
       },
-
+      filterTable(){
+        var newObj = checkFilter(this.filterList);
+        if(newObj.dateTime){
+          if(newObj.dateTime[0]&&newObj.dateTime[1]){
+            newObj.st = Date.parse(new Date(newObj.dateTime[0]));
+            newObj.et = Date.parse(new Date(newObj.dateTime[1]));
+          }
+        }
+        this._getAnnounce(1, newObj)
+      },
+      resetTable(){
+        this.filterList = {
+          title: null,
+          dateTime: "",
+          status: null,
+          et: null,
+          st: null
+        };
+        this._getAnnounce(1);
+      }
     },
     created(){
+
       this._getAnnounce(1);
     }
   }

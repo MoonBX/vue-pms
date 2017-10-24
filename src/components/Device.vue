@@ -2,23 +2,22 @@
   <div class="device position-right">
     <div class="g-table-banner p-v-lg p-h-md b-b">
       <v-form>
-        <v-form-item label="投诉人" class="m-b-sm">
-          <v-input v-model="filterList.title" placeholder="请输入投诉人姓名" style="width: 240px;"></v-input>
+        <v-form-item label="位置信息" class="m-b-sm">
+          <v-select v-model="filterList.partitionId" :allowClear="false" style="width: 150px;" :data="partitionOptions" @change="changeBlock"></v-select>
+          <v-select v-model="filterList.blockId" :allowClear="false" style="width: 120px;" :data="blockOptions" @change="changeUnit"></v-select>
+          <v-select v-model="filterList.unitId" :allowClear="false" style="width: 120px;" :data="unitOptions"></v-select>
         </v-form-item>
-        <v-form-item label="联系方式" class="m-b-sm">
-          <v-input v-model="filterList.mobile" placeholder="请输入联系方式" style="width: 240px;"></v-input>
+        <v-form-item label="设备类型" class="m-b-sm">
+          <v-select v-model="filterList.type" style="width: 150px;" :data="typeOptions"></v-select>
         </v-form-item>
-        <v-form-item label="投诉时间" class="m-b-sm">
-          <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
-        </v-form-item>
-        <v-form-item label="处理状态" class="m-b-sm">
-          <v-select v-model="filterList.status" position="fixed" style="width: 120px;" :data="selectOptions" ></v-select>
+        <v-form-item label="设备状态" class="m-b-sm">
+          <v-select v-model="filterList.status" style="width: 150px;" :data="statusOptions"></v-select>
         </v-form-item>
         <div class="row text-center">
-          <v-button type="primary" style="margin-right:10px">
+          <v-button type="primary m-r-sm" @click="filterTable">
             提交
           </v-button>
-          <v-button type="ghost">
+          <v-button type="ghost" @click="resetTable">
             重置
           </v-button>
         </div>
@@ -61,15 +60,15 @@
                     <td> {{item.status_cn || '-'}}</td>
                     <td>{{item.amount}}</td>
                     <td>
-                      <v-popconfirm placement="left"
-                                    title="确定删除吗?"
-                                    @confirm="deleteAnnounce(item.id)">
-                        <a href="javascript:;" class="m-r-xs">处理</a>
-                      </v-popconfirm>
                       <a href="javascript:;" class="m-r-xs"
                          @click="showModal('edit', item.id)">
                         详情
                       </a>
+                      <v-popconfirm placement="left"
+                                    title="确定删除吗?"
+                                    @confirm="deleteAnnounce(item.id)">
+                        <a href="javascript:;">手动关门</a>
+                      </v-popconfirm>
                     </td>
                   </tr>
                   <div style="width: 100%;height: 20px;"></div>
@@ -96,19 +95,39 @@
 </style>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
+  import { checkFilter } from '../util/option'
   export default {
     data() {
       return {
-        filterList:{title:"", mobile:"", dateTime: "", status: ""},
-        selectOptions: [{
+        filterList:{
+          type:"",
+          status: "",
+          partitionId: "",
+          blockId: "",
+          unitId: ""
+        },
+        page: {
+          total: 0,
+          value: 1
+        },
+        deviceList: [],
+        partitionOptions: [],
+        blockOptions: [],
+        unitOptions: [],
+        typeOptions: [{
           value: '0',
-          label: '未处理'
+          label: '围墙机'
         }, {
-          value: '2',
-          label: '已处理'
+          value: '1',
+          label: '单元机'
         }],
-        page: {total: 0, value: 1},
-        deviceList: []
+        statusOptions: [{
+          value: '0',
+          label: '离线'
+        }, {
+          value: '1',
+          label: '在线'
+        }]
       }
     },
     methods: {
@@ -116,7 +135,33 @@
         return `全部 ${total} 条`;
       },
       loadPage(i){
-        this._getDevice(i)
+        this._getDevice(i, this.filterList);
+      },
+      changeBlock(val){
+        api.getBlocks(val)
+          .then(res => {
+            for(let i=0;i<res.data.length;i++){
+              res.data[i].label = res.data[i].name;
+              res.data[i].value = res.data[i].id;
+            }
+            this.filterList.blockId = "";
+            this.blockOptions = [];
+            this.filterList.unitId = "";
+            this.unitOptions = [];
+            this.blockOptions = res.data;
+          })
+      },
+      changeUnit(val){
+        api.getUnits(val)
+          .then(res => {
+            for(let i=0;i<res.data.length;i++){
+              res.data[i].label = res.data[i].name;
+              res.data[i].value = res.data[i].id;
+            }
+            this.filterList.unitId = "";
+            this.unitOptions = [];
+            this.unitOptions = res.data;
+          })
       },
       _getDevice(pageNo, params){
         api.getDevice(pageNo, 10, params)
@@ -172,9 +217,34 @@
             }
           })
       },
+      filterTable(){
+        var newObj = checkFilter(this.filterList);
+        this._getDevice(1, newObj)
+      },
+      resetTable(){
+        this.filterList = {
+          type:"",
+          status: "",
+          partitionId: "",
+          blockId: "",
+          unitId: ""
+        };
+        this.blockOptions = [];
+        this.unitOptions = [];
+        this._getDevice(1);
+      },
     },
     created() {
       this._getDevice(1);
+      api.getPartitions()
+        .then(res=>{
+          for(let i=0;i<res.data.length;i++){
+            res.data[i].label = res.data[i].name;
+            res.data[i].value = res.data[i].id;
+          }
+          this.partitionOptions = res.data;
+
+        })
     }
   }
 </script>

@@ -2,23 +2,28 @@
   <div class="open position-right">
     <div class="g-table-banner p-v-lg p-h-md b-b">
       <v-form>
-        <v-form-item label="投诉人" class="m-b-sm">
-          <v-input v-model="filterList.title" placeholder="请输入投诉人姓名" style="width: 240px;"></v-input>
+        <v-form-item label="人员姓名" class="m-b-sm">
+          <v-input v-model="filterList.userName" placeholder="请输入人员姓名" style="width: 180px;"></v-input>
         </v-form-item>
-        <v-form-item label="联系方式" class="m-b-sm">
-          <v-input v-model="filterList.mobile" placeholder="请输入联系方式" style="width: 240px;"></v-input>
+        <v-form-item label="设备类型" class="m-b-sm">
+          <v-select v-model="filterList.deviceType" style="width: 150px;" :data="deviceTypeOptions"></v-select>
         </v-form-item>
-        <v-form-item label="投诉时间" class="m-b-sm">
+        <v-form-item label="开门类型" class="m-b-sm">
+          <v-select v-model="filterList.type" style="width: 150px;" :data="typeOptions"></v-select>
+        </v-form-item>
+        <v-form-item label="位置信息" class="m-b-sm">
+          <v-select v-model="filterList.partitionId" :allowClear="false" style="width: 150px;" :data="partitionOptions" @change="changeBlock"></v-select>
+          <v-select v-model="filterList.blockId" :allowClear="false" style="width: 120px;" :data="blockOptions" @change="changeUnit"></v-select>
+          <v-select v-model="filterList.unitId" :allowClear="false" style="width: 120px;" :data="unitOptions"></v-select>
+        </v-form-item>
+        <v-form-item label="时间范围" class="m-b-sm">
           <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
         </v-form-item>
-        <v-form-item label="处理状态" class="m-b-sm">
-          <v-select v-model="filterList.status" position="fixed" style="width: 120px;" :data="selectOptions" ></v-select>
-        </v-form-item>
         <div class="row text-center">
-          <v-button type="primary" style="margin-right:10px">
+          <v-button type="primary m-r-sm" @click="filterTable">
             提交
           </v-button>
-          <v-button type="ghost">
+          <v-button type="ghost" @click="resetTable">
             重置
           </v-button>
         </div>
@@ -90,19 +95,52 @@
 </style>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
+  import { checkFilter } from '../util/option'
   export default {
     data() {
       return {
-        filterList:{title:"", mobile:"", dateTime: "", status: ""},
-        selectOptions: [{
+        filterList:{
+          userName:"",
+          deviceType:"",
+          dateTime: "",
+          type: "",
+          partitionId: "",
+          blockId: "",
+          unitId: "",
+          et: null,
+          st: null
+        },
+        page: {
+          total: 0,
+          value: 1
+        },
+        openList: [],
+        partitionOptions: [],
+        blockOptions: [],
+        unitOptions: [],
+        deviceTypeOptions: [{
           value: '0',
-          label: '未处理'
-        }, {
-          value: '2',
-          label: '已处理'
+          label: '围墙机'
+        },{
+          value: '1',
+          label: '单元机'
         }],
-        page: {total: 0, value: 1},
-        openList: []
+        typeOptions: [{
+          value: '0',
+          label: '呼叫'
+        }, {
+          value: '1',
+          label: '刷卡'
+        },{
+          value: '2',
+          label: '密码'
+        }, {
+          value: '3',
+          label: '手机开门'
+        },{
+          value: '4',
+          label: '人脸开门'
+        }]
       }
     },
     methods: {
@@ -110,7 +148,7 @@
         return `全部 ${total} 条`;
       },
       loadPage(i){
-        this._getIntercom(i)
+        this._getIntercom(i, this.filterList)
       },
       _getIntercom(pageNo, params){
         api.getIntercom(pageNo, 10, params)
@@ -174,9 +212,70 @@
             }
           })
       },
+      changeBlock(val){
+        api.getBlocks(val)
+          .then(res => {
+            for(let i=0;i<res.data.length;i++){
+              res.data[i].label = res.data[i].name;
+              res.data[i].value = res.data[i].id;
+            }
+            this.filterList.blockId = "";
+            this.blockOptions = [];
+            this.filterList.unitId = "";
+            this.unitOptions = [];
+            this.blockOptions = res.data;
+          })
+      },
+      changeUnit(val){
+        api.getUnits(val)
+          .then(res => {
+            for(let i=0;i<res.data.length;i++){
+              res.data[i].label = res.data[i].name;
+              res.data[i].value = res.data[i].id;
+            }
+            this.filterList.unitId = "";
+            this.unitOptions = [];
+            this.unitOptions = res.data;
+          })
+      },
+      filterTable(){
+        var newObj = checkFilter(this.filterList);
+        if(newObj.dateTime){
+          if(newObj.dateTime[0]&&newObj.dateTime[1]){
+            newObj.st = Date.parse(new Date(newObj.dateTime[0]));
+            newObj.et = Date.parse(new Date(newObj.dateTime[1]));
+          }
+        }
+        this._getIntercom(1, newObj)
+      },
+      resetTable(){
+        this.filterList = {
+          userName:"",
+          deviceType:"",
+          dateTime: "",
+          type: "",
+          partitionId: "",
+          blockId: "",
+          unitId: "",
+          et: null,
+          st: null
+        };
+        this.blockOptions = [];
+        this.unitOptions = [];
+        this._getIntercom(1);
+      },
     },
     created() {
       this._getIntercom(1);
+      api.getPartitions()
+        .then(res=>{
+          for(let i=0;i<res.data.length;i++){
+            res.data[i].label = res.data[i].name;
+            res.data[i].value = res.data[i].id;
+          }
+          this.partitionOptions = res.data;
+
+        })
     }
   }
 </script>

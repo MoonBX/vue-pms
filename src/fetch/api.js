@@ -132,5 +132,18 @@ export default {
   },
   getAlarmInfo(pageNo, limit, obj){
     return get('/device/alarmInfo/log/list/' + pageNo + '/' + limit, obj)
+  },
+  // 获取位置信息
+  getPartitions(){
+    return get('/community/partitions')
+  },
+  getBlocks(partitionId){
+    return get('/community/'+partitionId+'/blocks');
+  },
+  getUnits(blockId){
+    return get('/community/' + blockId + '/units');
+  },
+  getRooms(unitId){
+    return get('/community/' + unitId + '/rooms')
   }
 }
