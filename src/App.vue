@@ -25,7 +25,7 @@
   }
 </script>
 
-<style>
+<style lang="scss">
   html, body, #all {
     height: 100%;
     background-color: #ececec;
@@ -76,4 +76,77 @@
     background: #fff;
     min-height: 500px;
   }
+
+  .detail-box{
+    font-size: 14px;
+    .title{
+      font-size: 18px;
+    }
+    .badge{
+      padding: 0px 10px;
+      border-radius: 20px;
+      position: relative;
+      top: -2px;
+      font-size: 12px;
+    }
+    .p-b-sm{
+      padding-bottom: 10px;
+    }
+  }
+
+  .main-box{
+    border-bottom: 1px solid #d8d8d8;
+    margin-bottom: 15px;
+    .title, .phone{
+      font-size: 18px;
+      color: #333333;
+      margin-right: 30px;
+    }
+    .state{
+      position: relative;
+      top: -2px;
+      padding:3px 13px;
+    }
+    .address{
+      font-size: 14px;
+      color: #666666;
+    }
+    .date{
+      line-height: 25px;
+    }
+  }
+
+  .other-box{
+    font-size: 14px;
+    .title{
+      margin-right: 10px;
+      display: inline-block;
+      width: 70px;
+      text-align: right;
+      color: #999999;
+    }
+    .value{
+      color: #666666;
+      width: 165px;
+      display: inline-block;
+    }
+  }
+
+  .ant-notification{
+    width: 275px;
+  }
+  .ant-notification-notice-message{
+    font-size: 14px;
+    position: relative;
+    top: 2px;
+    margin-left: 36px;
+  }
+  .ant-notification-notice-icon{
+    font-size: 24px;
+  }
+
+  form .has-feedback > .ant-select .ant-select-arrow, form .has-feedback > .ant-select .ant-select-selection__clear, form .has-feedback :not(.ant-input-group-addon) > .ant-select .ant-select-arrow, form .has-feedback :not(.ant-input-group-addon) > .ant-select .ant-select-selection__clear {
+     right: 6px;
+  }
+
 </style>

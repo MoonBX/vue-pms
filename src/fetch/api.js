@@ -105,6 +105,9 @@ export default {
   editAnnounceSave(data){
     return post('/community/announcement/editSave', data)
   },
+  getAnnounceDetail(id){
+    return post('/community/announcement/'+id+'/detail')
+  },
   // 投诉
   getComplaint(pageNo, limit, params){
     return get('/estate/complaint/list/'+ pageNo + '/' + limit, params);
@@ -118,6 +121,9 @@ export default {
   // 设备管理
   getDevice(pageNo, limit, obj){
     return get('/device/list/' + pageNo + '/' + limit, obj)
+  },
+  closeDoor(id, status){
+    return post('/device/'+id+'/'+status+'/change')
   },
   // 门禁管理
   getResident(pageNo, limit, obj){

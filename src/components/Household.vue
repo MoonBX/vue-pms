@@ -31,6 +31,18 @@
       </v-form>
     </div>
     <div class="g-table-content m-t-sm m-b-md p-h-md">
+      <div>
+        <div class="prop-button-group pull-right m-b-sm">
+          <v-button type="primary"
+                    class="m-r-sm"
+                    @click="showModal('create')">
+            添加住户
+          </v-button>
+          <v-button type="primary">
+            导入
+          </v-button>
+        </div>
+      </div>
       <div class="ant-table ant-table-large" style="width: 100%;">
         <div class="ant-table-content">
           <div class="ant-table-body">
@@ -63,15 +75,21 @@
                     </td>
                     <td>{{item.gmtCreated | formatDate('YMD') }}</td>
                     <td>
-                      <v-popconfirm placement="left"
-                                    title="确定删除吗?"
-                                    @confirm="deleteAnnounce(item.id)">
-                        <a href="javascript:;" class="m-r-xs">处理</a>
-                      </v-popconfirm>
                       <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('edit', item.id)">
+                         @click="showModal('detail', item.id)">
                         详情
                       </a>
+                      <a href="javascript:;" class="m-r-xs"
+                         @click="showModal('edit', item.id)">
+                        修改
+                      </a>
+                      <v-popconfirm placement="left"
+                                    title="确定删除吗?"
+                                    @confirm="deleteHousehold(item.id)">
+                        <a href="javascript:;" class="m-r-xs">
+                          删除
+                        </a>
+                      </v-popconfirm>
                     </td>
                   </tr>
                   <div style="width: 100%;height: 20px;"></div>
@@ -92,6 +110,57 @@
                     :total="page.total">
       </v-pagination>
     </div>
+    <div class="g-modal">
+
+      <v-modal title="添加住户"
+               :visible="modalVisible.create"
+               :width="600"
+               @cancel="handleCancel('create')">
+        <household-create ref="householdCreateRef"></household-create>
+        <div slot="footer">
+          <v-button key="cancel"
+                    @click="handleCancel('create')">
+            取 消
+          </v-button>
+          <v-button key="confirm"
+                    type="primary" @click="createHousehold">
+            提 交
+          </v-button>
+        </div>
+      </v-modal>
+
+      <v-modal title="编辑住户"
+               :visible="modalVisible.edit"
+               :width="600"
+               @cancel="handleCancel('edit')">
+        <household-edit :id="idParam" ref="householdEditRef"></household-edit>
+        <div slot="footer">
+          <v-button key="cancel"
+                    @click="handleCancel('edit')">
+            取 消
+          </v-button>
+          <v-button key="confirm"
+                    type="primary" >
+            提 交
+          </v-button>
+        </div>
+      </v-modal>
+
+      <v-modal title="住户详情"
+               :visible="modalVisible.detail"
+               :width="600"
+               @cancel="handleCancel('detail')">
+        <household-details :id="idParam" ></household-details>
+        <div slot="footer">
+          <v-button key="confirm"
+                    type="primary"
+                    @click="handleCancel('detail')">
+            确 定
+          </v-button>
+        </div>
+      </v-modal>
+
+    </div>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -99,6 +168,11 @@
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
   import { checkFilter } from '../util/option'
+
+  import HouseholdCreate from '@/components/HouseholdCreate'
+  import HouseholdEdit from '@/components/HouseholdEdit'
+  import HouseholdDetails from '@/components/HouseholdDetails'
+
   export default {
     data() {
       return {
@@ -141,15 +215,39 @@
         },{
           value: '1',
           label: '已过期'
-        }]
+        }],
+        modalVisible: {create: false, edit: false, detail: false},
+        idParam: "",
+        itemParam: {}
       }
+    },
+    components: {
+      HouseholdCreate,
+      HouseholdEdit,
+      HouseholdDetails
     },
     methods: {
       showTotal(total){
         return `全部 ${total} 条`;
       },
+      showModal(value, param){
+        if(typeof param == 'number'){
+          this.idParam = param;
+        }else{
+          this.itemParam = param;
+          console.log(this.itemParam)
+        }
+        this.modalVisible[value] = true;
+      },
+      handleCancel (value) {
+        this.modalVisible[value] = false;
+      },
       loadPage(i){
         this._getHousehold(i, this.filterList)
+      },
+      createHousehold(){
+        var obj = this.$refs.householdCreateRef.washData();
+        console.log(obj);
       },
       _getHousehold(pageNo, params){
         api.getResident(pageNo, 10, params)
@@ -188,6 +286,9 @@
             }
           })
       },
+      deleteHousehold(id){
+        console.log(id)
+      },
       changeBlock(val){
         api.getBlocks(val)
           .then(res => {
@@ -204,6 +305,7 @@
             this.blockOptions = res.data;
           })
       },
+
       changeUnit(val){
         api.getUnits(val)
           .then(res => {

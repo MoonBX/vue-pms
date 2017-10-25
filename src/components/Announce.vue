@@ -24,32 +24,6 @@
 
     <div class="g-table-content m-t-sm m-b-md p-h-md">
       <div>
-        <transition name="fade" v-if="noticeToggle.success.check || noticeToggle.fail.check">
-          <div class="text-center pull-left announce-notice">
-            <div class="message-filter">
-            <span>
-              <div transition="message" class="ant-message-notice">
-                <div class="ant-message-notice-content" >
-                  <div v-if="noticeToggle.success.check"
-                       class="ant-message-custom-content ant-message-success">
-                    <i class="anticon anticon-check-circle"></i>
-                    <span v-if="noticeToggle.success.create">新建公告成功！</span>
-                    <span v-if="noticeToggle.success.delete">删除公告成功！</span>
-                    <span v-if="noticeToggle.success.edit">编辑公告成功！</span>
-                  </div>
-                  <div v-if="noticeToggle.fail.check"
-                       class="ant-message-custom-content ant-message-error">
-                    <i class="anticon anticon-exclamation-circle"></i>
-                    <span v-if="noticeToggle.fail.create">新建公告失败！</span>
-                    <span v-if="noticeToggle.fail.delete">删除公告失败！</span>
-                    <span v-if="noticeToggle.fail.edit">编辑公告失败！</span>
-                  </div>
-                </div>
-              </div>
-            </span>
-            </div>
-          </div>
-        </transition>
         <div class="prop-button-group pull-right m-b-sm">
           <v-button type="primary"
                     class="m-r-sm"
@@ -90,7 +64,7 @@
                     <td>{{item.status}}</td>
                     <td>
                       <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('detail', item)">
+                         @click="showModal('detail', item.id)">
                         详情
                       </a>
                       <a href="javascript:;" class="m-r-xs"
@@ -166,14 +140,11 @@
                ref="announceEditRef"
                :width="600"
                @cancel="handleCancel('detail')">
-        <announce-details :item="itemParam" ></announce-details>
+        <announce-details :id="idParam" ></announce-details>
         <div slot="footer">
-          <v-button key="cancel"
-                    @click="handleCancel('detail')">
-            取 消
-          </v-button>
           <v-button key="confirm"
-                    type="primary">
+                    type="primary"
+                    @click="handleCancel('detail')">
             确 定
           </v-button>
         </div>
@@ -239,10 +210,6 @@
         page: {total: 0, value: 1},
         announceList: [],
         modalVisible: {create: false, edit: false, detail: false},
-        noticeToggle: {
-          success: {check: false, create: false, edit: false, delete: false},
-          fail: {check: false, create: false, edit: false, delete: false}
-        },
         idParam: "",
         itemParam: {}
       }
@@ -275,21 +242,17 @@
           .then(res => {
             console.log(res);
             if(res.success){
+              this.$notification.success({
+                message: '新建成功！',
+                duration: 2
+              });
               this.handleCancel('create');
-              this.noticeToggle.success.check = true;
-              this.noticeToggle.success.create = true;
               this._getAnnounce(1);
-              setTimeout(()=>{
-                this.noticeToggle.success.check = false;
-                this.noticeToggle.success.create = false;
-              }, 3000)
             }else{
-              this.noticeToggle.fail = true;
-              this.noticeToggle.create = true;
-              setTimeout(()=>{
-                this.noticeToggle.success = false;
-                this.noticeToggle.create = false;
-              }, 3000)
+              this.$notification.error({
+                message: res.message,
+                duration: 2
+              });
             }
           })
       },
@@ -301,20 +264,16 @@
           .then(res => {
             console.log(res);
             if(res.success){
-              this.noticeToggle.success.check = true;
-              this.noticeToggle.success.delete = true;
+              this.$notification.success({
+                message: '删除成功！',
+                duration: 2
+              });
               this._getAnnounce(1);
-              setTimeout(()=>{
-                this.noticeToggle.success.check = false;
-                this.noticeToggle.success.delete = false;
-              }, 3000)
             }else{
-              this.noticeToggle.fail.check = true;
-              this.noticeToggle.fail.delete = true;
-              setTimeout(()=>{
-                this.noticeToggle.fail.check = false;
-                this.noticeToggle.fail.delete = false;
-              }, 3000)
+              this.$notification.error({
+                message: res.message,
+                duration: 2
+              });
             }
           })
       },
@@ -373,7 +332,6 @@
       }
     },
     created(){
-
       this._getAnnounce(1);
     }
   }

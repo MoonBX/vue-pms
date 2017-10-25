@@ -25,6 +25,15 @@
       </v-form>
     </div>
     <div class="g-table-content m-t-sm m-b-md p-h-md">
+      <div>
+        <div class="prop-button-group pull-right m-b-sm">
+          <v-button type="primary"
+                    class="m-r-sm"
+                    @click="showModal('create')">
+            添加公卡
+          </v-button>
+        </div>
+      </div>
       <div class="ant-table ant-table-large" style="width: 100%;">
         <div class="ant-table-content">
           <div class="ant-table-body">
@@ -55,15 +64,16 @@
                     <td>{{item.startTime | formatDate('YMD') }} 至 {{item.endTime | formatDate('YMD') }}</td>
                     <td>{{item.status || '-'}}</td>
                     <td>
-                      <v-popconfirm placement="left"
-                                    title="确定删除吗?"
-                                    @confirm="deleteAnnounce(item.id)">
-                        <a href="javascript:;" class="m-r-xs">处理</a>
-                      </v-popconfirm>
                       <a href="javascript:;" class="m-r-xs"
                          @click="showModal('edit', item.id)">
                         详情
                       </a>
+                      <v-popconfirm placement="left"
+                                    title="确定删除吗?"
+                                    @confirm="deleteAnnounce(item.id)">
+                        <a href="javascript:;">删除</a>
+                      </v-popconfirm>
+
                     </td>
                   </tr>
                   <div style="width: 100%;height: 20px;"></div>

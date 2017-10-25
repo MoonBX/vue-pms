@@ -51,15 +51,22 @@
                     <td>{{item.location}}</td>
                     <td>{{item.gmtCreated | formatDate('YMD') }}</td>
                     <td>{{item.processTime | formatDate('YMD') }}</td>
-                    <td>{{item.status}}</td>
+                    <td>
+                      <span class="state-circle"
+                            :class="{'circle-red': item.status == '未处理',
+                                     'circle-green': item.status == '已处理',
+                                     'circle-orange': item.status == '处理中'}">
+                      </span>
+                      {{item.status}}
+                    </td>
                     <td>
                       <v-popconfirm placement="left"
-                                    title="确定删除吗?"
-                                    @confirm="deleteAnnounce(item.id)">
-                        <a href="javascript:;" class="m-r-xs">处理</a>
+                                    title="确定处理这条维修消息吗?"
+                                    @confirm="dealComplain(item.id)">
+                        <a href="javascript:;" class="m-r-xs" :disabled="item.status == '已处理'">处理</a>
                       </v-popconfirm>
                       <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('edit', item.id)">
+                         @click="showModal('detail', item.id)">
                         详情
                       </a>
                     </td>
@@ -79,8 +86,25 @@
                     :showTotal="showTotal"
                     @change="loadPage"
                     show-quick-jumper
+                    ref="pagination"
                     :total="page.total">
       </v-pagination>
+    </div>
+
+    <div class="g-modal">
+      <v-modal title="报修详情"
+               :visible="modalVisible.detail"
+               :width="600"
+               @cancel="handleCancel('detail')">
+        <complain-detail :id="idParam" ref="complainDetailRef"></complain-detail>
+        <div slot="footer">
+          <v-button key="confirm"
+                    type="primary"
+                    @click="handleCancel('detail')">
+            确 定
+          </v-button>
+        </div>
+      </v-modal>
     </div>
   </div>
 </template>
@@ -89,6 +113,7 @@
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
   import { checkFilter } from '../util/option'
+  import ComplainDetail from '@/components/ComplainDetail'
 
   export default{
     data(){
@@ -110,15 +135,49 @@
           label: '已处理'
         }],
         page: {total: 0, value: 1},
-        repairList: []
+        repairList: [],
+        modalVisible:{
+          detail: false
+        },
+        idParam: ""
       }
+    },
+    components:{
+      ComplainDetail
     },
     methods: {
       showTotal(total){
         return `全部 ${total} 条`;
       },
+      showModal(value, param){
+        this.idParam = param;
+        this.modalVisible[value] = true;
+      },
+      handleCancel (value) {
+        this.modalVisible[value] = false;
+      },
       loadPage(i){
         this._getRepair(i, this.filterList)
+      },
+      dealComplain(id){
+        var timeStr = new Date().getTime();
+        console.log(id);
+        console.log(this.$refs.pagination.value);
+        api.dealComplaint(id, timeStr)
+          .then(res => {
+            if(res.success){
+              this.$notification.success({
+                message: '处理成功！',
+                duration: 2
+              });
+              this.loadPage(this.$refs.pagination.value)
+            }else{
+              this.$notification.error({
+                message: res.message,
+                duration: 2
+              });
+            }
+          })
       },
       _getRepair(pageNo, params){
         api.getComplaint(pageNo, 10, params)

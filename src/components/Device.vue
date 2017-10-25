@@ -32,7 +32,6 @@
 
                 <table class="wk-table" style="table-layout:fixed;">
                   <thead class="ant-table-thead">
-
                   <tr>
                     <th>设备SN</th>
                     <th>设备类型</th>
@@ -61,14 +60,12 @@
                     <td>{{item.amount}}</td>
                     <td>
                       <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('edit', item.id)">
+                         @click="showModal('detail', item)">
                         详情
                       </a>
-                      <v-popconfirm placement="left"
-                                    title="确定删除吗?"
-                                    @confirm="deleteAnnounce(item.id)">
-                        <a href="javascript:;">手动关门</a>
-                      </v-popconfirm>
+                      <a href="javascript:;" @click="toggleDoor(item.id, item.lockStatus)">
+                        手动<span v-if="item.lockStatus == 0">开</span><span v-if="item.lockStatus != 0">关</span>门
+                      </a>
                     </td>
                   </tr>
                   <div style="width: 100%;height: 20px;"></div>
@@ -86,8 +83,24 @@
                     :showTotal="showTotal"
                     @change="loadPage"
                     show-quick-jumper
+                    ref="pagination"
                     :total="page.total">
       </v-pagination>
+    </div>
+    <div class="g-modal">
+      <v-modal title="设备详情"
+               :visible="modalVisible.detail"
+               :width="600"
+               @cancel="handleCancel('detail')">
+        <device-detail :item="itemParam" ref="deviceDetailRef"></device-detail>
+        <div slot="footer">
+          <v-button key="confirm"
+                    type="primary"
+                    @click="handleCancel('detail')">
+            确 定
+          </v-button>
+        </div>
+      </v-modal>
     </div>
   </div>
 </template>
@@ -96,6 +109,8 @@
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
   import { checkFilter } from '../util/option'
+  import DeviceDetail from '@/components/DeviceDetail'
+
   export default {
     data() {
       return {
@@ -127,12 +142,39 @@
         }, {
           value: '1',
           label: '在线'
-        }]
+        }],
+        modalVisible:{
+          detail: false
+        },
+        itemParam: {}
       }
+    },
+    components:{
+      DeviceDetail
     },
     methods: {
       showTotal(total){
         return `全部 ${total} 条`;
+      },
+      showModal(value, param){
+        this.itemParam = param;
+        this.modalVisible[value] = true;
+      },
+      handleCancel (value) {
+        this.modalVisible[value] = false;
+      },
+      toggleDoor(id, status){
+        api.closeDoor(id, status).then(res => {
+          console.log(res);
+          if(res.success){
+            this.loadPage(this.$refs.pagination.value)
+          }else{
+            this.$notification.error({
+              message: res.message,
+              duration: 2
+            });
+          }
+        })
       },
       loadPage(i){
         this._getDevice(i, this.filterList);

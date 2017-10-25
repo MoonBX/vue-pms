@@ -541,3 +541,23 @@
 .text-center {
   text-align: center
 }
+.state-circle{
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+.circle-red{
+  background: #dd4646;
+}
+.circle-green{
+  background: #3cc248;
+}
+.circle-orange{
+  background: #F4B33E;
+}
+
+.p-b-sm{
+  padding-bottom: 10px;
+}

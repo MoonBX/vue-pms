@@ -51,22 +51,62 @@
                   </tr>
                   </thead>
                   <tbody class="ant-table-tbody">
-                  <tr v-for="item in openList">
+                  <tr v-for="(item, index) in openList">
                     <td>{{item.blockName || '-'}}</td>
                     <td>{{item.deviceType || '-'}}</td>
                     <td>{{item.name || '-'}}</td>
                     <td>{{item.duration || '-'}}</td>
-                    <td>{{item.unlockTime | formatDate('YMD')  || '-'}}</td>
+                    <td>{{item.unlockTime | formatDate('YMDHMS')  || '-'}}</td>
                     <td>{{item.type || '-'}}</td>
-                    <td></td>
                     <td>
-                      <v-popconfirm placement="left"
-                                    title="确定删除吗?"
-                                    @confirm="deleteAnnounce(item.id)">
-                        <a href="javascript:;" class="m-r-xs">处理</a>
-                      </v-popconfirm>
-                      <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('edit', item.id)">
+                      <div>
+                        <v-popover title="Title"
+                                   trigger="click"
+                                   v-if="index==0"
+                                   placement="leftTop">
+                          <img :src="item.snapshot"
+                               alt="..." style="width: 88px;">
+                          <div slot="title">
+                            缩略图
+                          </div>
+                          <div slot="content">
+                            <img :src="item.snapshot"
+                                 alt="..." style="height: 288px">
+                          </div>
+                        </v-popover>
+                        <v-popover title="Title"
+                                   trigger="click"
+                                   v-if="index==9"
+                                   placement="leftBottom">
+                          <img :src="item.snapshot"
+                               alt="..." style="width: 88px;">
+                          <div slot="title">
+                            缩略图
+                          </div>
+                          <div slot="content">
+                            <img :src="item.snapshot"
+                                 alt="..." style="height: 288px">
+                          </div>
+                        </v-popover>
+                        <v-popover title="Title"
+                                   trigger="click"
+                                   v-if="index!=0&&index!=9"
+                                   placement="left">
+                          <img :src="item.snapshot"
+                               alt="..." style="width: 88px;">
+                          <div slot="title">
+                            缩略图
+                          </div>
+                          <div slot="content">
+                            <img :src="item.snapshot"
+                                 alt="..." style="height: 288px">
+                          </div>
+                        </v-popover>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="javascript:;"
+                         @click="showModal('detail', item)">
                         详情
                       </a>
                     </td>
@@ -89,6 +129,22 @@
                     :total="page.total">
       </v-pagination>
     </div>
+
+    <div class="g-modal">
+      <v-modal title="日志详情"
+               :visible="modalVisible.detail"
+               :width="600"
+               @cancel="handleCancel('detail')">
+        <open-detail :item="itemParam"></open-detail>
+        <div slot="footer">
+          <v-button key="confirm"
+                    type="primary"
+                    @click="handleCancel('detail')">
+            确 定
+          </v-button>
+        </div>
+      </v-modal>
+    </div>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -96,6 +152,7 @@
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
   import { checkFilter } from '../util/option'
+  import OpenDetail from '@/components/OpenDetail'
   export default {
     data() {
       return {
@@ -140,12 +197,26 @@
         },{
           value: '4',
           label: '人脸开门'
-        }]
+        }],
+        modalVisible: {
+          detail: false
+        },
+        itemParam: {}
       }
+    },
+    components:{
+      OpenDetail
     },
     methods: {
       showTotal(total){
         return `全部 ${total} 条`;
+      },
+      showModal(value, param){
+        this.itemParam = param;
+        this.modalVisible[value] = true;
+      },
+      handleCancel (value) {
+        this.modalVisible[value] = false;
       },
       loadPage(i){
         this._getIntercom(i, this.filterList)
