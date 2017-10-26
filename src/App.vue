@@ -21,6 +21,7 @@
         this.isLogin = false;
         this.$router.push('/login');
       }
+
     }
   }
 </script>
@@ -31,10 +32,18 @@
     background-color: #ececec;
   }
 
-  #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  body{
+    font-family: "arial";
+    font-size: 13px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    line-height: 1.42857143;
+    color: #777;
+    background-color: transparent;
+  }
+
+  #app {
+    /*font-family: 'Avenir', Helvetica, Arial, sans-serif;*/
     color: #2c3e50;
     height: 100%;
   }
@@ -46,6 +55,22 @@
     padding-bottom: 15px;
   }
 
+  .ant-menu-submenu{
+    font-size: 13px !important;
+  }
+  .ant-menu-item{
+    font-size: 13px !important;
+  }
+  .ant-menu-vertical .ant-menu-item, .ant-menu-inline .ant-menu-item, .ant-menu-vertical .ant-menu-submenu-title, .ant-menu-inline .ant-menu-submenu-title{
+    font-size: 13px !important;
+  }
+  label{
+    font-size: 13px !important;
+  }
+  .ant-input{
+    font-size: 13px;
+  }
+
 
   .ant-input:focus {
     border-color: #49a9ee;
@@ -54,6 +79,7 @@
   }
 
   .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+    font-size: 13px;
     padding: 16px 8px;
     word-break: break-all;
     white-space: normal;

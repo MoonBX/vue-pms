@@ -76,11 +76,11 @@
                     <td>{{item.gmtCreated | formatDate('YMD') }}</td>
                     <td>
                       <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('detail', item.id)">
+                         @click="showModal('detail', item)">
                         详情
                       </a>
                       <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('edit', item.id)">
+                         @click="showModal('edit', item)">
                         修改
                       </a>
                       <v-popconfirm placement="left"
@@ -106,6 +106,7 @@
                     :pageSize="10"
                     :showTotal="showTotal"
                     @change="loadPage"
+                    ref="pagination"
                     show-quick-jumper
                     :total="page.total">
       </v-pagination>
@@ -133,14 +134,14 @@
                :visible="modalVisible.edit"
                :width="600"
                @cancel="handleCancel('edit')">
-        <household-edit :id="idParam" ref="householdEditRef"></household-edit>
+        <household-edit :item="itemParam" ref="householdEditRef"></household-edit>
         <div slot="footer">
           <v-button key="cancel"
                     @click="handleCancel('edit')">
             取 消
           </v-button>
           <v-button key="confirm"
-                    type="primary" >
+                    type="primary" @click="editHousehold">
             提 交
           </v-button>
         </div>
@@ -150,7 +151,7 @@
                :visible="modalVisible.detail"
                :width="600"
                @cancel="handleCancel('detail')">
-        <household-details :id="idParam" ></household-details>
+        <household-details :item="itemParam" ></household-details>
         <div slot="footer">
           <v-button key="confirm"
                     type="primary"
@@ -168,6 +169,7 @@
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
   import { checkFilter } from '../util/option'
+  import { bus } from '../util/bus.js'
 
   import HouseholdCreate from '@/components/HouseholdCreate'
   import HouseholdEdit from '@/components/HouseholdEdit'
@@ -216,7 +218,11 @@
           value: '1',
           label: '已过期'
         }],
-        modalVisible: {create: false, edit: false, detail: false},
+        modalVisible: {
+          create: false,
+          edit: false,
+          detail: false
+        },
         idParam: "",
         itemParam: {}
       }
@@ -246,8 +252,10 @@
         this._getHousehold(i, this.filterList)
       },
       createHousehold(){
-        var obj = this.$refs.householdCreateRef.washData();
-        console.log(obj);
+        this.$refs.householdCreateRef.washData();
+      },
+      editHousehold(){
+        this.$refs.householdEditRef.washData();
       },
       _getHousehold(pageNo, params){
         api.getResident(pageNo, 10, params)
@@ -287,7 +295,20 @@
           })
       },
       deleteHousehold(id){
-        console.log(id)
+        api.deleteResident(id).then(res => {
+          if(res.success){
+            this.$notification.success({
+              message: '删除成功！',
+              duration: 2
+            });
+            this.loadPage(this.$refs.pagination.value)
+          }else{
+            this.$notification.error({
+              message: res.message,
+              duration: 2
+            });
+          }
+        })
       },
       changeBlock(val){
         api.getBlocks(val)
@@ -357,14 +378,53 @@
     },
     created() {
       this._getHousehold(1);
-      api.getPartitions()
-        .then(res=>{
-          for(let i=0;i<res.data.length;i++){
-            res.data[i].label = res.data[i].name;
-            res.data[i].value = res.data[i].id;
+      api.getPartitions().then(res=>{
+        for(let i=0;i<res.data.length;i++){
+          res.data[i].label = res.data[i].name;
+          res.data[i].value = res.data[i].id;
+        }
+        this.partitionOptions = res.data;
+      })
+
+      bus.$on('householdForm_data_create', (data) => {
+        console.log(data)
+        api.createResident(data).then(res=>{
+          console.log(res);
+          if(res.success){
+            this.$notification.success({
+              message: '新建成功！',
+              duration: 2
+            });
+            this.handleCancel('create');
+            this.loadPage(1);
+          }else{
+            this.$notification.error({
+              message: res.message,
+              duration: 2
+            });
           }
-          this.partitionOptions = res.data;
         })
+      })
+
+      bus.$on('householdForm_data_edit', (data) => {
+        console.log(data)
+        api.editResident(data).then(res=>{
+          console.log(res);
+          if(res.success){
+            this.$notification.success({
+              message: '编辑成功！',
+              duration: 2
+            });
+            this.handleCancel('edit');
+            this.loadPage(this.$refs.pagination.value)
+          }else{
+            this.$notification.error({
+              message: res.message,
+              duration: 2
+            });
+          }
+        })
+      })
     }
   }
 </script>

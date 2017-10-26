@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="jquery.min.js"></script>
+  <script language="javascript" src="http://127.0.0.1:8008/YOWOCloudRFIDReader.js"></script>
+</head>
+<body>
+<script>
+  var ua = navigator.userAgent;
+  if(ua.indexOf("Mac OS X") !== -1){
+    alert("读卡器不支持OSX系统, 请使用Windows系统进行读卡操作");
+  }else{
+    try {
+      var rfidreader = YOWORFIDReader.createNew();
+    } catch (e) {
+      alert("创建读卡器连接失败，请先下载安装！");
+      top.location = "http://www.youwokeji.com.cn/CloudReader/YOWORFIDReaderCloudForWeb.exe";
+    }
+  }
+  if (!rfidreader.TryConnect()) {
+    alert("浏览器不支持，请更换浏览器后重试！");
+  }
+
+  rfidreader.onResult(function(resultdata)
+    {
+      switch(resultdata.FunctionID)
+      {
+        case 0:
+          if(resultdata.Result>0) {
+            document.getElementById("CardNo").value = "IC-"+resultdata.strData.slice(2);
+          }
+          break;
+      }
+    }
+  );
+
+  function Start() {
+    var OrderID = 0;
+    var FormatID = 1;
+    rfidreader.Repeat = 0;
+    rfidreader.HaltAfterSuccess = 0;
+    rfidreader.BeepOnSuccess = 0;
+    rfidreader.RequestTypeACardNo(FormatID, OrderID);
+  }
+
+  function lay(x){
+    $(x).prev().val("");
+  }
+</script>
+<style>
+  body{
+    margin: 0;
+    font-family: "PT Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.42857143;
+    color: #777;
+    background-color: transparent;
+  }
+  .w-form-control{
+    height: 18px;
+    outline:none;
+    padding: 6px 8px;
+    color: #555;
+    border: 1px solid #ccc;
+    line-height: 1.42857143;
+  }
+  input, button, select, textarea{
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit
+  }
+  img{
+    position: relative;
+    top: 3px;
+    left: -2px
+  }
+</style>
+<input type="text"
+       class="w-md p-h-xs m-r-xs w-form-control"
+       disabled
+       id="CardNo"
+       name="CardNo">
+<img src="delete.png" alt="" width="15px" height="15px" onclick="lay(this)" style="margin-top: 7px">
+<a href="javascript:;" onclick="Start()">读取</a>
+</body>
+</html>

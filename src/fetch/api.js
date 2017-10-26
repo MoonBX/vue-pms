@@ -1,7 +1,8 @@
 /**
  * Created by zhongyuqiang on 2017/10/9.
  */
-import axios from 'axios'
+import axios from 'axios';
+
 axios.defaults.baseURL = 'http://114.55.143.170:8082';
 
 axios.interceptors.request.use(function (config) {    // 这里的config包含每次请求的内容
@@ -15,6 +16,7 @@ axios.interceptors.request.use(function (config) {    // 这里的config包含�
 }, function (err) {
   return Promise.reject(err);
 });
+
 
 export function login(url, params) {
   return new Promise((resolve, reject) => {
@@ -34,7 +36,13 @@ export function post(url, data) {
   return new Promise((resolve, reject) => {
     axios.post(url, data)
       .then(response => {
-        resolve(response.data);
+        if(response.data.code == '401'){
+          // bus.$emit('please_login', response.data.message);
+          window.location.href = '/#/login'
+          localStorage.removeItem('vueToken');
+        }else{
+          resolve(response.data);
+        }
       }, err => {
         reject(err);
       })
@@ -48,7 +56,13 @@ export function get(url, params) {
   return new Promise((resolve, reject) => {
     axios.get(url, {params: params})
       .then(response => {
-        resolve(response.data);
+        if(response.data.code == '401'){
+          // bus.$emit('please_login', response.data.message);
+          window.location.href = '/#/login'
+          localStorage.removeItem('vueToken');
+        }else{
+          resolve(response.data);
+        }
       }, err => {
         reject(err);
       })
@@ -128,6 +142,18 @@ export default {
   // 门禁管理
   getResident(pageNo, limit, obj){
     return get('/community/resident/list/' + pageNo + '/' + limit, obj)
+  },
+  checkExist(partitionId, unitId){
+    return get('/device/isExist/'+partitionId+'/'+unitId);
+  },
+  createResident(obj){
+    return post('/community/resident/add', obj);
+  },
+  editResident(obj){
+    return post('/community/resident/edit', obj);
+  },
+  deleteResident(id){
+    return post('/community/resident/'+id+'/delete');
   },
   getPublicCard(pageNo, limit, obj){
     return get('/public/card/list/' + pageNo + '/' + limit, obj)
