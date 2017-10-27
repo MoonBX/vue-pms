@@ -1,54 +1,118 @@
 <template>
   <div>
-    <v-form direction="horizontal" :model="model"  :rules="rules" ref="householdForm">
+    <v-form direction="horizontal"
+            :model="model"
+            :rules="rules"
+            class="b-b"
+            ref="householdForm">
+
       <v-row>
         <v-col span="12">
-          <v-form-item label="住户姓名" :label-col="{span: 6}" :wrapper-col="{span:13}" prop="name" has-feedback>
-            <v-input style="width: 150px;" v-model="model.name" disabled></v-input>
+          <v-form-item label="住户姓名"
+                       :label-col="{span: 6}"
+                       :wrapper-col="{span:13}"
+                       prop="name" has-feedback>
+            <v-input style="width: 150px;"
+                     v-model="model.name"
+                     disabled>
+            </v-input>
           </v-form-item>
         </v-col>
+
         <v-col span="12">
-          <v-form-item label="住户身份" :label-col="{span: 6}" :wrapper-col="{span:13}" prop="userType" has-feedback>
-            <v-select disabled style="width: 150px;" :data="userTypeOption" v-model="model.userType" @change="userChangeEffective"></v-select>
+          <v-form-item label="住户身份"
+                       :label-col="{span: 6}"
+                       :wrapper-col="{span:13}"
+                       prop="userType" has-feedback>
+            <v-select disabled style="width: 150px;"
+                      :data="userTypeOption"
+                      v-model="model.userType"
+                      @change="userChangeEffective">
+            </v-select>
           </v-form-item>
         </v-col>
       </v-row>
+
       <v-row>
-        <v-form-item label="手机号码" :label-col="labelCol" :wrapper-col="{span: 11}" prop="mobile" has-feedback>
-          <v-input disabled style="width: 260px;" v-model="model.mobile"></v-input>
+        <v-form-item label="手机号码"
+                     :label-col="labelCol"
+                     :wrapper-col="{span: 11}"
+                     prop="mobile"
+                     has-feedback>
+          <v-input disabled
+                   style="width: 260px;"
+                   v-model="model.mobile">
+          </v-input>
         </v-form-item>
       </v-row>
+
       <v-row>
-        <v-form-item label="身份证号" :label-col="labelCol" :wrapper-col="{span: 11}" prop="idCard" has-feedback>
-          <v-input style="width: 260px;" v-model="model.idCard"></v-input>
+        <v-form-item label="身份证号"
+                     :label-col="labelCol"
+                     :wrapper-col="{span: 11}"
+                     prop="idCard"
+                     has-feedback>
+          <v-input style="width: 260px;"
+                   v-model="model.idCard">
+          </v-input>
         </v-form-item>
       </v-row>
+
       <v-row>
-        <v-form-item label="住户房号" :label-col="labelCol" :wrapper-col="{span:17}" prop="roomNoId" has-feedback>
+        <v-form-item label="住户房号"
+                     :label-col="labelCol"
+                     :wrapper-col="{span:17}"
+                     prop="roomNoId"
+                     has-feedback>
           <v-input disabled v-model="model.partitionName" style="width: 120px;"></v-input>
           <v-input disabled v-model="model.blockName" style="width: 90px;"></v-input>
           <v-input disabled v-model="model.unitName" style="width: 90px;"></v-input>
           <v-input disabled v-model="model.roomNo" style="width: 90px;"></v-input>
         </v-form-item>
       </v-row>
+
       <v-row v-if="isEntranceExist">
         <v-col span="6">
-          <v-form-item label="永久有效" :label-col="{span: 12}" :wrapper-col="{span:12}">
-            <v-switch v-model="model.effectiveType" :true-value="0" :false-value="1" :disabled="disabled">
+          <v-form-item label="永久有效"
+                       :label-col="{span: 12}"
+                       :wrapper-col="{span:12}">
+            <v-switch v-model="model.effectiveType"
+                      :true-value="0"
+                      :false-value="1"
+                      :disabled="disabled">
               <span slot="checkedChildren">开</span>
               <span slot="unCheckedChildren">关</span>
             </v-switch>
           </v-form-item>
         </v-col>
+
         <v-col span="18" v-if="dateShow">
-          <v-form-item :label-col="labelCol" :wrapper-col="wrapperCol">
-            <v-date-picker v-model="model.effectiveStartTime" style="width: 150px;" disabled ></v-date-picker>
+          <v-form-item :label-col="labelCol"
+                       :wrapper-col="wrapperCol">
+            <v-date-picker v-model="model.effectiveStartTime"
+                           style="width: 150px;"
+                           disabled>
+            </v-date-picker>
             <span class="content-tip">--</span>
-            <v-date-picker v-model="model.effectiveEndTime" style="width: 150px;" :disabled-date="disabledDate" placeholder="请选择结束日期"></v-date-picker>
+            <v-date-picker v-model="model.effectiveEndTime"
+                           style="width: 150px;"
+                           :disabled-date="disabledDate"
+                           placeholder="请选择结束日期">
+            </v-date-picker>
           </v-form-item>
         </v-col>
       </v-row>
     </v-form>
+
+    <div class="m-t-md">
+      <iframe name="myFrame1"
+              src="../static/ocx/ocx-edit.html"
+              width="100%" height="260px"
+              frameborder="no"
+              border="0">
+      </iframe>
+    </div>
+
   </div>
 </template>
 <style lang="scss" scoped>

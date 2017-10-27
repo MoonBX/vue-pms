@@ -65,7 +65,7 @@
                     <td>{{item.status || '-'}}</td>
                     <td>
                       <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('edit', item.id)">
+                         @click="showModal('detail', item.id)">
                         详情
                       </a>
                       <v-popconfirm placement="left"
@@ -94,6 +94,42 @@
                     :total="page.total">
       </v-pagination>
     </div>
+    <div class="g-modal">
+
+      <v-modal title="添加公卡"
+               :visible="modalVisible.create"
+               :width="700"
+               @cancel="handleCancel('create')">
+        <common-create ref="commonCreateRef"></common-create>
+        <div slot="footer">
+          <v-button key="cancel"
+                    @click="handleCancel('create')">
+            取 消
+          </v-button>
+          <v-button key="confirm"
+                    type="primary"
+                    @click="createCommon">
+            提 交
+          </v-button>
+        </div>
+      </v-modal>
+
+      <v-modal title="公告详情"
+               :visible="modalVisible.detail"
+               ref="commonEditRef"
+               :width="600"
+               @cancel="handleCancel('detail')">
+        <common-details :item="itemParam" ></common-details>
+        <div slot="footer">
+          <v-button key="confirm"
+                    type="primary"
+                    @click="handleCancel('detail')">
+            确 定
+          </v-button>
+        </div>
+      </v-modal>
+
+    </div>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -101,6 +137,9 @@
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
   import { checkFilter } from '../util/option'
+
+  import CommonCreate from '@/components/CommonCreate'
+  import CommonDetails from '@/components/CommonDetails'
   export default {
     data() {
       return {
@@ -128,12 +167,32 @@
         }, {
           value: '1',
           label: '过期'
-        }]
+        }],
+        modalVisible: {
+          create: false,
+          detail: false
+        },
+        itemParam: ""
       }
     },
+    components: {
+      CommonCreate,
+      CommonDetails
+    },
+
     methods: {
       showTotal(total){
         return `全部 ${total} 条`;
+      },
+      showModal(value, param){
+        this.itemParam = param;
+        this.modalVisible[value] = true;
+      },
+      handleCancel (value) {
+        this.modalVisible[value] = false;
+      },
+      createCommon(){
+        this.$refs.commonCreateRef.washData();
       },
       loadPage(i){
         this._getPublicCard(i, this.filterList)

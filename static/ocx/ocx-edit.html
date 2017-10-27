@@ -12,6 +12,16 @@
 </head>
 <body>
 <style>
+  body{
+    margin: 0;
+    font-family: "arial";
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.42857143;
+    background-color: transparent;
+    color: rgba(0, 0, 0, 0.65);
+  }
   .other-info .title {
     margin-right: 10px;
     display: inline-block;
@@ -46,45 +56,56 @@
     float: left;
     text-align: right;
     margin-top: 5px;
-    margin-right: 10px;
+    margin-right: 2px;
+    width:70px;
+    color: rgba(0, 0, 0, 0.85);
   }
 
   .row {
     width: 100%;
     display: inline-block;
-  }
-
-  .w-form-control {
-    color: #555;
-    border: 1px solid #ccc;
-    width: 120px;
-    height: 28px;
-    padding: 0;
-    font-size: 13px;
-    outline: none;
-    padding-left: 6px;
-    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-  }
-
-  .w-form-control:focus {
-    border-color: #acb2b8;
-    padding-left: 6px;
+    position: relative;
   }
 
   .m-r-md {
     margin-right: 20px
   }
 
+  .ant-btn{
+    display: inline-block;
+    text-align: center;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    line-height: 1.5;
+    padding: 0 15px;
+    font-size: 12px;
+    border-radius: 4px;
+    height: 28px;
+    user-select: none;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    position: relative;
+    color: rgba(0, 0, 0, 0.65);
+    background-color: #fff;
+    border-color: #d9d9d9;
+  }
+  .ant-btn:focus{
+    outline: none;
+  }
+
+  .ant-btn-primary {
+    color: #fff;
+    background-color: #108ee9;
+    border-color: #108ee9;
+  }
+
   .cards-box {
-    background: #F0F6FF;
     width: 400px;
-    height: 200px;
-    /*display: flex;*/
-    /*-ms-display: flex;*/
-    /*flex-direction: row;*/
-    /*flex-wrap: wrap;*/
+    height: 220px;
+    /*background: #F0F6FF;*/
+    /*padding-top: 15px;*/
   }
 
   .cards-box .row {
@@ -99,17 +120,6 @@
     line-height: 30px;
   }
 
-  .btn {
-    display: inline-block;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.4285;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    cursor: pointer;
-    border: 1px solid transparent;
-  }
 
   .p-h-lg {
     padding-right: 30px;
@@ -120,33 +130,36 @@
     margin-bottom: 20px;
   }
 
-  .btn-primary:hover, .btn-primary:focus {
-    color: #ffffff !important;
-    background-color: #4E85DE !important;
-    border-color: #4E85DE !important;
-  }
-
-  .btn-primary {
-    color: #ffffff !important;
-    background-color: #4E85DE !important;
-    border-color: #4E85DE !important;
-  }
   .text-center{
     text-align: center;
   }
 
   .row img{
     position: relative;
-    top: 8px;
-    left: 4px;
+    top: 2px;
+    left: -19px;
+  }
+  .ant-input{
+    position: relative;
+    display: inline-block;
+    padding-left: 7px;
+    width: 100px;
+    height: 24px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.65);
+    background-color: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    transition: all .3s;
   }
 </style>
-<div class="other-info p-v-md p-h-sm clearfix">
-  <div class="pull-left p-sm cards-box" id="cardBox">
+<div class="other-info clearfix">
+  <div class="pull-left cards-box" id="cardBox">
 
   </div>
   <div class="text-center p-h-sm" style="width: auto; overflow: auto">
-    <button class="btn btn-primary btn-md p-h-lg m-b-md" name="RequestCard1" value="寻卡" onClick="Start()">读取卡号
+    <button class="ant-btn ant-btn-primary m-b-sm" name="RequestCard1" value="寻卡" onClick="Start()">读取卡号
     </button>
     <div class="m-b-md"><a href="http://www.youwokeji.com.cn/CloudReader/YOWORFIDReaderCloudForWeb.exe">下载插件</a></div>
   </div>
@@ -177,10 +190,10 @@
     console.log(arr);
     if(arr.length){
       for (var l = 0; l < arr.length; l++) {
-        $('#cardBox').append('<div class="row m-b-sm"> <label class="w-label-control" style="width:40px;">卡' + (l + 1) + ':</label> <input type="text" class="w-sm p-h-xs pull-left w-form-control" name="CardNo' + l + '" id="CardNo' + l + '" value="'+arr[l]+'" disabled><img src="delete.png" alt="" width="15px" height="15px" onclick="lay(this)"></div>');
+        $('#cardBox').append('<div class="row m-b-sm"> <label class="w-label-control" style="width:40px;">卡' + (l + 1) + ':</label> <input type="text" class="ant-input" name="CardNo' + l + '" id="CardNo' + l + '" value="'+arr[l]+'" disabled><img src="delete.png" alt="" width="12px" height="12px" onclick="lay(this)"></div>');
       }
     }else{
-      $('.cards-box').append('<div class="row m-b-sm"> <label class="w-label-control" style="width:40px;">卡1:</label> <input type="text" class="w-sm p-h-xs pull-left w-form-control" name="CardNo0" id="CardNo0" disabled><img src="delete.png" alt="" width="15px" height="15px" onclick="lay(this)"></div>');
+      $('.cards-box').append('<div class="row m-b-sm"> <label class="w-label-control" style="width:40px;">卡1:</label> <input type="text" class="ant-input" name="CardNo0" id="CardNo0" disabled><img src="delete.png" alt="" width="12px" height="12px" onclick="lay(this)"></div>');
     }
 
 rfidreader.onResult(function (resultdata) {
@@ -217,11 +230,11 @@ rfidreader.onResult(function (resultdata) {
                         if (!firstInput && currentIndex == 0) {
                             document.getElementById("CardNo0").value = "IC-" + resultdata.strData.slice(2);
                         } else if (firstInput && currentIndex == 0) {
-                            cardBox.append('<div class="row m-b-sm"> <label class="w-label-control" style="width:40px;">卡2:</label> <input type="text" class="w-sm p-h-xs pull-left w-form-control" name="CardNo1" id="CardNo1" disabled><img src="delete.png" alt="" width="15px" height="15px" onclick="lay(this)"></div>');
+                            cardBox.append('<div class="row m-b-sm"> <label class="w-label-control" style="width:40px;">卡2:</label> <input type="text" class="ant-input" name="CardNo1" id="CardNo1" disabled><img src="delete.png" alt="" width="12px" height="12px" onclick="lay(this)"></div>');
                             document.getElementById("CardNo1").value = "IC-" + resultdata.strData.slice(2);
                         } else if (currentIndex > 0 && currentIndex < 9) {
 //            console.log(currentIndex);
-                            cardBox.append('<div class="row m-b-sm"> <label class="w-label-control" style="width:40px;">卡' + (currentIndex + 2) + ':</label> <input type="text" class="w-sm p-h-xs pull-left w-form-control" name="CardNo' + (currentIndex + 1) + '" id="CardNo' + (currentIndex + 1) + '" disabled><img src="delete.png" alt="" width="15px" height="15px" onclick="lay(this)"></div>');
+                            cardBox.append('<div class="row m-b-sm"> <label class="w-label-control" style="width:40px;">卡' + (currentIndex + 2) + ':</label> <input type="text" class="ant-input" name="CardNo' + (currentIndex + 1) + '" id="CardNo' + (currentIndex + 1) + '" disabled><img src="delete.png" alt="" width="12px" height="12px" onclick="lay(this)"></div>');
                             document.getElementById("CardNo" + (currentIndex + 1)).value = "IC-" + resultdata.strData.slice(2);
                         } else {
                             console.log('end');

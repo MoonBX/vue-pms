@@ -67,11 +67,11 @@
               if (!firstInput && currentIndex == 0) {
                 document.getElementById("CardNo0").value = "IC-" + resultdata.strData.slice(2);
               } else if (firstInput && currentIndex == 0) {
-                cardBox.append('<div class="row m-b-sm"> <label class="w-label-control" style="width:70px;color: rgba(0, 0, 0, 0.85);">卡2:</label> <input type="text" class="ant-input" name="CardNo1" id="CardNo1" disabled><img src="delete.png" alt="" width="12px" height="12px" onclick="lay(this)"></div>');
+                cardBox.append('<div class="row m-b-sm"> <label class="w-label-control">卡2:</label> <input type="text" class="ant-input" name="CardNo1" id="CardNo1" disabled><img src="delete.png" alt="" width="12px" height="12px" onclick="lay(this)"></div>');
                 document.getElementById("CardNo1").value = "IC-" + resultdata.strData.slice(2);
               } else if (currentIndex > 0 && currentIndex < 9) {
 //            console.log(currentIndex);
-                cardBox.append('<div class="row m-b-sm"> <label class="w-label-control" style="width:70px;color: rgba(0, 0, 0, 0.85);">卡' + (currentIndex + 2) + ':</label> <input type="text" class="ant-input" name="CardNo' + (currentIndex + 1) + '" id="CardNo' + (currentIndex + 1) + '" disabled><img src="delete.png" alt="" width="12px" height="12px" onclick="lay(this)"></div>');
+                cardBox.append('<div class="row m-b-sm"> <label class="w-label-control">卡' + (currentIndex + 2) + ':</label> <input type="text" class="ant-input" name="CardNo' + (currentIndex + 1) + '" id="CardNo' + (currentIndex + 1) + '" disabled><img src="delete.png" alt="" width="12px" height="12px" onclick="lay(this)"></div>');
                 document.getElementById("CardNo" + (currentIndex + 1)).value = "IC-" + resultdata.strData.slice(2);
               } else {
                 console.log('end');
@@ -154,6 +154,8 @@
     text-align: right;
     margin-top: 5px;
     margin-right: 2px;
+    width:70px;
+    color: rgba(0, 0, 0, 0.85);
   }
 
   .row {
@@ -195,6 +197,7 @@
     background-color: #108ee9;
     border-color: #108ee9;
   }
+
   .cards-box {
     width: 400px;
     height: 220px;
@@ -214,17 +217,6 @@
     line-height: 30px;
   }
 
-  .btn {
-    display: inline-block;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.4285;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    cursor: pointer;
-    border: 1px solid transparent;
-  }
 
   .p-h-lg {
     padding-right: 30px;
@@ -233,18 +225,6 @@
 
   .m-b-md {
     margin-bottom: 20px;
-  }
-
-  .btn-primary:hover, .btn-primary:focus {
-    color: #ffffff !important;
-    background-color: #4E85DE !important;
-    border-color: #4E85DE !important;
-  }
-
-  .btn-primary {
-    color: #ffffff !important;
-    background-color: #4E85DE !important;
-    border-color: #4E85DE !important;
   }
 
   .text-center {
@@ -273,7 +253,7 @@
 <div class="other-info clearfix">
   <div class="pull-left cards-box" id="cardBox">
     <div class="row m-b-sm">
-      <label class="w-label-control" style="width:70px;color: rgba(0, 0, 0, 0.85);">卡1：</label>
+      <label class="w-label-control">卡1：</label>
       <input type="text" disabled
              name="CardNo0" id="CardNo0"
              class="ant-input">
@@ -286,6 +266,4 @@
   </div>
 </div>
 </body>
-
-
 </html>

@@ -93,6 +93,7 @@
                     :pageSize="10"
                     :showTotal="showTotal"
                     @change="loadPage"
+                    ref="pagination"
                     show-quick-jumper
                     :total="page.total">
       </v-pagination>
@@ -181,6 +182,7 @@
 <script>
   import api from '../fetch/api'
   import { checkFilter } from '../util/option'
+  import { bus } from '../util/bus.js'
 
   import AnnounceCreate from '@/components/AnnounceCreate'
   import AnnounceEdit from '@/components/AnnounceEdit'
@@ -236,25 +238,7 @@
         this._getAnnounce(i, this.filterList)
       },
       createAnnounce(){
-        var obj = this.$refs.announceCreateRef.cleanData();
-        console.log(obj);
-        api.createAnnounce(obj)
-          .then(res => {
-            console.log(res);
-            if(res.success){
-              this.$notification.success({
-                message: '新建成功！',
-                duration: 2
-              });
-              this.handleCancel('create');
-              this._getAnnounce(1);
-            }else{
-              this.$notification.error({
-                message: res.message,
-                duration: 2
-              });
-            }
-          })
+        this.$refs.announceCreateRef.cleanData();
       },
       editAnnounce(){
 
@@ -268,7 +252,7 @@
                 message: '删除成功！',
                 duration: 2
               });
-              this._getAnnounce(1);
+              this.loadPage(this.$refs.pagination.value)
             }else{
               this.$notification.error({
                 message: res.message,
@@ -333,6 +317,26 @@
     },
     created(){
       this._getAnnounce(1);
+      bus.$on('announceForm_data_create', (data) => {
+        console.log(data);
+        api.createAnnounce(data)
+          .then(res => {
+            console.log(res);
+            if(res.success){
+              this.$notification.success({
+                message: '新建成功！',
+                duration: 2
+              });
+              this.handleCancel('create');
+              this._getAnnounce(1);
+            }else{
+              this.$notification.error({
+                message: res.message,
+                duration: 2
+              });
+            }
+          })
+      })
     }
   }
 </script>

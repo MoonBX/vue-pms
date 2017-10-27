@@ -3,10 +3,17 @@
     <v-form direction="horizontal" :model="model"  :rules="rules" ref="householdForm" class="b-b">
       <v-row>
         <v-col span="12">
-          <v-form-item label="住户姓名" :label-col="{span: 6}" :wrapper-col="{span:13}" prop="name" has-feedback>
-            <v-input style="width: 150px;" v-model="model.name"></v-input>
+          <v-form-item label="住户姓名"
+                       :label-col="{span: 6}"
+                       :wrapper-col="{span:13}"
+                       prop="name"
+                       has-feedback>
+            <v-input style="width: 150px;"
+                     v-model="model.name">
+            </v-input>
           </v-form-item>
         </v-col>
+
         <v-col span="12">
           <v-form-item label="住户身份" :label-col="{span: 6}" :wrapper-col="{span:13}" prop="userType" has-feedback>
             <v-select style="width: 150px;" :data="userTypeOption" v-model="model.userType" @change="userChangeEffective"></v-select>

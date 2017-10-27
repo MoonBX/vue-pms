@@ -74,16 +74,36 @@
   }
   img{
     position: relative;
-    top: 3px;
-    left: -2px
+    top: 2px;
+    left: -21px;
+  }
+  .ant-input{
+    position: relative;
+    display: inline-block;
+    padding-left: 7px;
+    width: 139px;
+    height: 24px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.65);
+    background-color: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    transition: all .3s;
+  }
+  a{
+    margin-left: -12px;
+    text-decoration: none;
+    font-size: 12px;
+    color: #108ee9;
   }
 </style>
 <input type="text"
-       class="w-md p-h-xs m-r-xs w-form-control"
+       class="ant-input"
        disabled
        id="CardNo"
        name="CardNo">
-<img src="delete.png" alt="" width="15px" height="15px" onclick="lay(this)" style="margin-top: 7px">
+<img src="delete.png" alt="" width="12px" height="12px"onclick="lay(this)" style="margin-top: 7px">
 <a href="javascript:;" onclick="Start()">读取</a>
 </body>
 </html>
