@@ -80,18 +80,7 @@
 </style>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
-  var ua = navigator.userAgent;
-  if(ua.indexOf("Mac OS X") !== -1){
-    console.log("读卡器不支持OSX系统, 请使用Windows系统进行读卡操作");
-  }else{
-    try {
-      var rfidreader = YOWORFIDReader.createNew();
-      console.log(rfidreader);
-    } catch (e) {
-      console.log("创建读卡器连接失败，请先下载安装！");
-//          top.location = "http://www.youwokeji.com.cn/CloudReader/YOWORFIDReaderCloudForWeb.exe";
-    }
-  }
+  import cardInit from '../util/card'
   export default {
     data() {
       var validatePass2 = (rule, value, callback) => {
@@ -171,10 +160,10 @@
       go(){
         var OrderID = 0;
         var FormatID = 1;
-        rfidreader.Repeat = 0;
-        rfidreader.HaltAfterSuccess = 0;
-        rfidreader.BeepOnSuccess = 0;
-        rfidreader.RequestTypeACardNo(FormatID, OrderID);
+        cardInit.Repeat = 0;
+        cardInit.HaltAfterSuccess = 0;
+        cardInit.BeepOnSuccess = 0;
+        cardInit.RequestTypeACardNo(FormatID, OrderID);
       },
       washData(){
         this.$refs.commonCreateForm.validate((valid) => {
@@ -254,23 +243,22 @@
           })
       }
     },
+
     created() {
       this._getDeviceDetail();
 
       console.log(this.$data)
 
-      if(rfidreader){
-        if (ua.indexOf("Windows NT 5.1") !== -1) console.log("Windows Vista");
-        if (ua.indexOf("Windows NT 6.1") !== -1) console.log("Windows 7");
-        if (ua.indexOf("Windows NT 6.2") !== -1) console.log("Windows 8");
-        if (ua.indexOf("Windows NT 10") !== -1) console.log("Windows 10");
-        if (ua.indexOf("Mac OS X") !== -1) console.log("OSX");
+      console.log(cardInit)
 
-        if (!rfidreader.TryConnect()) {
+      if(cardInit){
+
+
+        if (!cardInit.TryConnect()) {
           alert("浏览器不支持，请更换浏览器后重试！");
         }
 
-        rfidreader.onResult((resultdata) => {
+        cardInit.onResult((resultdata) => {
           switch (resultdata.FunctionID) {
             case 0:
               if (resultdata.Result > 0) {

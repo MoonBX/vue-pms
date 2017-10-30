@@ -156,18 +156,24 @@ export default {
     return post('/community/resident/'+id+'/delete');
   },
   getPublicCard(pageNo, limit, obj){
-    return get('/public/card/list/' + pageNo + '/' + limit, obj)
+    return get('/public/card/list/' + pageNo + '/' + limit, obj);
+  },
+  detailPublicCard(id){
+    return post('/public/card/'+id+'/detail');
+  },
+  deletePublicCard(id){
+    return post('/public/card/'+id+'/delete')
   },
   // 日志管理
   getIntercom(pageNo, limit, obj){
-    return get('/log/intercom/' + pageNo + '/' + limit, obj)
+    return get('/log/intercom/' + pageNo + '/' + limit, obj);
   },
   getAlarmInfo(pageNo, limit, obj){
-    return get('/device/alarmInfo/log/list/' + pageNo + '/' + limit, obj)
+    return get('/device/alarmInfo/log/list/' + pageNo + '/' + limit, obj);
   },
   // 获取位置信息
   getPartitions(){
-    return get('/community/partitions')
+    return get('/community/partitions');
   },
   getBlocks(partitionId){
     return get('/community/'+partitionId+'/blocks');
@@ -176,6 +182,6 @@ export default {
     return get('/community/' + blockId + '/units');
   },
   getRooms(unitId){
-    return get('/community/' + unitId + '/rooms')
+    return get('/community/' + unitId + '/rooms');
   }
 }

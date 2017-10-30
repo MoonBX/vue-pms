@@ -57,13 +57,35 @@
       </v-row>
     </v-form>
 
-    <div class="m-t-md">
-      <iframe name="myFrame"
-              src="../static/ocx/ocx.html"
-              width="100%" height="260px"
-              frameborder="no"
-              border="0">
-      </iframe>
+    <div class="m-t-md clear">
+      <div class="left pull-left" style="width: 70%;">
+        <v-row>
+            <v-form-item :label-col="{span: 4}" :wrapper-col="{span:19}"
+                         v-for="(item, index) in cardNoList.cardNo"
+                         :label="'卡号' + index">
+              <v-input v-model="item.value" style="width:70%;margin-right:5px"></v-input>
+              <v-button v-if="cardNoList.cardNo.length == 1" @click.prevent="resetCard(item)">清空</v-button>
+              <v-button v-if="cardNoList.cardNo.length>1" @click.prevent="removeCard(item)">删除</v-button>
+            </v-form-item>
+        </v-row>
+      </div>
+      <div class="right pull-left text-center" style="width: 30%; margin-top: 2px;">
+        <v-button type="primary" @click="readCard">
+          读取卡号
+        </v-button>
+        <div class="m-t-sm">
+          <a href="javascript:;">
+            下载插件
+          </a>
+        </div>
+
+      </div>
+      <!--<iframe name="myFrame"-->
+              <!--src="../static/ocx/ocx.html"-->
+              <!--width="100%" height="260px"-->
+              <!--frameborder="no"-->
+              <!--border="0">-->
+      <!--</iframe>-->
     </div>
   </div>
 </template>
@@ -75,7 +97,7 @@
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
   import { bus } from '../util/bus.js'
-
+  import cardInit from '../util/card'
   export default {
     data() {
       return {
@@ -91,6 +113,11 @@
           effectiveType: "",
           effectiveStartTime: "",
           effectiveEndTime: ""
+        },
+        cardNoList: {
+          cardNo: [{
+            value: ''
+          }]
         },
         rules: {
           name: [{
@@ -142,9 +169,34 @@
       disabledDate(current){
         return current && current.valueOf() < Date.now();
       },
+      readCard(){
+        var OrderID = 0;
+        var FormatID = 1;
+        cardInit.Repeat = 0;
+        cardInit.HaltAfterSuccess = 0;
+        cardInit.BeepOnSuccess = 0;
+        cardInit.RequestTypeACardNo(FormatID, OrderID);
+      },
+      resetCard(){
+        this.cardNoList.cardNo[0].value = "";
+        console.log(this.cardNoList.cardNo);
+      },
+      removeCard(item) {
+        var index = this.cardNoList.cardNo.indexOf(item)
+        if (index !== -1) {
+          this.cardNoList.cardNo.splice(index, 1)
+        }
+        console.log(this.cardNoList.cardNo);
+      },
       washData(){
         this.$refs.householdForm.validate((valid) => {
           if (valid) {
+            console.log(this.cardNoList.cardNo)
+            let arr = [];
+            for(let i=0;i<this.cardNoList.cardNo.length;i++){
+              arr.push(this.cardNoList.cardNo[i].value)
+            }
+            this.model.cardTypeNames = arr.join(',');
             var newObj = this.model;
             if(newObj.effectiveEndTime){
               newObj.effectiveStartTime = Date.parse(new Date());
@@ -156,8 +208,6 @@
             return false;
           }
         });
-
-//        return newObj;
       },
       userChangeEffective(val){
         if(val == 0){
@@ -198,7 +248,6 @@
             this.blockOptions = res.data;
           })
       },
-
       changeUnit(val){
         api.getUnits(val)
           .then(res => {
@@ -237,7 +286,52 @@
           this.partitionOptions = res.data;
         })
 
-//      this.model.effectiveStartTime = formatDate(Date.parse(new Date()), 'YMD')
+
+      if(cardInit){
+
+
+        if (!cardInit.TryConnect()) {
+          alert("浏览器不支持，请更换浏览器后重试！");
+        }
+
+        cardInit.onResult((resultdata) => {
+          switch (resultdata.FunctionID) {
+            case 0:
+              if (resultdata.Result > 0) {
+
+                for(let j=0; j < this.$data.cardNoList.cardNo.length; j++){
+
+                  if(("IC-"+resultdata.strData.slice(2)) == this.$data.cardNoList.cardNo[j].value){
+                    this.$notification.error({
+                      message: '重复读卡',
+                      duration: 2
+                    });
+                    break;
+                  }
+
+                  if(this.$data.cardNoList.cardNo[j].value == ''){
+                    this.$data.cardNoList.cardNo[j].value = "IC-"+resultdata.strData.slice(2)
+                    break;
+                  }
+
+                  if(j == this.$data.cardNoList.cardNo.length - 1){
+                    this.$data.cardNoList.cardNo.push({
+                      value: "IC-"+resultdata.strData.slice(2)
+                    });
+                    break;
+                  }
+                }
+
+
+              }else{
+                test('读卡失败')
+              }
+              break;
+          }
+        });
+      }
+
+
     }
   }
 </script>

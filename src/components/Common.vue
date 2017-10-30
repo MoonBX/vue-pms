@@ -70,7 +70,7 @@
                       </a>
                       <v-popconfirm placement="left"
                                     title="确定删除吗?"
-                                    @confirm="deleteAnnounce(item.id)">
+                                    @confirm="deletePublicCard(item.id)">
                         <a href="javascript:;">删除</a>
                       </v-popconfirm>
 
@@ -91,6 +91,7 @@
                     :showTotal="showTotal"
                     @change="loadPage"
                     show-quick-jumper
+                    ref="pagination"
                     :total="page.total">
       </v-pagination>
     </div>
@@ -114,7 +115,7 @@
         </div>
       </v-modal>
 
-      <v-modal title="公告详情"
+      <v-modal title="公卡详情"
                :visible="modalVisible.detail"
                ref="commonEditRef"
                :width="600"
@@ -196,6 +197,24 @@
       },
       loadPage(i){
         this._getPublicCard(i, this.filterList)
+      },
+      deletePublicCard(id){
+        console.log(id);
+        api.deletePublicCard(id).then(res => {
+          if(res.success){
+            this.$notification.success({
+              message: '删除成功！',
+              duration: 2
+            });
+            console.log(this.$refs.pagination.value)
+            this.loadPage(this.$refs.pagination.value)
+          }else{
+            this.$notification.error({
+              message: res.message,
+              duration: 2
+            });
+          }
+        })
       },
       _getPublicCard(pageNo, params){
         api.getPublicCard(pageNo, 10, params)
