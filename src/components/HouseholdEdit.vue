@@ -105,12 +105,6 @@
     </v-form>
 
     <div class="p-v-md clear b-t" v-if="model.isHasEntrance == 1">
-      <!--<iframe name="myFrame1"-->
-              <!--src="../static/ocx/ocx-edit.html"-->
-              <!--width="100%" height="260px"-->
-              <!--frameborder="no"-->
-              <!--border="0">-->
-      <!--</iframe>-->
       <div class="left pull-left" style="width: 70%;">
         <v-row>
           <v-form-item v-if="cardNoList.cardNo.length"
@@ -128,7 +122,7 @@
           读取卡号
         </v-button>
         <div class="m-t-sm">
-          <a href="javascript:;">
+          <a href="javascript:;" href="http://www.youwokeji.com.cn/CloudReader/YOWORFIDReaderCloudForWeb.exe">
             下载插件
           </a>
         </div>
