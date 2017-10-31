@@ -15,10 +15,10 @@
       </v-form-item>
 
       <v-form-item label="住户身份"
-                   :label-col="labelCol" :wrapper-col="wrapperCol"
+                   :label-col="labelCol" :wrapper-col="{span: 8}"
                    prop="userStatus"
                    has-feedback>
-        <v-select style="width: 150px;"
+        <v-select style="width: 140px;"
                   :data="userStatusOption"
                   v-model="model.userStatus">
         </v-select>
@@ -44,26 +44,27 @@
       </v-form-item>
 
       <v-form-item label="有效时间"
-                   :label-col="labelCol" :wrapper-col="wrapperCol"
+                   :label-col="labelCol" :wrapper-col="{span: 8}"
                    prop="vaildType"
                    has-feedback>
-        <v-select style="width: 150px;"
+        <v-select style="width: 140px;"
                   :data="vaildTypeOption"
                   v-model="model.vaildType">
         </v-select>
       </v-form-item>
 
       <v-form-item label="卡号"
-                   :label-col="labelCol" :wrapper-col="wrapperCol"
+                   :label-col="labelCol" :wrapper-col="{span: 8}"
                    prop="cardNo"
                    has-feedback>
         <v-input placeholder="请读取卡号"
                  id="cardNo" allow
-                 style="width: 150px;"
+                 style="width: 140px;"
                  v-model="model.cardNo">
         </v-input>
-        <a href="javascript:;" @click="go">读取</a>
+        <a href="javascript:;" @click="go" class="read">读取</a>
       </v-form-item>
+
     </v-form>
 
     <div class="pull-left b-l" style="width: 35%;min-height: 300px;">
@@ -77,6 +78,11 @@
   </div>
 </template>
 <style lang="scss" scoped>
+  .read{
+    position: absolute;
+    top: 1px;
+    right: -25px;
+  }
 </style>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
