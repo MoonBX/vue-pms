@@ -158,6 +158,9 @@ export default {
   getPublicCard(pageNo, limit, obj){
     return get('/public/card/list/' + pageNo + '/' + limit, obj);
   },
+  createPublicCard(obj){
+    return post('/public/card/add', obj);
+  },
   detailPublicCard(id){
     return post('/public/card/'+id+'/detail');
   },

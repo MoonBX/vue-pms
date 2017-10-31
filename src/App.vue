@@ -7,12 +7,13 @@
 </template>
 
 <script>
-
+  import {bus} from './util/bus'
   export default {
     name: 'app',
     data(){
       return{
-        isLogin: false
+        isLogin: false,
+        websocket: null
       }
     },
     created(){
@@ -22,7 +23,6 @@
         this.isLogin = false;
         this.$router.push('/login');
       }
-
     }
   }
 </script>

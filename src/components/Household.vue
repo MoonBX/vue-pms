@@ -385,7 +385,10 @@
           res.data[i].value = res.data[i].id;
         }
         this.partitionOptions = res.data;
-      })
+      });
+
+      bus.$off('householdForm_data_edit');
+      bus.$off('householdForm_data_create');
 
       bus.$on('householdForm_data_create', (data) => {
         console.log(data)

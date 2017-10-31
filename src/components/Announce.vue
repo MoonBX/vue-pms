@@ -317,6 +317,8 @@
     },
     created(){
       this._getAnnounce(1);
+
+      bus.$off('announceForm_data_create');
       bus.$on('announceForm_data_create', (data) => {
         console.log(data);
         api.createAnnounce(data)

@@ -38,6 +38,8 @@
 
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
+  import { bus } from '../util/bus.js'
+
   export default {
     name: 'hello',
     data () {
@@ -48,7 +50,8 @@
         title: '',
         dropdown: [
           {content: '退出登录'}
-        ]
+        ],
+        socket: null
       }
     },
     methods: {
@@ -67,13 +70,36 @@
             localStorage.removeItem('vueToken');
             localStorage.removeItem('vueUsername');
             localStorage.removeItem('vueEstate');
+            localStorage.removeItem('vueCommunityId');
             this.$router.push('/login');
+            this.socket.close();
           })
           .catch(error => {
             console.log(error)
           })
+      },
+      send(message, callback) {
+        var that = this;
+        this.waitForConnection(function () {
+          that.socket.send(message);
+          if (typeof callback !== 'undefined') {
+            callback();
+          }
+        }, 1000);
+      },
+      waitForConnection(callback, interval) {
+        console.log(this.socket.readyState)
+        if (this.socket.readyState === 1) {
+          callback();
+        } else {
+          // optional: implement backoff for interval here
+          setTimeout(() => {
+            this.waitForConnection(callback, interval);
+          }, interval);
+        }
       }
-    },
+
+  },
     created(){
       this.title = this.$route.name;
       var routePath = this.$route.path.split('/')[2];
@@ -109,6 +135,22 @@
         }
       }
       this.themeMenuData = data;
+
+      this.socket = new WebSocket('ws://192.168.23.241:8081/websocket');
+      this.send(localStorage.vueCommunityId);
+
+      this.socket.onopen = function() {
+        console.log('open');
+      }
+
+      this.socket.onmessage = function(evt) {
+        console.log(evt)
+      };
+
+      this.socket.onclose = function(e) {
+        console.log(e)
+      };
+
     },
     watch: {
       $route(){

@@ -296,6 +296,8 @@
 </style>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
+  import { bus } from '../util/bus'
+
   export default{
     name: 'login',
     data(){
@@ -306,7 +308,6 @@
     },
     methods: {
       login() {
-        console.log(this.loginObj)
         api.Login(this.loginObj)
           .then(res => {
             console.log(res);
@@ -314,13 +315,19 @@
               localStorage.vueToken = res.data.token;
               localStorage.vueEstate = res.data.community.eatateName;
               localStorage.vueUsername = res.data.community.name;
+              localStorage.vueCommunityId = res.data.community.id;
+
               this.$router.push('/wk/home');
+
             }
           })
         .catch(error => {
           console.log(error)
         })
       }
+    },
+    created(){
+
     }
   }
 </script>

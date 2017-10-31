@@ -138,6 +138,7 @@
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
   import { checkFilter } from '../util/option'
+  import {bus} from '../util/bus'
 
   import CommonCreate from '@/components/CommonCreate'
   import CommonDetails from '@/components/CommonDetails'
@@ -291,6 +292,26 @@
     },
     created() {
       this._getPublicCard(1);
+
+      bus.$off('CommonForm_data_create')
+
+      bus.$on('CommonForm_data_create', (data) => {
+        api.createPublicCard(data).then(res=>{
+          if(res.success){
+            this.$notification.success({
+              message: '添加成功！',
+              duration: 2
+            });
+            this.handleCancel('create');
+            this.loadPage(this.$refs.pagination.value)
+          }else{
+            this.$notification.error({
+              message: res.message,
+              duration: 2
+            });
+          }
+        })
+      })
     }
   }
 </script>

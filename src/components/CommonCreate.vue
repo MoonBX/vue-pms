@@ -87,6 +87,8 @@
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
   import cardInit from '../util/card'
+  import {bus} from '../util/bus'
+
   export default {
     data() {
       var validatePass2 = (rule, value, callback) => {
@@ -177,7 +179,7 @@
               this.model.cardNo = document.getElementById('cardNo').value;
               var a = this.getTreeNode();
               var newObj = {
-                userName: this.model.title,
+                userName: this.model.userName,
                 vaildType: this.model.vaildType,
                 fenceIds : a.fenceIds,
                 unitIds : a.unitIds,
@@ -185,7 +187,7 @@
                 cardNo : this.model.cardNo,
                 mobile : this.model.mobile
               }
-              console.log(newObj)
+              bus.$emit('CommonForm_data_create', newObj);
             } else {
               console.log('error submit!!');
               return false;
