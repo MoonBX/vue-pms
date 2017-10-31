@@ -75,7 +75,7 @@
         </v-button>
         <div class="m-t-sm">
           <a href="http://www.youwokeji.com.cn/CloudReader/YOWORFIDReaderCloudForWeb.exe">
-            下载插件 
+            下载插件
           </a>
         </div>
 
