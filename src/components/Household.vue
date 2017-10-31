@@ -408,15 +408,6 @@
       })
 
       bus.$on('householdForm_data_edit', (data) => {
-        let arr = [];
-        let cardBox = myFrame1.window.document.getElementById("cardBox");
-        let cardBoxLen = $(cardBox).children('.row').length;
-        for (let i = 0; i < cardBoxLen; i++) {
-          if ($(cardBox).children('.row').eq(i).children("input")[0].value) {
-            arr.push($(cardBox).children('.row').eq(i).children("input")[0].value)
-          }
-        }
-        data.cardTypeNames = arr.join(',');
         console.log(data)
         api.editResident(data).then(res=>{
           console.log(res);

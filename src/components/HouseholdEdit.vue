@@ -3,7 +3,6 @@
     <v-form direction="horizontal"
             :model="model"
             :rules="rules"
-            class="b-b"
             ref="householdForm">
 
       <v-row>
@@ -86,11 +85,12 @@
           </v-form-item>
         </v-col>
 
-        <v-col span="18" v-if="dateShow">
+        <v-col span="18" v-if="dateShow && model.effectiveType != 0">
           <v-form-item :label-col="labelCol"
                        :wrapper-col="wrapperCol">
             <v-date-picker v-model="model.effectiveStartTime"
                            style="width: 150px;"
+                           placeholder="今天"
                            disabled>
             </v-date-picker>
             <span class="content-tip">--</span>
@@ -104,7 +104,7 @@
       </v-row>
     </v-form>
 
-    <div class="m-t-md clear">
+    <div class="p-v-md clear b-t" v-if="model.isHasEntrance == 1">
       <!--<iframe name="myFrame1"-->
               <!--src="../static/ocx/ocx-edit.html"-->
               <!--width="100%" height="260px"-->
@@ -116,7 +116,7 @@
           <v-form-item v-if="cardNoList.cardNo.length"
                        :label-col="{span: 4}" :wrapper-col="{span:19}"
                        v-for="(item, index) in cardNoList.cardNo"
-                       :label="'卡号' + index">
+                       :label="'卡号' + (index+1)">
             <v-input v-model="item.value" style="width:70%;margin-right:5px"></v-input>
             <v-button v-if="cardNoList.cardNo.length == 1" @click.prevent="resetCard(item)">清空</v-button>
             <v-button v-if="cardNoList.cardNo.length>1" @click.prevent="removeCard(item)">删除</v-button>
@@ -242,6 +242,12 @@
       washData(){
         this.$refs.householdForm.validate((valid) => {
           if (valid) {
+            console.log(this.cardNoList.cardNo)
+            let arr = [];
+            for(let i=0;i<this.cardNoList.cardNo.length;i++){
+              arr.push(this.cardNoList.cardNo[i].value)
+            }
+            this.model.cardTypeNames = arr.join(',');
             var newObj = {
               id: this.model.id,
               name: this.model.name,
@@ -254,7 +260,8 @@
               roomNoId: this.model.roomNoId,
               effectiveType: this.model.effectiveType,
               effectiveStartTime: this.model.effectiveStartTime,
-              effectiveEndTime: this.model.effectiveEndTime
+              effectiveEndTime: this.model.effectiveEndTime,
+              cardTypeNames: this.model.cardTypeNames
             };
             if(newObj.effectiveEndTime){
               newObj.effectiveStartTime = Date.parse(new Date(newObj.effectiveStartTime));
@@ -294,23 +301,26 @@
     },
     created() {
       this.model = this.item;
-      this.userChangeEffective(this.model.userType)
+      this.userChangeEffective(this.model.userType);
+      console.log(this.model);
+
       this.checkEntranceExist();
-      let arr = this.model.cardTypeName.split(' ');
-      console.log(arr);
-      if(arr.length){
-        for(let i=0;i<arr.length;i++){
-          if(i==0){
-            this.cardNoList.cardNo[i].value = arr[i]
-          }else{
-            this.cardNoList.cardNo.push({
-              value: arr[i]
-            });
+      if(this.model.cardTypeName!=null){
+        let arr = this.model.cardTypeName.split(' ');
+        if(arr.length){
+          for(let i=0;i<arr.length;i++){
+            if(i==0){
+              this.cardNoList.cardNo[i].value = arr[i]
+            }else{
+              this.cardNoList.cardNo.push({
+                value: arr[i]
+              });
+            }
           }
-
         }
+      } else{
+        this.cardNoList.cardNo[0].value = "";
       }
-
 
       if(cardInit){
 

@@ -47,7 +47,7 @@
             </v-switch>
           </v-form-item>
         </v-col>
-        <v-col span="18" v-if="dateShow">
+        <v-col span="18" v-if="dateShow&& model.effectiveType != 0">
           <v-form-item :label-col="labelCol" :wrapper-col="wrapperCol">
             <v-date-picker style="width: 100px;" placeholder="今天" disabled></v-date-picker>
             <span class="content-tip">--</span>
@@ -62,7 +62,7 @@
         <v-row>
             <v-form-item :label-col="{span: 4}" :wrapper-col="{span:19}"
                          v-for="(item, index) in cardNoList.cardNo"
-                         :label="'卡号' + index">
+                         :label="'卡号' + (index+1) ">
               <v-input v-model="item.value" style="width:70%;margin-right:5px"></v-input>
               <v-button v-if="cardNoList.cardNo.length == 1" @click.prevent="resetCard(item)">清空</v-button>
               <v-button v-if="cardNoList.cardNo.length>1" @click.prevent="removeCard(item)">删除</v-button>
