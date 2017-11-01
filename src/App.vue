@@ -29,18 +29,18 @@
 
 <style lang="scss">
   html, body, #all {
-    height: 100%;
-    background-color: #ececec;
+    height: 100% !important;
+    background-color: #ececec !important;
   }
 
   body{
-    font-family: "arial";
+    font-family: "arial" !important;
     font-size: 13px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    line-height: 1.42857143;
-    color: #777;
-    background-color: transparent;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    line-height: 1.42857143 !important;
+    color: #777 !important;
+    background-color: transparent !important;
   }
 
   #app {
@@ -69,33 +69,33 @@
     font-size: 13px !important;
   }
   .ant-input{
-    font-size: 13px;
+    font-size: 13px !important;
   }
 
 
   .ant-input:focus {
-    border-color: #49a9ee;
-    outline: 0;
-     box-shadow: 0 0 0 0px rgba(16, 142, 233, 0.2);
+    border-color: #49a9ee !important;
+    outline: 0 !important;
+     box-shadow: 0 0 0 0px rgba(16, 142, 233, 0.2) !important;
   }
 
   .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
-    font-size: 13px;
-    padding: 16px 8px;
-    word-break: break-all;
-    white-space: normal;
+    font-size: 13px !important;
+    padding: 16px 8px !important;
+    word-break: break-all !important;
+    white-space: normal !important;
   }
 
   .ant-menu-dark .ant-menu-inline.ant-menu-sub{
-    background-color: #06101F;
-    color: #7f8ea7;
+    background-color: #06101F !important;
+    color: #7f8ea7 !important;
   }
 
   .ant-dropdown-menu{
     left: -15px !important;
   }
   .ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title{
-    padding: 7px 12px;
+    padding: 7px 12px !important;
   }
 
   .position-right {
@@ -160,20 +160,20 @@
   }
 
   .ant-notification{
-    width: 275px;
+    width: 275px !important;
   }
   .ant-notification-notice-message{
-    font-size: 14px;
-    position: relative;
-    top: 2px;
-    margin-left: 36px;
+    font-size: 14px !important;
+    position: relative !important;
+    top: 2px !important;
+    margin-left: 36px !important;
   }
   .ant-notification-notice-icon{
-    font-size: 24px;
+    font-size: 24px !important;
   }
 
   form .has-feedback > .ant-select .ant-select-arrow, form .has-feedback > .ant-select .ant-select-selection__clear, form .has-feedback :not(.ant-input-group-addon) > .ant-select .ant-select-arrow, form .has-feedback :not(.ant-input-group-addon) > .ant-select .ant-select-selection__clear {
-     right: 6px;
+     right: 6px !important;
   }
 
 </style>

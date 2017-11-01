@@ -9,7 +9,7 @@
       </v-row>
       <v-row class="m-b-sm">
         <v-col span="24">
-          <span class="date">{{detailList.effectiveStartTime | formatDate('YMD')}}到{{detailList.effectiveEndTime | formatDate('YMD')}}</span>
+          <span class="date">{{detailList.effectiveStartTime | formatDate('YMD')}} 到 {{detailList.effectiveEndTime | formatDate('YMD')}}</span>
         </v-col>
       </v-row>
       <v-row class="b-b p-b-sm">
@@ -18,7 +18,7 @@
         </v-col>
       </v-row>
     </div>
-    <div class="wrap-box m-v-sm clearfix" v-for="item in detailList.partitions">
+    <div class="wrap-box m-t-md m-b-sm clearfix" v-for="item in detailList.partitions">
       <div class="left">
         {{item.name}}
       </div>

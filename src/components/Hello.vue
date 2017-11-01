@@ -88,12 +88,12 @@
         }, 1000);
       },
       waitForConnection(callback, interval) {
-        console.log(this.socket.readyState)
         if (this.socket.readyState === 1) {
+          clearTimeout(t)
           callback();
         } else {
           // optional: implement backoff for interval here
-          setTimeout(() => {
+          var t = setTimeout(() => {
             this.waitForConnection(callback, interval);
           }, interval);
         }
@@ -136,7 +136,7 @@
       }
       this.themeMenuData = data;
 
-      this.socket = new WebSocket('ws://192.168.23.241:8081/websocket');
+      this.socket = new WebSocket('ws://192.168.23.241:8888/websocket');
       this.send(localStorage.vueCommunityId);
 
       this.socket.onopen = function() {
