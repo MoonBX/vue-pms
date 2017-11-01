@@ -171,6 +171,10 @@
   .ant-notification-notice-icon{
     font-size: 24px !important;
   }
+  .ant-notification-notice-with-icon .ant-notification-notice-description {
+    margin-left: 36px !important;
+    font-size: 12px;
+  }
 
   form .has-feedback > .ant-select .ant-select-arrow, form .has-feedback > .ant-select .ant-select-selection__clear, form .has-feedback :not(.ant-input-group-addon) > .ant-select .ant-select-arrow, form .has-feedback :not(.ant-input-group-addon) > .ant-select .ant-select-selection__clear {
      right: 6px !important;

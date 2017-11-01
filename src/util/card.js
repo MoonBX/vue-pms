@@ -1,7 +1,7 @@
 function createRif(){
   var ua = navigator.userAgent;
   if(ua.indexOf("Mac OS X") !== -1){
-    alert("读卡器不支持OSX系统, 请使用Windows系统进行读卡操作");
+    console.log("读卡器不支持OSX系统, 请使用Windows系统进行读卡操作");
   }else{
     try {
       let rfidreader = YOWORFIDReader.createNew();

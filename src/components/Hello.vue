@@ -136,15 +136,20 @@
       }
       this.themeMenuData = data;
 
-      this.socket = new WebSocket('ws://192.168.23.241:8888/websocket');
+      this.socket = new WebSocket('ws://192.168.23.241:8081/websocket');
       this.send(localStorage.vueCommunityId);
 
       this.socket.onopen = function() {
         console.log('open');
       }
 
-      this.socket.onmessage = function(evt) {
+      this.socket.onmessage = (evt) => {
         console.log(evt)
+        this.$notification.error({
+          message: '劫持报警',
+          description: "10月11日 15：00东区 1-2-0101住户智能门锁发出劫持报警事件，请尽快前往处理！",
+          duration: 0
+        });
       };
 
       this.socket.onclose = function(e) {
