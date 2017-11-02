@@ -1,27 +1,27 @@
 <template>
   <div class="device position-right">
-    <div class="g-table-banner p-v-lg p-h-md b-b">
-      <v-form>
-        <v-form-item label="位置信息" class="m-b-sm">
-          <v-select v-model="filterList.partitionId" :allowClear="false" style="width: 150px;" :data="partitionOptions" @change="changeBlock"></v-select>
-          <v-select v-model="filterList.blockId" :allowClear="false" style="width: 120px;" :data="blockOptions" @change="changeUnit"></v-select>
-          <v-select v-model="filterList.unitId" :allowClear="false" style="width: 120px;" :data="unitOptions"></v-select>
-        </v-form-item>
-        <v-form-item label="设备类型" class="m-b-sm">
-          <v-select v-model="filterList.type" style="width: 150px;" :data="typeOptions"></v-select>
-        </v-form-item>
-        <v-form-item label="设备状态" class="m-b-sm">
-          <v-select v-model="filterList.status" style="width: 150px;" :data="statusOptions"></v-select>
-        </v-form-item>
-        <div class="row text-center">
-          <v-button type="primary m-r-sm" @click="filterTable">
-            提交
-          </v-button>
-          <v-button type="ghost" @click="resetTable">
-            重置
-          </v-button>
-        </div>
-      </v-form>
+    <div class="g-table-banner">
+      <v-more-panel class="p-v-lg p-h-md">
+        <v-form slot="form">
+          <v-form-item label="位置信息" class="m-b-sm">
+            <v-select v-model="filterList.partitionId" :allowClear="false" style="width: 150px;" :data="partitionOptions" @change="changeBlock"></v-select>
+            <v-select v-model="filterList.blockId" :allowClear="false" style="width: 120px;" :data="blockOptions" @change="changeUnit"></v-select>
+            <v-select v-model="filterList.unitId" :allowClear="false" style="width: 120px;" :data="unitOptions"></v-select>
+          </v-form-item>
+          <v-form-item label="设备类型" class="m-b-sm">
+            <v-select v-model="filterList.type" style="width: 150px;" :data="typeOptions"></v-select>
+          </v-form-item>
+          <v-form-item label="设备状态" class="m-b-sm">
+            <v-select v-model="filterList.status" style="width: 150px;" :data="statusOptions"></v-select>
+          </v-form-item>
+        </v-form>
+        <v-button slot="control" type="primary" html-type="button" icon="search" style="margin-right:10px" @click="filterTable">
+          查询
+        </v-button>
+        <v-button slot="control" type="ghost" @click="resetTable">
+          重置
+        </v-button>
+      </v-more-panel>
     </div>
     <div class="g-table-content m-t-sm m-b-md p-h-md">
       <div class="ant-table ant-table-large" style="width: 100%;">

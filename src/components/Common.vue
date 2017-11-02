@@ -1,28 +1,29 @@
 <template>
   <div class="common position-right">
-    <div class="g-table-banner p-v-lg p-h-md b-b">
-      <v-form>
-        <v-form-item label="人员姓名" class="m-b-sm">
-          <v-input v-model="filterList.userName" placeholder="请输入人员姓名" style="width: 180px;"></v-input>
-        </v-form-item>
-        <v-form-item label="手机号码" class="m-b-sm">
-          <v-input v-model="filterList.mobile" placeholder="请输入手机号码" style="width: 180px;"></v-input>
-        </v-form-item>
-        <v-form-item label="人员身份" class="m-b-sm">
-          <v-select v-model="filterList.userStatus" style="width: 150px;" :data="userStatusOptions"></v-select>
-        </v-form-item>
-        <v-form-item label="卡片状态" class="m-b-sm">
-          <v-select v-model="filterList.status" style="width: 150px;" :data="statusOptions" ></v-select>
-        </v-form-item>
-        <div class="row text-center">
-          <v-button type="primary m-r-sm" @click="filterTable">
-            提交
-          </v-button>
-          <v-button type="ghost" @click="resetTable">
-            重置
-          </v-button>
-        </div>
-      </v-form>
+    <div class="g-table-banner">
+
+      <v-more-panel class="p-v-lg p-h-md">
+        <v-form slot="form">
+          <v-form-item label="人员姓名" class="m-b-sm">
+            <v-input v-model="filterList.userName" placeholder="请输入人员姓名" style="width: 180px;"></v-input>
+          </v-form-item>
+          <v-form-item label="手机号码" class="m-b-sm">
+            <v-input v-model="filterList.mobile" placeholder="请输入手机号码" style="width: 180px;"></v-input>
+          </v-form-item>
+          <v-form-item label="人员身份" class="m-b-sm">
+            <v-select v-model="filterList.userStatus" style="width: 150px;" :data="userStatusOptions"></v-select>
+          </v-form-item>
+          <v-form-item label="卡片状态" class="m-b-sm">
+            <v-select v-model="filterList.status" style="width: 150px;" :data="statusOptions" ></v-select>
+          </v-form-item>
+        </v-form>
+        <v-button slot="control" type="primary" html-type="button" icon="search" style="margin-right:10px" @click="filterTable">
+          查询
+        </v-button>
+        <v-button slot="control" type="ghost" @click="resetTable">
+          重置
+        </v-button>
+      </v-more-panel>
     </div>
     <div class="g-table-content m-t-sm m-b-md p-h-md">
       <div>

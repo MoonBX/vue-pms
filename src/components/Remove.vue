@@ -1,19 +1,19 @@
 <template>
   <div class="remove position-right">
-    <div class="g-table-banner p-v-lg p-h-md b-b">
-      <v-form>
-        <v-form-item label="时间范围" class="m-b-sm">
-          <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
-        </v-form-item>
-        <div class="row text-center">
-          <v-button type="primary m-r-sm" @click="filterTable">
-            提交
-          </v-button>
-          <v-button type="ghost" @click="resetTable">
-            重置
-          </v-button>
-        </div>
-      </v-form>
+    <div class="g-table-banner">
+      <v-more-panel class="p-v-lg p-h-md">
+        <v-form slot="form">
+          <v-form-item label="时间范围" class="m-b-sm">
+            <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
+          </v-form-item>
+        </v-form>
+        <v-button slot="control" type="primary" html-type="button" icon="search" style="margin-right:10px" @click="filterTable">
+          查询
+        </v-button>
+        <v-button slot="control" type="ghost" @click="resetTable">
+          重置
+        </v-button>
+      </v-more-panel>
     </div>
     <div class="g-table-content m-t-sm m-b-md p-h-md">
       <div class="ant-table ant-table-large" style="width: 100%;">

@@ -180,4 +180,14 @@
      right: 6px !important;
   }
 
+  .ant-more-panel {
+    background-color: #fff;
+    font-size: 12px;
+    position: relative;
+    padding: 25px 15px;
+    display: flex;
+    border: none;
+    border-bottom: 1px solid #e9e9e9;
+  }
+
 </style>

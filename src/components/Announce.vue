@@ -1,25 +1,25 @@
 <template>
   <div class="announce position-right">
-    <div class="g-table-banner p-v-lg p-h-md b-b">
-      <v-form>
-        <v-form-item label="发布标题">
-          <v-input v-model="filterList.title" placeholder="请输入公告标题" style="width: 240px;"></v-input>
-        </v-form-item>
-        <v-form-item label="发布时间">
-          <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
-        </v-form-item>
-        <v-form-item label="发布状态">
-          <v-select v-model="filterList.status" tags style="width: 120px;" :data="selectOptions" ></v-select>
-        </v-form-item>
-        <div class="row text-center m-t-sm">
-          <v-button type="primary" style="margin-right:10px" @click="filterTable">
-            提交
-          </v-button>
-          <v-button type="ghost" @click="resetTable">
-            重置
-          </v-button>
-        </div>
-      </v-form>
+    <div class="g-table-banner">
+      <v-more-panel class="p-v-lg p-h-md">
+        <v-form slot="form">
+          <v-form-item label="发布标题" class="m-b-sm">
+            <v-input v-model="filterList.title" placeholder="请输入公告标题" style="width: 240px;"></v-input>
+          </v-form-item>
+          <v-form-item label="发布时间" class="m-b-sm">
+            <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
+          </v-form-item>
+          <v-form-item label="发布状态" class="m-b-sm">
+            <v-select v-model="filterList.status" tags style="width: 120px;" :data="selectOptions"></v-select>
+          </v-form-item>
+        </v-form>
+        <v-button slot="control" type="primary" html-type="button" icon="search" style="margin-right:10px" @click="filterTable">
+          查询
+        </v-button>
+        <v-button slot="control" type="ghost" @click="resetTable">
+          重置
+        </v-button>
+      </v-more-panel>
     </div>
 
     <div class="g-table-content m-t-sm m-b-md p-h-md">

@@ -1,34 +1,34 @@
 <template>
   <div class="household position-right">
-    <div class="g-table-banner p-v-lg p-h-md b-b">
-      <v-form>
-        <v-form-item label="住户姓名" class="m-b-sm">
-          <v-input v-model="filterList.name" placeholder="请输入住户姓名" style="width: 180px;"></v-input>
-        </v-form-item>
-        <v-form-item label="联系方式" class="m-b-sm">
-          <v-input v-model="filterList.mobile" placeholder="请输入联系方式" style="width: 180px;"></v-input>
-        </v-form-item>
-        <v-form-item label="住户身份" class="m-b-sm">
-          <v-select v-model="filterList.userType" style="width: 150px;" :data="userTypeOptions"></v-select>
-        </v-form-item>
-        <v-form-item label="住户房号" class="m-b-sm">
-          <v-select v-model="filterList.partitionId" :allowClear="false" style="width: 150px;" :data="partitionOptions" @change="changeBlock"></v-select>
-          <v-select v-model="filterList.blockId" :allowClear="false" style="width: 120px;" :data="blockOptions" @change="changeUnit"></v-select>
-          <v-select v-model="filterList.unitId" :allowClear="false" style="width: 120px;" :data="unitOptions" @change="changeRoom"></v-select>
-          <v-select v-model="filterList.roomNoId" :allowClear="false" style="width: 120px;" :data="roomOptions"></v-select>
-        </v-form-item>
-        <v-form-item label="住户状态" class="m-b-sm">
-          <v-select v-model="filterList.status" :allowClear="false" style="width: 150px;" :data="statusOptions"></v-select>
-        </v-form-item>
-        <div class="row text-center">
-          <v-button type="primary m-r-sm" @click="filterTable">
-            提交
-          </v-button>
-          <v-button type="ghost" @click="resetTable">
-            重置
-          </v-button>
-        </div>
-      </v-form>
+    <div class="g-table-banner">
+      <v-more-panel class="p-v-lg p-h-md">
+        <v-form slot="form">
+          <v-form-item label="住户姓名" class="m-b-sm">
+            <v-input v-model="filterList.name" placeholder="请输入住户姓名" style="width: 180px;"></v-input>
+          </v-form-item>
+          <v-form-item label="联系方式" class="m-b-sm">
+            <v-input v-model="filterList.mobile" placeholder="请输入联系方式" style="width: 180px;"></v-input>
+          </v-form-item>
+          <v-form-item label="住户身份" class="m-b-sm">
+            <v-select v-model="filterList.userType" style="width: 150px;" :data="userTypeOptions"></v-select>
+          </v-form-item>
+          <v-form-item label="住户房号" class="m-b-sm">
+            <v-select v-model="filterList.partitionId" :allowClear="false" style="width: 150px;" :data="partitionOptions" @change="changeBlock"></v-select>
+            <v-select v-model="filterList.blockId" :allowClear="false" style="width: 120px;" :data="blockOptions" @change="changeUnit"></v-select>
+            <v-select v-model="filterList.unitId" :allowClear="false" style="width: 120px;" :data="unitOptions" @change="changeRoom"></v-select>
+            <v-select v-model="filterList.roomNoId" :allowClear="false" style="width: 120px;" :data="roomOptions"></v-select>
+          </v-form-item>
+          <v-form-item label="住户状态" class="m-b-sm">
+            <v-select v-model="filterList.status" :allowClear="false" style="width: 150px;" :data="statusOptions"></v-select>
+          </v-form-item>
+        </v-form>
+        <v-button slot="control" type="primary" html-type="button" icon="search" style="margin-right:10px" @click="filterTable">
+          查询
+        </v-button>
+        <v-button slot="control" type="ghost" @click="resetTable">
+          重置
+        </v-button>
+      </v-more-panel>
     </div>
     <div class="g-table-content m-t-sm m-b-md p-h-md">
       <div>
