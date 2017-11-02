@@ -92,7 +92,7 @@
   }
 
   .ant-dropdown-menu{
-    left: -15px !important;
+    left: 0 !important;
   }
   .ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title{
     padding: 7px 12px !important;

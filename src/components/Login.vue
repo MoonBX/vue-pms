@@ -28,7 +28,7 @@
         <form class="login-content">
           <v-input-group class="p-v-sm p-h-md">
             <v-input placeholder="请输入用户名" v-model="loginObj.userName" size="large" class="m-b-sm"></v-input>
-            <v-input placeholder="请输入密码" v-model="loginObj.pwd" size="large" class="m-b-sm"></v-input>
+            <v-input placeholder="请输入密码" v-model="loginObj.pwd" size="large" class="m-b-md"></v-input>
             <div class="form-group text-center m-t-lg">
               <v-button type="primary" class="p-h-md" :loading="loading" @click="login">{{ loading ? "登录中" : "登录" }}</v-button>
             </div>
@@ -265,7 +265,7 @@
 
   .login-box {
     width: 230px;
-    height: 330px;
+    height: 320px;
     background: #fff;
     position: absolute;
     right: 20%;

@@ -104,6 +104,7 @@
             localStorage.removeItem('vueCommunityId');
             this.$router.push('/login');
             this.socket.close();
+            this.$notification.close('1')
           })
           .catch(error => {
             console.log(error)
@@ -134,9 +135,7 @@
       },
       add0(m){return m<10?'0'+m:m },
       format(shijianchuo) {
-        console.log(shijianchuo)
         var time = new Date(parseInt(shijianchuo));
-        console.log(time)
         var y = time.getFullYear();
         var m = time.getMonth()+1;
         var d = time.getDate();
@@ -192,11 +191,8 @@
       }
 
       this.socket.onmessage = (evt) => {
-        console.log(evt)
-        console.log(evt.data);
         if(evt.data){
           let arr = evt.data.split('/');
-
           let obj = {
             id: arr[0],
             address: arr[2]
@@ -206,6 +202,7 @@
             message: '劫持报警',
             description: obj.time + ': ' + obj.address + "住户智能门锁发出劫持报警事件，请尽快前往处理！",
             duration: 0,
+            selfKey: '1',
             onClose: ()=>{
               this.showModal('create', obj)
             }
