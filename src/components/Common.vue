@@ -294,6 +294,11 @@
     created() {
       this._getPublicCard(1);
 
+      if(sessionStorage.from == '1'){
+        this.showModal('create');
+        sessionStorage.removeItem('from')
+      }
+
       bus.$off('CommonForm_data_create')
 
       bus.$on('CommonForm_data_create', (data) => {

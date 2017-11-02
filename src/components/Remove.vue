@@ -15,7 +15,7 @@
         </v-button>
       </v-more-panel>
     </div>
-    <div class="g-table-content m-t-sm m-b-md p-h-md">
+    <div class="g-table-content m-t-sm m-b-md p-h-md p-v-sm">
       <div class="ant-table ant-table-large" style="width: 100%;">
         <div class="ant-table-content">
           <div class="ant-table-body">
@@ -131,7 +131,7 @@
         if(newObj.dateTime){
           if(newObj.dateTime[0]&&newObj.dateTime[1]){
             newObj.st = Date.parse(new Date(newObj.dateTime[0]));
-            newObj.et = Date.parse(new Date(newObj.dateTime[1]));
+            newObj.et = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
           }
         }
 

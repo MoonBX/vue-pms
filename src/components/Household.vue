@@ -242,7 +242,6 @@
           this.idParam = param;
         }else{
           this.itemParam = param;
-          console.log(this.itemParam)
         }
         this.modalVisible[value] = true;
       },
@@ -387,6 +386,11 @@
         this.partitionOptions = res.data;
       });
 
+      if(sessionStorage.from == '1'){
+        this.showModal('create');
+        sessionStorage.removeItem('from')
+      }
+
       bus.$off('householdForm_data_edit');
       bus.$off('householdForm_data_create');
 
@@ -429,6 +433,7 @@
           }
         })
       })
+
     }
   }
 </script>

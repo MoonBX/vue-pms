@@ -6,11 +6,11 @@
           <v-form-item label="投诉人" class="m-b-sm">
             <v-input v-model="filterList.proposerName" placeholder="请输入投诉人姓名" style="width: 240px;"></v-input>
           </v-form-item>
-          <v-form-item label="联系方式" class="m-b-sm">
-            <v-input v-model="filterList.proposerMobile" placeholder="请输入联系方式" style="width: 240px;"></v-input>
-          </v-form-item>
           <v-form-item label="投诉时间" class="m-b-sm">
             <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
+          </v-form-item>
+          <v-form-item label="联系方式" class="m-b-sm">
+            <v-input v-model="filterList.proposerMobile" placeholder="请输入联系方式" style="width: 240px;"></v-input>
           </v-form-item>
           <v-form-item label="处理状态" class="m-b-sm">
             <v-select v-model="filterList.status" style="width: 120px;" :data="statusOption" ></v-select>
@@ -25,8 +25,7 @@
       </v-more-panel>
 
     </div>
-    <div class="g-table-content m-t-sm m-b-md p-h-md">
-
+    <div class="g-table-content m-t-sm m-b-md p-h-md p-v-sm">
       <div class="ant-table ant-table-large" style="width: 100%;">
         <div class="ant-table-content">
           <div class="ant-table-body">
@@ -213,7 +212,7 @@
         if(newObj.dateTime){
           if(newObj.dateTime[0]&&newObj.dateTime[1]){
             newObj.startTime = Date.parse(new Date(newObj.dateTime[0]));
-            newObj.endTime = Date.parse(new Date(newObj.dateTime[1]));
+            newObj.endTime = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
           }
         }
 

@@ -36,8 +36,9 @@
       </v-form-item>
 
       <v-form-item label="公告时间"
-                   :label-col="labelCol" :wrapper-col="wrapperCol"
-                   prop="dateTime">
+                   :label-col="labelCol" :wrapper-col="{span: 10}"
+                   prop="dateTime"
+                   has-feedback>
         <v-date-picker placeholder="请输入公告时间"
                        v-model="model.dateTime"
                        range clearable>

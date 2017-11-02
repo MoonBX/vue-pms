@@ -11,6 +11,7 @@ import Household from '@/components/Household'
 import Common from '@/components/Common'
 import Open from '@/components/Open'
 import Remove from '@/components/Remove'
+import Hijack from '@/components/Hijack'
 
 Vue.use(Router);
 
@@ -67,6 +68,11 @@ export default new Router({
           name: '日志管理 - 防拆日志',
           component: Remove
         },
+        {
+          path: 'hijack',
+          name: '日志管理 - 劫持报警日志',
+          component: Hijack
+        }
       ]
     },
     {

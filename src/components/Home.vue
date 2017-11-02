@@ -45,19 +45,19 @@
               <div class="home-title">常用功能</div>
             </div>
             <ul class="func-list clearfix">
-              <li>
+              <li @click="skipPage('household', '1')">
                 <div class="icon icon-user"></div>
-                <div class="name">添加住户</div>
+                <div class="name" >添加住户</div>
               </li>
-              <li>
+              <li @click="skipPage('household')">
                 <div class="icon icon-admin"></div>
                 <div class="name">住户管理</div>
               </li>
-              <li>
+              <li @click="skipPage('common', '1')">
                 <div class="icon icon-card"></div>
                 <div class="name">添加公卡</div>
               </li>
-              <li>
+              <li @click="skipPage('announce', '1')">
                 <div class="icon icon-adver"></div>
                 <div class="name">发布公告</div>
               </li>
@@ -186,11 +186,15 @@
         </div>
       </div>
     </div>
+
   </div>
 </template>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
   import HomeDetails from '@/components/HomeDetails'
+  import HouseholdCreate from '@/components/HouseholdCreate'
+
+  import {bus} from '../util/bus'
 
   export default{
     name: 'home',
@@ -205,11 +209,13 @@
         statisticsList: {},
         dealState: {success: false, fail: false},
         customTextVisible: false,
-        singleComplaint: {}
+        singleComplaint: {},
+        modalVisible: {household: false}
       }
     },
     components: {
-      HomeDetails
+      HomeDetails,
+      HouseholdCreate
     },
     methods: {
       showTotal(total){
@@ -227,10 +233,14 @@
         this.singleComplaint = item;
         this.customTextVisible = true;
       },
-
+      skipPage(path, value){
+        if(value){
+          sessionStorage.setItem('from', value);
+        }
+        this.$router.push({path: '/wk/' + path});
+      },
       customTextOk () {
         this.customTextVisible = false;
-//        this.$refs.homeDetailsRef.show();
       },
       handleCancel () {
         this.customTextVisible = false;

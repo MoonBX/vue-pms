@@ -12,14 +12,15 @@
           <v-form-item label="开门类型" class="m-b-sm">
             <v-select v-model="filterList.type" style="width: 150px;" :data="typeOptions"></v-select>
           </v-form-item>
+          <v-form-item label="时间范围" class="m-b-sm">
+            <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
+          </v-form-item>
           <v-form-item label="位置信息" class="m-b-sm">
             <v-select v-model="filterList.partitionId" :allowClear="false" style="width: 150px;" :data="partitionOptions" @change="changeBlock"></v-select>
             <v-select v-model="filterList.blockId" :allowClear="false" style="width: 120px;" :data="blockOptions" @change="changeUnit"></v-select>
             <v-select v-model="filterList.unitId" :allowClear="false" style="width: 120px;" :data="unitOptions"></v-select>
           </v-form-item>
-          <v-form-item label="时间范围" class="m-b-sm">
-            <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
-          </v-form-item>
+
         </v-form>
         <v-button slot="control" type="primary" html-type="button" icon="search" style="margin-right:10px" @click="filterTable">
           查询
@@ -29,7 +30,7 @@
         </v-button>
       </v-more-panel>
     </div>
-    <div class="g-table-content m-t-sm m-b-md p-h-md">
+    <div class="g-table-content m-t-sm m-b-md p-h-md p-v-sm">
       <div class="ant-table ant-table-large" style="width: 100%;">
         <div class="ant-table-content">
           <div class="ant-table-body">
@@ -314,7 +315,7 @@
         if(newObj.dateTime){
           if(newObj.dateTime[0]&&newObj.dateTime[1]){
             newObj.st = Date.parse(new Date(newObj.dateTime[0]));
-            newObj.et = Date.parse(new Date(newObj.dateTime[1]));
+            newObj.et = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
           }
         }
         this._getIntercom(1, newObj)

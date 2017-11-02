@@ -81,7 +81,7 @@
 
   .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
     font-size: 13px !important;
-    padding: 16px 8px !important;
+    padding: 14px 8px !important;
     word-break: break-all !important;
     white-space: normal !important;
   }
@@ -173,7 +173,7 @@
   }
   .ant-notification-notice-with-icon .ant-notification-notice-description {
     margin-left: 36px !important;
-    font-size: 12px;
+    font-size: 12px !important;
   }
 
   form .has-feedback > .ant-select .ant-select-arrow, form .has-feedback > .ant-select .ant-select-selection__clear, form .has-feedback :not(.ant-input-group-addon) > .ant-select .ant-select-arrow, form .has-feedback :not(.ant-input-group-addon) > .ant-select .ant-select-selection__clear {
@@ -181,13 +181,14 @@
   }
 
   .ant-more-panel {
-    background-color: #fff;
     font-size: 12px;
-    position: relative;
-    padding: 25px 15px;
-    display: flex;
-    border: none;
-    border-bottom: 1px solid #e9e9e9;
+    padding: 30px 15px !important;
+    border: none !important;
+    border-bottom: 1px solid #e9e9e9 !important;
+  }
+
+  form .has-feedback .ant-calendar-picker-icon, form .has-feedback .ant-calendar-picker-clear {
+    right: 8px !important;
   }
 
 </style>

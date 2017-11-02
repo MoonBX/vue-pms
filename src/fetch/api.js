@@ -4,6 +4,7 @@
 import axios from 'axios';
 
 axios.defaults.baseURL = 'http://114.55.143.170:8082';
+// axios.defaults.baseURL = 'http://192.168.23.241:8082';
 
 axios.interceptors.request.use(function (config) {    // 这里的config包含每次请求的内容
   if (localStorage.vueToken) {
@@ -173,6 +174,15 @@ export default {
   },
   getAlarmInfo(pageNo, limit, obj){
     return get('/device/alarmInfo/log/list/' + pageNo + '/' + limit, obj);
+  },
+  getHijack(pageNo, limit, obj){
+    return get('/lock/alarm/list/' + pageNo + '/' + limit, obj);
+  },
+  getSingleHijack(id){
+    return get('/lock/alarm/query/' + id);
+  },
+  handleHijack(obj){
+    return post('/lock/alarm/handle', obj);
   },
   // 获取位置信息
   getPartitions(){

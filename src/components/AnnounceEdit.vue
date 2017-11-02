@@ -3,8 +3,7 @@
     <v-form direction="horizontal"
             :model="model"
             :rules="rules"
-            ref="announceEditForm"
-            style="width: 65%; float: left;">
+            ref="announceEditForm">
 
       <v-form-item label="公告标题"
                    :label-col="labelCol" :wrapper-col="wrapperCol"
@@ -15,16 +14,16 @@
         </v-input>
       </v-form-item>
 
-      <v-form-item label="公告范围"
-                   :label-col="labelCol" :wrapper-col="wrapperCol"
-                   prop="range"
-                   has-feedback>
-        <v-input placeholder="请在右侧选择"
-                 v-model="model.range"
-                 value="ds"
-                 disabled>
-        </v-input>
-      </v-form-item>
+      <!--<v-form-item label="公告范围"-->
+                   <!--:label-col="labelCol" :wrapper-col="wrapperCol"-->
+                   <!--prop="range"-->
+                   <!--has-feedback>-->
+        <!--<v-input placeholder="请在右侧选择"-->
+                 <!--v-model="model.range"-->
+                 <!--value="ds"-->
+                 <!--disabled>-->
+        <!--</v-input>-->
+      <!--</v-form-item>-->
 
       <v-form-item label="公告内容"
                    :label-col="labelCol" :wrapper-col="wrapperCol"
@@ -38,27 +37,30 @@
       </v-form-item>
 
       <v-form-item label="公告时间"
-                   :label-col="labelCol" :wrapper-col="wrapperCol"
-                   prop="dateTime">
+                   :label-col="labelCol" :wrapper-col="{span: 10}"
+                   prop="dateTime"
+                   has-feedback>
         <v-date-picker placeholder="请输入公告时间"
                        v-model="model.dateTime"
                        range clearable>
         </v-date-picker>
       </v-form-item>
     </v-form>
-    <div class="pull-left b-l" style="width: 35%;min-height: 300px;height: auto;">
-      <v-tree :data="treeData"
-              checkable multiple
-              @check="onCheck"
-              ref="rangeTree">
-      </v-tree>
-    </div>
+    <!--<div class="pull-left b-l" style="width: 35%;min-height: 300px;height: auto;">-->
+      <!--<v-tree :data="treeData"-->
+              <!--checkable multiple-->
+              <!--@check="onCheck"-->
+              <!--ref="rangeTree">-->
+      <!--</v-tree>-->
+    <!--</div>-->
   </div>
 </template>
 <style lang="scss" scoped>
 </style>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
+  import { bus } from '../util/bus.js'
+
   export default {
     data() {
       var validatePass2 = (rule, value, callback) => {
@@ -78,7 +80,7 @@
           range: "",
           effectiveEndTime: "",
           effectiveStartTime: "",
-          dateTime: ""
+          dateTime: null
         },
         rules: {
           title: [{
@@ -106,15 +108,31 @@
     },
     props: ['id'],
     methods: {
-      editAnnounceSave(){
-
-      },
       onCheck(val){
         if(this.$refs.rangeTree.getCheckedNodes().length){
           this.model.range = "已选择";
         }else{
           this.model.range='请在右侧选择'
         }
+      },
+      washData(){
+        this.$refs.announceEditForm.validate((valid) => {
+          if (valid) {
+            var newObj = {
+              id: this.id,
+              title: this.model.title,
+              content: this.model.content,
+              fenceIds : this.model.fenceIds.substring(0,this.model.fenceIds.length-1),
+              unitIds : this.model.unitIds.substring(0,this.model.unitIds.length-1),
+              effectiveStartTime : Date.parse(new Date(this.model.dateTime[0])),
+              effectiveEndTime : Date.parse(new Date(this.model.dateTime[1])) + 24 * 60 * 60 * 1000 - 1000
+            }
+            bus.$emit('AnnounceForm_data_edit', newObj);
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        })
       },
       getData(){
         var fenceIdsArr = [], unitIdsArr = [];
@@ -123,7 +141,7 @@
             console.log(res);
             if(res.success){
               this.model = res.data;
-              this.dateTime = [this.model.effectiveStartTime, this.model.effectiveEndTime]
+              this.model.dateTime = [this.model.effectiveStartTime, this.model.effectiveEndTime];
               fenceIdsArr = this.model.fenceIds.split(',');
               unitIdsArr = this.model.unitIds.split(',');
               this.fuArr = fenceIdsArr.concat(unitIdsArr);
@@ -194,7 +212,6 @@
         }
       }
     },
-
     created () {
       this.model.range = "已选择";
       this.getData();

@@ -1,5 +1,6 @@
 <template>
   <div class="announce position-right">
+
     <div class="g-table-banner">
       <v-more-panel class="p-v-lg p-h-md">
         <v-form slot="form">
@@ -120,7 +121,7 @@
 
       <v-modal title="编辑公告"
                :visible="modalVisible.edit"
-               :width="700"
+               :width="500"
                @cancel="handleCancel('edit')">
         <announce-edit :id="idParam" ref="announceEditRef"></announce-edit>
         <div slot="footer">
@@ -241,7 +242,7 @@
         this.$refs.announceCreateRef.cleanData();
       },
       editAnnounce(){
-
+        this.$refs.announceEditRef.washData();
       },
       deleteAnnounce(id){
         api.deleteAnnounce(id)
@@ -299,7 +300,7 @@
         if(newObj.dateTime){
           if(newObj.dateTime[0]&&newObj.dateTime[1]){
             newObj.st = Date.parse(new Date(newObj.dateTime[0]));
-            newObj.et = Date.parse(new Date(newObj.dateTime[1]));
+            newObj.et = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
           }
         }
         this._getAnnounce(1, newObj)
@@ -318,6 +319,11 @@
     created(){
       this._getAnnounce(1);
 
+      if(sessionStorage.from == '1'){
+        this.showModal('create');
+        sessionStorage.removeItem('from')
+      }
+
       bus.$off('announceForm_data_create');
       bus.$on('announceForm_data_create', (data) => {
         console.log(data);
@@ -331,6 +337,30 @@
               });
               this.handleCancel('create');
               this._getAnnounce(1);
+            }else{
+              this.$notification.error({
+                message: res.message,
+                duration: 2
+              });
+            }
+          })
+      })
+
+
+
+      bus.$off('AnnounceForm_data_edit');
+      bus.$on('AnnounceForm_data_edit', (data) => {
+        console.log(data);
+        api.editAnnounceSave(data)
+          .then(res => {
+            console.log(res);
+            if(res.success){
+              this.$notification.success({
+                message: '编辑成功！',
+                duration: 2
+              });
+              this.handleCancel('edit');
+              this.loadPage(1);
             }else{
               this.$notification.error({
                 message: res.message,

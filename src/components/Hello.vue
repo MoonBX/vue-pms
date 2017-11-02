@@ -1,7 +1,24 @@
 <template>
   <div class="hello">
+    <div class="g-modal">
+      <v-modal title="劫持报警信息"
+               :visible="modalVisible.create"
+               :width="400"
+               :maskClosable="false"
+               @cancel="handleCancel('create')">
+        <jcbj ref="jcbjRef" :item="jcObj"></jcbj>
+        <div slot="footer">
+          <v-button key="cancel"
+                    type="primary"
+                    @click="handleCancel('create')">
+            确 定
+          </v-button>
+        </div>
+      </v-modal>
+    </div>
+
     <v-layout>
-      <v-header>
+      <v-header class="box-shadow">
         {{title}}
         <v-dropdown :data="dropdown" trigger="click" class="pull-right" @item-click="dropdownClick" position="fixed">
           <a href="javascript:void(0)" class="ant-dropdown-link ant-dropdown-trigger">
@@ -39,6 +56,7 @@
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
   import { bus } from '../util/bus.js'
+  import jcbj from '@/components/jcbj'
 
   export default {
     name: 'hello',
@@ -51,8 +69,14 @@
         dropdown: [
           {content: '退出登录'}
         ],
-        socket: null
+        socket: null,
+        modalVisible: {create: false, edit: false, detail: false},
+        jcObj: {},
+        jcObj2: {}
       }
+    },
+    components: {
+      jcbj
     },
     methods: {
       fetchTitle(){
@@ -62,6 +86,13 @@
         if(data.content == '退出登录'){
           this.logout();
         }
+      },
+      showModal(value, param){
+        this.jcObj = param;
+        this.modalVisible[value] = true;
+      },
+      handleCancel (value) {
+        this.modalVisible[value] = false;
       },
       logout(){
         api.Logout()
@@ -77,6 +108,9 @@
           .catch(error => {
             console.log(error)
           })
+      },
+      jcbjHandle(){
+        this.modalVisible.create = false;
       },
       send(message, callback) {
         var that = this;
@@ -97,8 +131,20 @@
             this.waitForConnection(callback, interval);
           }, interval);
         }
+      },
+      add0(m){return m<10?'0'+m:m },
+      format(shijianchuo) {
+        console.log(shijianchuo)
+        var time = new Date(parseInt(shijianchuo));
+        console.log(time)
+        var y = time.getFullYear();
+        var m = time.getMonth()+1;
+        var d = time.getDate();
+        var h = time.getHours();
+        var mm = time.getMinutes();
+        var s = time.getSeconds();
+        return y+'-'+this.add0(m)+'-'+this.add0(d)+' '+this.add0(h)+':'+this.add0(mm)+':'+this.add0(s);
       }
-
   },
     created(){
       this.title = this.$route.name;
@@ -117,7 +163,8 @@
         },
         {name: '日志管理', icon: 'file-text-o', children: [
           {name: "开门日志", href: 'open'},
-          {name: "防拆日志", href: 'remove'}]
+          {name: "防拆日志", href: 'remove'},
+          {name: "劫持报警日志", href: 'hijack'}]
         }
       ];
       for (let i = 0; i < data.length; i++) {
@@ -137,6 +184,7 @@
       this.themeMenuData = data;
 
       this.socket = new WebSocket('ws://192.168.23.241:8081/websocket');
+      console.log(this.socket )
       this.send(localStorage.vueCommunityId);
 
       this.socket.onopen = function() {
@@ -145,11 +193,25 @@
 
       this.socket.onmessage = (evt) => {
         console.log(evt)
-        this.$notification.error({
-          message: '劫持报警',
-          description: "10月11日 15：00东区 1-2-0101住户智能门锁发出劫持报警事件，请尽快前往处理！",
-          duration: 0
-        });
+        console.log(evt.data);
+        if(evt.data){
+          let arr = evt.data.split('/');
+
+          let obj = {
+            id: arr[0],
+            address: arr[2]
+          };
+          obj.time = this.format(arr[1]);
+          this.$notification.error({
+            message: '劫持报警',
+            description: obj.time + ': ' + obj.address + "住户智能门锁发出劫持报警事件，请尽快前往处理！",
+            duration: 0,
+            onClose: ()=>{
+              this.showModal('create', obj)
+            }
+          });
+        }
+
       };
 
       this.socket.onclose = function(e) {
@@ -159,8 +221,48 @@
     },
     watch: {
       $route(){
-        this.fetchTitle()
+        this.fetchTitle();
+        var routePath = this.$route.path.split('/')[2];
+        var data = [
+          {name: '首页',  icon: 'home', href: 'home'},
+          { name: '物业中心', icon: 'building', children: [
+            {name: "公告管理", href: 'announce'},
+            {name: "投诉", href: 'complain'},
+            {name: "维修", href: 'repair'}]
+          },
+          {name: '设备管理', icon: 'cog', href: 'device'},
+          {name: '门禁管理', icon: 'unlock-alt', children: [
+            {name: "住户管理", href: 'household'},
+            {name: "公卡管理", href: 'common'}]
+          },
+          {name: '日志管理', icon: 'file-text-o', children: [
+            {name: "开门日志", href: 'open'},
+            {name: "防拆日志", href: 'remove'},
+            {name: "劫持报警日志", href: 'hijack'}]
+          }
+        ];
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].href == routePath) {
+            data[i].selected = true;
+          } else {
+            if (data[i].children) {
+              for (let j = 0; j < data[i].children.length; j++) {
+                if (data[i].children[j].href == routePath) {
+                  data[i].children[j].selected = true;
+                  data[i].expand = true;
+                }
+              }
+            }
+          }
+        }
+        this.themeMenuData = data;
       }
+    },
+    beforeRouteLeave (to, from, next) {
+      next(vm => {
+        // 通过 `vm` 访问组件实例
+        console.log(vm.$data.socket.close())
+      })
     }
   }
 </script>
@@ -168,6 +270,10 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
   .hello {
+    .box-shadow {
+      -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
     height: 100%;
     margin-bottom: 20px;
     .ant-layout {
