@@ -191,4 +191,7 @@
     right: 8px !important;
   }
 
+  .ant-calendar-top{
+    display: none !important;
+  }
 </style>

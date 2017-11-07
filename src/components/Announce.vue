@@ -214,7 +214,8 @@
         announceList: [],
         modalVisible: {create: false, edit: false, detail: false},
         idParam: "",
-        itemParam: {}
+        itemParam: {},
+        listLen: ""
       }
     },
     components: {
@@ -253,7 +254,13 @@
                 message: '删除成功！',
                 duration: 2
               });
-              this.loadPage(this.$refs.pagination.value)
+              this.listLen -= 1;
+              if(this.listLen!=0){
+                this.loadPage(this.$refs.pagination.value)
+              }else{
+                this.loadPage(this.$refs.pagination.value-1)
+                this.$refs.pagination.current = this.$refs.pagination.value-1;
+              }
             }else{
               this.$notification.error({
                 message: res.message,
@@ -291,6 +298,8 @@
                 }
                 this.page.total = res.data.total;
                 this.announceList = res.data.list;
+                this.listLen = res.data.list.length;
+
               }
             }
           })
@@ -318,6 +327,8 @@
     },
     created(){
       this._getAnnounce(1);
+
+
 
       if(sessionStorage.from == '1'){
         this.showModal('create');

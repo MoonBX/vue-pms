@@ -87,7 +87,10 @@
 
         <v-col span="18" v-if="dateShow && model.effectiveType != 0">
           <v-form-item :label-col="labelCol"
-                       :wrapper-col="wrapperCol">
+                       :wrapper-col="wrapperCol"
+                       label="选择时间"
+                       prop="effectiveEndTime"
+                       has-feedback>
             <v-date-picker v-model="model.effectiveStartTime"
                            style="width: 150px;"
                            placeholder="今天"
@@ -104,16 +107,22 @@
       </v-row>
     </v-form>
 
-    <div class="p-v-md clear b-t" v-if="model.isHasEntrance == 1">
+    <div class="p-v-md clear b-t" v-if="model.isHasEntrance == 1 && isEntranceExist">
       <div class="left pull-left" style="width: 70%;">
         <v-row>
           <v-form-item v-if="cardNoList.cardNo.length"
                        :label-col="{span: 4}" :wrapper-col="{span:19}"
                        v-for="(item, index) in cardNoList.cardNo"
                        :label="'卡号' + (index+1)">
-            <v-input v-model="item.value" style="width:70%;margin-right:5px"></v-input>
-            <v-button v-if="cardNoList.cardNo.length == 1" @click.prevent="resetCard(item)">清空</v-button>
-            <v-button v-if="cardNoList.cardNo.length>1" @click.prevent="removeCard(item)">删除</v-button>
+            <v-input v-model="item.value" disabled style="width:70%;margin-right:5px"></v-input>
+            <v-button v-if="cardNoList.cardNo.length == 1"
+                      @click.prevent="resetCard(item)">
+              清空
+            </v-button>
+            <v-button v-if="cardNoList.cardNo.length > 1"
+                      @click.prevent="removeCard(item)">
+               删除
+            </v-button>
           </v-form-item>
         </v-row>
       </div>
@@ -191,6 +200,10 @@
             pattern: '(^[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)|(^[1-9]\\d{5}\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{2}$)',
             message: '请输入正确的身份证号码'
           }],
+          effectiveEndTime: [{
+            required: true,
+            message: '请选择结束时间'
+          }]
         },
         labelCol: { span: 3 },
         wrapperCol: { span: 21 },
@@ -257,10 +270,17 @@
               effectiveEndTime: this.model.effectiveEndTime,
               cardTypeNames: this.model.cardTypeNames
             };
-            if(newObj.effectiveEndTime){
-              newObj.effectiveStartTime = Date.parse(new Date(newObj.effectiveStartTime));
-              newObj.effectiveEndTime = Date.parse(new Date(newObj.effectiveEndTime));
+            if(newObj.effectiveType == 0){
+                newObj.effectiveStartTime = 0;
+                newObj.effectiveEndTime = 0;
+            }else{
+              if(newObj.effectiveEndTime){
+                newObj.effectiveStartTime = Date.parse(new Date());
+                newObj.effectiveEndTime = Date.parse(new Date(newObj.effectiveEndTime));
+              }
             }
+
+            console.log(newObj)
             bus.$emit('householdForm_data_edit', newObj);
           } else {
             console.log('error submit!!');
@@ -272,15 +292,12 @@
       userChangeEffective(val){
         if(val == 0){
           this.disabled = true;
-          this.model.effectiveType = 0;
           this.dateShow = false;
         }else if(val == 1){
           this.disabled = false;
-          this.model.effectiveType = 0;
           this.dateShow = true;
         }else{
           this.disabled = true;
-          this.model.effectiveType = 1;
           this.dateShow = true;
         }
       },
@@ -297,6 +314,7 @@
       this.model = this.item;
       this.userChangeEffective(this.model.userType);
       console.log(this.model);
+
 
       this.checkEntranceExist();
       if(this.model.cardTypeName!=null){

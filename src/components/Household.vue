@@ -65,7 +65,7 @@
                   </thead>
                   <tbody class="ant-table-tbody">
                   <tr v-for="item in householdList">
-                    <td>{{item.partitionName + '-' + item.blockName + '-' + item.unitName + '-' + item.roomNoId}}</td>
+                    <td>{{item.partitionName + '-' + item.blockName + '-' + item.unitName + '-' + item.roomNo}}</td>
                     <td>{{item.name || '-'}}</td>
                     <td>{{item.mobile || '-'}}</td>
                     <td>{{item.cardTypeName || '-'}}</td>
@@ -225,7 +225,8 @@
           detail: false
         },
         idParam: "",
-        itemParam: {}
+        itemParam: {},
+        listLen: ""
       }
     },
     components: {
@@ -290,6 +291,7 @@
                 }
                 this.page.total = res.data.total;
                 this.householdList = res.data.list;
+                this.listLen = res.data.list.length;
               }
             }
           })
@@ -301,7 +303,13 @@
               message: '删除成功！',
               duration: 2
             });
-            this.loadPage(this.$refs.pagination.value)
+            this.listLen -= 1;
+            if(this.listLen!=0){
+              this.loadPage(this.$refs.pagination.value)
+            }else{
+              this.loadPage(this.$refs.pagination.value-1)
+              this.$refs.pagination.current = this.$refs.pagination.value-1;
+            }
           }else{
             this.$notification.error({
               message: res.message,
@@ -378,6 +386,7 @@
     },
     created() {
       this._getHousehold(1);
+
       api.getPartitions().then(res=>{
         for(let i=0;i<res.data.length;i++){
           res.data[i].label = res.data[i].name;

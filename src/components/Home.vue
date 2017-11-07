@@ -151,13 +151,13 @@
                 </div>
               </div>
 
-              <v-pagination class="m-t-md" v-model="value"
-                            :pageSize="6"
-                            :showTotal="showTotal"
-                            @change="loadPage"
-                            show-quick-jumper
-                            :total="pageTotal">
-              </v-pagination>
+              <!--<v-pagination class="m-t-md" v-model="value"-->
+                            <!--:pageSize="6"-->
+                            <!--:showTotal="showTotal"-->
+                            <!--@change="loadPage"-->
+                            <!--show-quick-jumper-->
+                            <!--:total="pageTotal">-->
+              <!--</v-pagination>-->
             </div>
           </div>
         </div>
@@ -389,7 +389,7 @@
 
       .left {
         width: 67%;
-        height: 510px;
+        height: 694px;
         margin-right: 2%;
         display: flex;
         flex-direction: column;

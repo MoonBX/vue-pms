@@ -2,7 +2,7 @@
   <div class="login">
     <div style="min-width: 1200px; position: relative;height: 100%;">
       <div class="logo-text">
-        <h3 style="margin-top: 10px; color: #fff; font-weight:700">Weker物业管理平台</h3>
+        <h2 style="margin-top: 10px; color: #fff; font-weight:700">Weker物业管理平台</h2>
       </div>
 
       <div class="foot-bg">
@@ -21,20 +21,47 @@
         <div class="cloud3"></div>
       </div>
       <div class="tree"></div>
+
       <div class="login-box">
         <div class="login-banner">
           <img src="http://weker.oss-cn-shanghai.aliyuncs.com/51weker_com/logo3.png" width="70px" height="50px">
         </div>
+
         <form class="login-content">
+
           <v-input-group class="p-v-sm p-h-md">
-            <v-input placeholder="请输入用户名" v-model="loginObj.userName" size="large" class="m-b-sm"></v-input>
-            <v-input placeholder="请输入密码" v-model="loginObj.pwd" size="large" class="m-b-md"></v-input>
+            <div v-if="error" style="margin-left: 2px; font-size: 11px;" class="text-error">{{errorTip}}</div>
+            <v-input placeholder="请输入用户名"
+                     v-model="loginObj.userName"
+                     size="large"
+                     class="m-b-sm">
+            </v-input>
+            <v-input placeholder="请输入密码"
+                     type="password"
+                     v-model="loginObj.pwd"
+                     size="large"
+                     class="m-b-md">
+            </v-input>
             <div class="form-group text-center m-t-lg">
-              <v-button type="primary" class="p-h-md" :loading="loading" @click="login">{{ loading ? "登录中" : "登录" }}</v-button>
+              <v-button v-if="!error"
+                        type="primary"
+                        class="p-h-md"
+                        :loading="loading"
+                        @click="login">
+                {{ loading ? "登录中" : "登录" }}
+              </v-button>
+              <v-button v-if="error"
+                        type="error"
+                        class="p-h-md"
+                        :loading="loading"
+                        @click="login">
+                登录失败
+              </v-button>
             </div>
           </v-input-group>
         </form>
       </div>
+
     </div>
   </div>
 </template>
@@ -303,7 +330,9 @@
     data(){
       return{
         loading: false,
-        loginObj: {userName: "", pwd: ""}
+        loginObj: {userName: "", pwd: ""},
+        error: false,
+        errorTip: ""
       }
     },
     methods: {
@@ -318,7 +347,11 @@
               localStorage.vueCommunityId = res.data.community.id;
 
               this.$router.push('/wk/home');
+              this.error = false;
 
+            }else{
+              this.errorTip = res.message;
+              this.error = true;
             }
           })
         .catch(error => {

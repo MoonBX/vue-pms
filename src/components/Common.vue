@@ -175,7 +175,8 @@
           create: false,
           detail: false
         },
-        itemParam: ""
+        itemParam: "",
+        listLen: ""
       }
     },
     components: {
@@ -208,8 +209,13 @@
               message: '删除成功！',
               duration: 2
             });
-            console.log(this.$refs.pagination.value)
-            this.loadPage(this.$refs.pagination.value)
+            this.listLen -= 1;
+            if(this.listLen!=0){
+              this.loadPage(this.$refs.pagination.value)
+            }else{
+              this.loadPage(this.$refs.pagination.value-1)
+              this.$refs.pagination.current = this.$refs.pagination.value-1;
+            }
           }else{
             this.$notification.error({
               message: res.message,
@@ -271,6 +277,7 @@
                 }
                 this.page.total = res.data.total;
                 this.publicCardList = res.data.list;
+                this.listLen = res.data.list.length;
               }
             }
           })

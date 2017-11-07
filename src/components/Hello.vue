@@ -30,7 +30,7 @@
       <v-layout>
         <v-sider style="flex: 0 0 230;width: 230px;position:fixed; height: 100%">
           <div class="sdn-brand">
-            <img class="brand-img" src="../assets/logo.png" width="27%">
+            <img class="brand-img" src="http://weker.oss-cn-shanghai.aliyuncs.com/51weker_com/logo3.png" width="27%">
             <div class="brand-text text-lt">Weker物业管理平台</div>
           </div>
           <v-menu style="width:230px;background-color:#0c1729" mode="inline" :data="themeMenuData" :theme="theme"
@@ -300,6 +300,7 @@
           .brand-text {
             color: #ffffff;
             font-weight: 700;
+            font-size: 15px;
           }
         }
       }

@@ -47,6 +47,7 @@
 
     </v-form>
     <div class="pull-left b-l" style="width: 35%;min-height: 300px;">
+      <div v-if="!treeData.length">暂无数据</div>
       <v-tree :data="treeData"
               checkable multiple
               @check="onCheck"
@@ -56,7 +57,6 @@
   </div>
 </template>
 <style lang="scss" scoped>
-
 </style>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
