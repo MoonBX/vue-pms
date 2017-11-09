@@ -4,28 +4,58 @@
       <v-more-panel class="p-v-lg p-h-md">
         <v-form slot="form">
           <v-form-item label="人员姓名" class="m-b-sm">
-            <v-input v-model="filterList.userName" placeholder="请输入人员姓名" style="width: 180px;"></v-input>
+            <v-input v-model="filterList.userName"
+                     placeholder="请输入人员姓名"
+                     style="width: 180px;">
+            </v-input>
           </v-form-item>
           <v-form-item label="设备类型" class="m-b-sm">
-            <v-select v-model="filterList.deviceType" style="width: 150px;" :data="deviceTypeOptions"></v-select>
+            <v-select v-model="filterList.deviceType"
+                      style="width: 150px;"
+                      :data="deviceTypeOptions">
+            </v-select>
           </v-form-item>
           <v-form-item label="开门类型" class="m-b-sm">
-            <v-select v-model="filterList.type" style="width: 150px;" :data="typeOptions"></v-select>
+            <v-select v-model="filterList.type"
+                      style="width: 150px;"
+                      :data="typeOptions">
+            </v-select>
           </v-form-item>
           <v-form-item label="时间范围" class="m-b-sm">
-            <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
+            <v-date-picker v-model="filterList.dateTime"
+                           range
+                           clearable>
+            </v-date-picker>
           </v-form-item>
           <v-form-item label="位置信息" class="m-b-sm">
-            <v-select v-model="filterList.partitionId" :allowClear="false" style="width: 150px;" :data="partitionOptions" @change="changeBlock"></v-select>
-            <v-select v-model="filterList.blockId" :allowClear="false" style="width: 120px;" :data="blockOptions" @change="changeUnit"></v-select>
-            <v-select v-model="filterList.unitId" :allowClear="false" style="width: 120px;" :data="unitOptions"></v-select>
+            <v-select v-model="filterList.partitionId"
+                      :allowClear="false" style="width: 150px;"
+                      :data="partitionOptions"
+                      @change="changeBlock">
+            </v-select>
+            <v-select v-model="filterList.blockId"
+                      :allowClear="false" style="width: 120px;"
+                      :data="blockOptions"
+                      @change="changeUnit">
+            </v-select>
+            <v-select v-model="filterList.unitId"
+                      :allowClear="false" style="width: 120px;"
+                      :data="unitOptions">
+            </v-select>
           </v-form-item>
 
         </v-form>
-        <v-button slot="control" type="primary" html-type="button" icon="search" style="margin-right:10px" @click="filterTable">
+        <v-button slot="control"
+                  type="primary"
+                  html-type="button"
+                  icon="search"
+                  style="margin-right:10px"
+                  @click="filterTable">
           查询
         </v-button>
-        <v-button slot="control" type="ghost" @click="resetTable">
+        <v-button slot="control"
+                  type="ghost"
+                  @click="resetTable">
           重置
         </v-button>
       </v-more-panel>
@@ -219,6 +249,32 @@
       handleCancel (value) {
         this.modalVisible[value] = false;
       },
+      filterTable(){
+        var newObj = checkFilter(this.filterList);
+        if(newObj.dateTime){
+          if(newObj.dateTime[0]&&newObj.dateTime[1]){
+            newObj.st = Date.parse(new Date(newObj.dateTime[0]));
+            newObj.et = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
+          }
+        }
+        this._getIntercom(1, newObj)
+      },
+      resetTable(){
+        this.filterList = {
+          userName:"",
+          deviceType:"",
+          dateTime: "",
+          type: "",
+          partitionId: "",
+          blockId: "",
+          unitId: "",
+          et: null,
+          st: null
+        };
+        this.blockOptions = [];
+        this.unitOptions = [];
+        this._getIntercom(1);
+      },
       loadPage(i){
         this._getIntercom(i, this.filterList)
       },
@@ -310,32 +366,7 @@
             this.unitOptions = res.data;
           })
       },
-      filterTable(){
-        var newObj = checkFilter(this.filterList);
-        if(newObj.dateTime){
-          if(newObj.dateTime[0]&&newObj.dateTime[1]){
-            newObj.st = Date.parse(new Date(newObj.dateTime[0]));
-            newObj.et = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
-          }
-        }
-        this._getIntercom(1, newObj)
-      },
-      resetTable(){
-        this.filterList = {
-          userName:"",
-          deviceType:"",
-          dateTime: "",
-          type: "",
-          partitionId: "",
-          blockId: "",
-          unitId: "",
-          et: null,
-          st: null
-        };
-        this.blockOptions = [];
-        this.unitOptions = [];
-        this._getIntercom(1);
-      },
+
     },
     created() {
       this._getIntercom(1);

@@ -4,13 +4,21 @@
       <v-more-panel class="p-v-lg p-h-md">
         <v-form slot="form">
           <v-form-item label="时间范围" class="m-b-sm">
-            <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
+            <v-date-picker v-model="filterList.dateTime"
+                           range clearable>
+            </v-date-picker>
           </v-form-item>
         </v-form>
-        <v-button slot="control" type="primary" html-type="button" icon="search" style="margin-right:10px" @click="filterTable">
+        <v-button slot="control"
+                  type="primary"
+                  html-type="button"
+                  icon="search" style="margin-right:10px"
+                  @click="filterTable">
           查询
         </v-button>
-        <v-button slot="control" type="ghost" @click="resetTable">
+        <v-button slot="control"
+                  type="ghost"
+                  @click="resetTable">
           重置
         </v-button>
       </v-more-panel>
@@ -96,6 +104,25 @@
       loadPage(i){
         this._getAlarmInfo(i,this.filterList)
       },
+      filterTable(){
+        var newObj = checkFilter(this.filterList);
+        if(newObj.dateTime){
+          if(newObj.dateTime[0]&&newObj.dateTime[1]){
+            newObj.st = Date.parse(new Date(newObj.dateTime[0]));
+            newObj.et = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
+          }
+        }
+
+        this._getAlarmInfo(1, newObj)
+      },
+      resetTable(){
+        this.filterList = {
+          dateTime: "",
+          st: null,
+          et: null
+        };
+        this._getAlarmInfo(1);
+      },
       _getAlarmInfo(pageNo, params){
         api.getAlarmInfo(pageNo, 10, params)
           .then(res => {
@@ -126,25 +153,7 @@
             }
           })
       },
-      filterTable(){
-        var newObj = checkFilter(this.filterList);
-        if(newObj.dateTime){
-          if(newObj.dateTime[0]&&newObj.dateTime[1]){
-            newObj.st = Date.parse(new Date(newObj.dateTime[0]));
-            newObj.et = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
-          }
-        }
 
-        this._getAlarmInfo(1, newObj)
-      },
-      resetTable(){
-        this.filterList = {
-          dateTime: "",
-          st: null,
-          et: null
-        };
-        this._getAlarmInfo(1);
-      },
     },
     created() {
       this._getAlarmInfo(1);

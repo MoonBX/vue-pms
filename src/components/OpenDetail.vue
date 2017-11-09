@@ -26,12 +26,6 @@
         <span class="title">开门时间:</span>
         <span class="value">{{item.unlockTime | formatDate('YMDHMS')}}</span>
       </v-row>
-      <!--<v-row class="m-b-xs">-->
-        <!--<span class="title pull-left">缩略图:</span>-->
-        <!--<div class="value pull-left">-->
-          <!--<img ng-src="{{item.snapshot}}" alt="..." style="width: 300px;">-->
-        <!--</div>-->
-      <!--</v-row>-->
     </div>
   </div>
 </template>

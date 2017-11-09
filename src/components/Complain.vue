@@ -159,6 +159,28 @@
       handleCancel (value) {
         this.modalVisible[value] = false;
       },
+      filterTable(){
+        var newObj = checkFilter(this.filterList);
+        if(newObj.dateTime){
+          if(newObj.dateTime[0]&&newObj.dateTime[1]){
+            newObj.startTime = Date.parse(new Date(newObj.dateTime[0]));
+            newObj.endTime = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
+          }
+        }
+        this._getComplaint(1, newObj)
+      },
+      resetTable(){
+        this.filterList = {
+          proposerName:null,
+          proposerMobile:null,
+          dateTime: "",
+          status: null,
+          type: "0",
+          startTime: null,
+          endTime: null
+        };
+        this._getComplaint(1, {type: 0});
+      },
       loadPage(i){
         this._getComplaint(i, this.filterList)
       },
@@ -206,30 +228,7 @@
               }
             }
           })
-      },
-      filterTable(){
-        var newObj = checkFilter(this.filterList);
-        if(newObj.dateTime){
-          if(newObj.dateTime[0]&&newObj.dateTime[1]){
-            newObj.startTime = Date.parse(new Date(newObj.dateTime[0]));
-            newObj.endTime = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
-          }
-        }
-
-        this._getComplaint(1, newObj)
-      },
-      resetTable(){
-        this.filterList = {
-          proposerName:null,
-          proposerMobile:null,
-          dateTime: "",
-          status: null,
-          type: "0",
-          startTime: null,
-          endTime: null
-        };
-        this._getComplaint(1, {type: 0});
-      },
+      }
     },
     created(){
       this._getComplaint(1, {type:0});

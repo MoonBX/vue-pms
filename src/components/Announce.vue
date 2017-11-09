@@ -184,7 +184,6 @@
   import api from '../fetch/api'
   import { checkFilter } from '../util/option'
   import { bus } from '../util/bus.js'
-
   import AnnounceCreate from '@/components/AnnounceCreate'
   import AnnounceEdit from '@/components/AnnounceEdit'
   import AnnounceDetails from '@/components/AnnounceDetails'
@@ -210,9 +209,16 @@
           value: '3',
           label: '未生效'
         }],
-        page: {total: 0, value: 1},
+        page: {
+          total: 0,
+          value: 1
+        },
         announceList: [],
-        modalVisible: {create: false, edit: false, detail: false},
+        modalVisible: {
+          create: false,
+          edit: false,
+          detail: false
+        },
         idParam: "",
         itemParam: {},
         listLen: ""
@@ -235,6 +241,29 @@
           console.log(this.itemParam)
         }
         this.modalVisible[value] = true;
+      },
+      handleCancel (value) {
+        this.modalVisible[value] = false;
+      },
+      filterTable(){
+        var newObj = checkFilter(this.filterList);
+        if(newObj.dateTime){
+          if(newObj.dateTime[0]&&newObj.dateTime[1]){
+            newObj.st = Date.parse(new Date(newObj.dateTime[0]));
+            newObj.et = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
+          }
+        }
+        this._getAnnounce(1, newObj)
+      },
+      resetTable(){
+        this.filterList = {
+          title: null,
+          dateTime: "",
+          status: null,
+          et: null,
+          st: null
+        };
+        this._getAnnounce(1);
       },
       loadPage(i){
         this._getAnnounce(i, this.filterList)
@@ -269,9 +298,6 @@
             }
           })
       },
-      handleCancel (value) {
-        this.modalVisible[value] = false;
-      },
       _getAnnounce(pageNo, params){
         api.getAnnounce(pageNo, 10, params)
           .then(res => {
@@ -303,32 +329,10 @@
               }
             }
           })
-      },
-      filterTable(){
-        var newObj = checkFilter(this.filterList);
-        if(newObj.dateTime){
-          if(newObj.dateTime[0]&&newObj.dateTime[1]){
-            newObj.st = Date.parse(new Date(newObj.dateTime[0]));
-            newObj.et = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
-          }
-        }
-        this._getAnnounce(1, newObj)
-      },
-      resetTable(){
-        this.filterList = {
-          title: null,
-          dateTime: "",
-          status: null,
-          et: null,
-          st: null
-        };
-        this._getAnnounce(1);
       }
     },
     created(){
       this._getAnnounce(1);
-
-
 
       if(sessionStorage.from == '1'){
         this.showModal('create');
@@ -356,8 +360,6 @@
             }
           })
       })
-
-
 
       bus.$off('AnnounceForm_data_edit');
       bus.$on('AnnounceForm_data_edit', (data) => {

@@ -107,11 +107,11 @@
         treeData: [],
       }
     },
+//    https://zyqchat.rocket.chat/
     methods: {
       cleanData(){
         this.$refs.announceCreateForm.validate((valid) => {
           if (valid) {
-//            var newObj = this.model;
             var a = this.getTreeNode();
             var newObj = {
               title: this.model.title,
@@ -120,7 +120,7 @@
               unitIds : a.unitIds,
               effectiveStartTime : Date.parse(new Date(this.model.dateTime[0])),
               effectiveEndTime : Date.parse(new Date(this.model.dateTime[1])) + 24 * 60 * 60 * 1000 - 1000
-            }
+            };
             bus.$emit('announceForm_data_create', newObj);
           } else {
             console.log('error submit!!');
@@ -180,7 +180,6 @@
               delete originArr[i].blockDevices;
               delete originArr[i].fenceLocations;
             }
-            console.log(originArr);
             this.treeData = originArr;
           })
       }

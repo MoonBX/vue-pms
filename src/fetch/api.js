@@ -196,5 +196,9 @@ export default {
   },
   getRooms(unitId){
     return get('/community/' + unitId + '/rooms');
+  },
+//  导入文件
+  importExcel(data){
+    return post('community/resident/import', data)
   }
 }

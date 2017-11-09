@@ -4,16 +4,30 @@
       <v-more-panel class="p-v-lg p-h-md">
         <v-form slot="form">
           <v-form-item label="发生时间" class="m-b-sm">
-            <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
+            <v-date-picker v-model="filterList.dateTime"
+                           range
+                           clearable>
+            </v-date-picker>
           </v-form-item>
           <v-form-item label="处理状态" class="m-b-sm">
-            <v-select v-model="filterList.status" tags style="width: 120px;" :data="selectOptions"></v-select>
+            <v-select v-model="filterList.status"
+                      tags
+                      style="width: 120px;"
+                      :data="selectOptions">
+            </v-select>
           </v-form-item>
         </v-form>
-        <v-button slot="control" type="primary" html-type="button" icon="search" style="margin-right:10px" @click="filterTable">
+        <v-button slot="control"
+                  type="primary"
+                  html-type="button"
+                  icon="search"
+                  style="margin-right:10px"
+                  @click="filterTable">
           查询
         </v-button>
-        <v-button slot="control" type="ghost" @click="resetTable">
+        <v-button slot="control"
+                  type="ghost"
+                  @click="resetTable">
           重置
         </v-button>
       </v-more-panel>
@@ -59,11 +73,6 @@
                          @click="showModal('detail', item.id)">
                         详情
                       </a>
-                      <!--<a href="javascript:;" class="m-r-xs"-->
-
-                         <!--@click="showModal('edit', item.id)">-->
-                        <!--处理-->
-                      <!--</a>-->
                       <v-popconfirm placement="left"
                                     title="确定处理吗?"
                                     v-if="item.status == '未处理'"
@@ -116,7 +125,10 @@
           value: '1',
           label: '已处理'
         }],
-        page: {total: 0, value: 1},
+        page: {
+          total: 0,
+          value: 1
+        },
         hijackList: []
       }
     },

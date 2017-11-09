@@ -4,44 +4,90 @@
       <v-more-panel class="p-v-lg p-h-md">
         <v-form slot="form">
           <v-form-item label="住户姓名" class="m-b-sm">
-            <v-input v-model="filterList.name" placeholder="请输入住户姓名" style="width: 180px;"></v-input>
+            <v-input v-model="filterList.name"
+                     placeholder="请输入住户姓名"
+                     style="width: 180px;">
+            </v-input>
           </v-form-item>
           <v-form-item label="联系方式" class="m-b-sm">
-            <v-input v-model="filterList.mobile" placeholder="请输入联系方式" style="width: 180px;"></v-input>
+            <v-input v-model="filterList.mobile"
+                     placeholder="请输入联系方式"
+                     style="width: 180px;">
+            </v-input>
           </v-form-item>
           <v-form-item label="住户身份" class="m-b-sm">
-            <v-select v-model="filterList.userType" style="width: 150px;" :data="userTypeOptions"></v-select>
+            <v-select v-model="filterList.userType" style="width: 150px;"
+                      :data="userTypeOptions">
+            </v-select>
           </v-form-item>
           <v-form-item label="住户房号" class="m-b-sm">
-            <v-select v-model="filterList.partitionId" :allowClear="false" style="width: 150px;" :data="partitionOptions" @change="changeBlock"></v-select>
-            <v-select v-model="filterList.blockId" :allowClear="false" style="width: 120px;" :data="blockOptions" @change="changeUnit"></v-select>
-            <v-select v-model="filterList.unitId" :allowClear="false" style="width: 120px;" :data="unitOptions" @change="changeRoom"></v-select>
-            <v-select v-model="filterList.roomNoId" :allowClear="false" style="width: 120px;" :data="roomOptions"></v-select>
+            <v-select v-model="filterList.partitionId"
+                      :allowClear="false" style="width: 150px;"
+                      :data="partitionOptions"
+                      @change="changeBlock">
+            </v-select>
+            <v-select v-model="filterList.blockId"
+                      :allowClear="false" style="width: 120px;"
+                      :data="blockOptions"
+                      @change="changeUnit">
+            </v-select>
+            <v-select v-model="filterList.unitId"
+                      :allowClear="false" style="width: 120px;"
+                      :data="unitOptions"
+                      @change="changeRoom">
+            </v-select>
+            <v-select v-model="filterList.roomNoId"
+                      :allowClear="false" style="width: 120px;"
+                      :data="roomOptions">
+            </v-select>
           </v-form-item>
           <v-form-item label="住户状态" class="m-b-sm">
-            <v-select v-model="filterList.status" :allowClear="false" style="width: 150px;" :data="statusOptions"></v-select>
+            <v-select v-model="filterList.status"
+                      :allowClear="false" style="width: 150px;"
+                      :data="statusOptions">
+            </v-select>
           </v-form-item>
         </v-form>
-        <v-button slot="control" type="primary" html-type="button" icon="search" style="margin-right:10px" @click="filterTable">
+        <v-button slot="control"
+                  type="primary"
+                  html-type="button"
+                  icon="search" style="margin-right:10px"
+                  @click="filterTable">
           查询
         </v-button>
-        <v-button slot="control" type="ghost" @click="resetTable">
+        <v-button slot="control"
+                  type="ghost"
+                  @click="resetTable">
           重置
         </v-button>
       </v-more-panel>
     </div>
+
     <div class="g-table-content m-t-sm m-b-md p-h-md">
-      <div>
+      <div class="clear">
         <div class="prop-button-group pull-right m-b-sm">
           <v-button type="primary"
                     class="m-r-sm"
                     @click="showModal('create')">
             添加住户
           </v-button>
-          <v-button type="primary">
-            导入
+          <v-button class="pull-right"
+                    v-if="file.uploadFailData.length"
+                    type="danger" ghost
+                    @click="download">
+            下载导入失败住户列表
           </v-button>
+          <v-upload :name="file.name"
+                    :action="file.action"
+                    @change="onChange">
+            <v-button type="primary" class="m-r-sm">
+              导入
+            </v-button>
+          </v-upload>
+
         </div>
+      </div>
+      <div id="dvjson">
       </div>
       <div class="ant-table ant-table-large" style="width: 100%;">
         <div class="ant-table-content">
@@ -51,7 +97,6 @@
 
                 <table class="wk-table" style="table-layout:fixed;">
                   <thead class="ant-table-thead">
-
                   <tr>
                     <th>单元信息</th>
                     <th>住户姓名</th>
@@ -170,7 +215,6 @@
   import api from '../fetch/api'
   import { checkFilter } from '../util/option'
   import { bus } from '../util/bus.js'
-  import $ from 'jquery'
 
   import HouseholdCreate from '@/components/HouseholdCreate'
   import HouseholdEdit from '@/components/HouseholdEdit'
@@ -188,6 +232,11 @@
           blockId: "",
           unitId: "",
           roomNoId: ""
+        },
+        file: {
+          name: 'file',
+          action: 'http://192.168.23.241:8082/community/resident/import',
+          uploadFailData: []
         },
         selectOptions: [{
           value: '0',
@@ -317,6 +366,42 @@
             });
           }
         })
+      },
+      onChange(info) {
+        if (info.file.status !== 'uploading') {
+
+        }
+        if (info.file.status === 'done') {
+          if(info.file.response.success && info.file.response.message == ""){
+            this.$notification.success({
+              message: '上传成功',
+              duration: 2
+            });
+          }else{
+            this.file.uploadFailData = info.file.response.data;
+            this.$notification.error({
+              message: info.file.response.message,
+              duration: 2
+            });
+          }
+
+        } else if (info.file.status === 'error') {
+          this.$notification.error({
+            message: '上传失败',
+            duration: 2
+          });
+        }
+      },
+      download(){
+        $("#dvjson").excelexportjs({
+          containerid: "dvjson",
+          datatype: 'json',
+          dataset: this.file.uploadFailData,
+          columns: [
+            { headertext: "mobile", datatype: "string", datafield: "mobile", width: "100px" },
+            { headertext: "name", datatype: "string", datafield: "name", width: "100px" }
+          ]
+        });
       },
       changeBlock(val){
         api.getBlocks(val)

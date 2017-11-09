@@ -4,22 +4,45 @@
       <v-more-panel class="p-v-lg p-h-md">
         <v-form slot="form">
           <v-form-item label="报修人" class="m-b-sm">
-            <v-input v-model="filterList.proposerName" placeholder="请输入报修人姓名" style="width: 240px;"></v-input>
+            <v-input v-model="filterList.proposerName"
+                     placeholder="请输入报修人姓名"
+                     style="width: 240px;">
+
+            </v-input>
           </v-form-item>
           <v-form-item label="报修时间" class="m-b-sm">
-            <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
+            <v-date-picker v-model="filterList.dateTime"
+                           range clearable>
+
+            </v-date-picker>
           </v-form-item>
           <v-form-item label="联系方式" class="m-b-sm">
-            <v-input v-model="filterList.proposerMobile" placeholder="请输入联系方式" style="width: 240px;"></v-input>
+            <v-input v-model="filterList.proposerMobile"
+                     placeholder="请输入联系方式"
+                     style="width: 240px;">
+
+            </v-input>
           </v-form-item>
           <v-form-item label="处理状态" class="m-b-sm">
-            <v-select v-model="filterList.status" position="fixed" style="width: 120px;" :data="selectOptions" ></v-select>
+            <v-select v-model="filterList.status"
+                      position="fixed"
+                      style="width: 120px;"
+                      :data="selectOptions">
+
+            </v-select>
           </v-form-item>
         </v-form>
-        <v-button slot="control" type="primary" html-type="button" icon="search" style="margin-right:10px" @click="filterTable">
+        <v-button slot="control"
+                  type="primary"
+                  html-type="button"
+                  icon="search"
+                  style="margin-right:10px"
+                  @click="filterTable">
           查询
         </v-button>
-        <v-button slot="control" type="ghost" @click="resetTable">
+        <v-button slot="control"
+                  type="ghost"
+                  @click="resetTable">
           重置
         </v-button>
       </v-more-panel>
@@ -63,7 +86,11 @@
                       <v-popconfirm placement="left"
                                     title="确定处理这条维修消息吗?"
                                     @confirm="dealComplain(item.id)">
-                        <a href="javascript:;" class="m-r-xs" :disabled="item.status == '已处理'">处理</a>
+                        <a href="javascript:;"
+                           class="m-r-xs"
+                           :disabled="item.status == '已处理'">
+                          处理
+                        </a>
                       </v-popconfirm>
                       <a href="javascript:;" class="m-r-xs"
                          @click="showModal('detail', item.id)">
@@ -156,6 +183,29 @@
       handleCancel (value) {
         this.modalVisible[value] = false;
       },
+      filterTable(){
+        var newObj = checkFilter(this.filterList);
+        if(newObj.dateTime){
+          if(newObj.dateTime[0]&&newObj.dateTime[1]){
+            newObj.startTime = Date.parse(new Date(newObj.dateTime[0]));
+            newObj.endTime = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
+          }
+        }
+        console.log(newObj)
+        this._getRepair(1, newObj)
+      },
+      resetTable(){
+        this.filterList = {
+          proposerName:null,
+          proposerMobile:null,
+          dateTime: "",
+          status: null,
+          type: "1",
+          startTime: null,
+          endTime: null
+        };
+        this._getRepair(1, {type:1});
+      },
       loadPage(i){
         this._getRepair(i, this.filterList)
       },
@@ -206,29 +256,7 @@
             }
           })
       },
-      filterTable(){
-        var newObj = checkFilter(this.filterList);
-        if(newObj.dateTime){
-          if(newObj.dateTime[0]&&newObj.dateTime[1]){
-            newObj.startTime = Date.parse(new Date(newObj.dateTime[0]));
-            newObj.endTime = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
-          }
-        }
-        console.log(newObj)
-        this._getRepair(1, newObj)
-      },
-      resetTable(){
-        this.filterList = {
-          proposerName:null,
-          proposerMobile:null,
-          dateTime: "",
-          status: null,
-          type: "1",
-          startTime: null,
-          endTime: null
-        };
-        this._getRepair(1, {type:1});
-      },
+
     },
     created(){
       this._getRepair(1, {type:1});

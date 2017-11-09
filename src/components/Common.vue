@@ -195,92 +195,8 @@
       handleCancel (value) {
         this.modalVisible[value] = false;
       },
-      createCommon(){
-        this.$refs.commonCreateRef.washData();
-      },
       loadPage(i){
         this._getPublicCard(i, this.filterList)
-      },
-      deletePublicCard(id){
-        console.log(id);
-        api.deletePublicCard(id).then(res => {
-          if(res.success){
-            this.$notification.success({
-              message: '删除成功！',
-              duration: 2
-            });
-            this.listLen -= 1;
-            if(this.listLen!=0){
-              this.loadPage(this.$refs.pagination.value)
-            }else{
-              this.loadPage(this.$refs.pagination.value-1)
-              this.$refs.pagination.current = this.$refs.pagination.value-1;
-            }
-          }else{
-            this.$notification.error({
-              message: res.message,
-              duration: 2
-            });
-          }
-        })
-      },
-      _getPublicCard(pageNo, params){
-        api.getPublicCard(pageNo, 10, params)
-          .then(res => {
-            console.log(res);
-            if(res.success){
-              if(res.data.list){
-                for (var i = 0; i < res.data.list.length; i++) {
-                  switch (res.data.list[i].vaildType) {
-                    case 0:
-                      res.data.list[i].vaildType = '月卡';
-                      break;
-                    case 1:
-                      res.data.list[i].vaildType = '季卡';
-                      break;
-                    case 2:
-                      res.data.list[i].vaildType = '年卡';
-                      break;
-                    default:
-                      res.data.list[i].vaildType = '';
-                  }
-                  switch (res.data.list[i].status) {
-                    case 0:
-                      res.data.list[i].status = '正常';
-                      break;
-                    case 1:
-                      res.data.list[i].status = '过期';
-                      break;
-                    default:
-                      res.data.list[i].status = '';
-                  }
-                  switch (res.data.list[i].userStatus) {
-                    case 0:
-                      res.data.list[i].userStatus = '物业人员';
-                      break;
-                    case 1:
-                      res.data.list[i].userStatus = '外部人员';
-                      break;
-                    default:
-                      res.data.list[i].userStatus = '';
-                  }
-                  switch (res.data.list[i].cardType) {
-                    case 1:
-                      res.data.list[i].cardType = 'IC';
-                      break;
-                    case 2:
-                      res.data.list[i].cardType = 'ID';
-                      break;
-                    default:
-                      res.data.list[i].cardType = '';
-                  }
-                }
-                this.page.total = res.data.total;
-                this.publicCardList = res.data.list;
-                this.listLen = res.data.list.length;
-              }
-            }
-          })
       },
       filterTable(){
         var newObj = checkFilter(this.filterList);
@@ -297,6 +213,90 @@
         this.unitOptions = [];
         this._getPublicCard(1);
       },
+      createCommon(){
+        this.$refs.commonCreateRef.washData();
+      },
+      deletePublicCard(id){
+        console.log(id);
+        api.deletePublicCard(id).then(res => {
+          if(res.success){
+            this.$notification.success({
+              message: '删除成功！',
+              duration: 2
+            });
+            this.listLen -= 1;
+            if(this.listLen!=0){
+              this.loadPage(this.$refs.pagination.value)
+            }else{
+              this.loadPage(this.$refs.pagination.value - 1);
+              this.$refs.pagination.current = this.$refs.pagination.value-1;
+            }
+          }else{
+            this.$notification.error({
+              message: res.message,
+              duration: 2
+            });
+          }
+        })
+      },
+      _getPublicCard(pageNo, params){
+        api.getPublicCard(pageNo, 10, params).then(res => {
+          console.log(res);
+          if(res.success){
+            if(res.data.list){
+              for (var i = 0; i < res.data.list.length; i++) {
+                switch (res.data.list[i].vaildType) {
+                  case 0:
+                    res.data.list[i].vaildType = '月卡';
+                    break;
+                  case 1:
+                    res.data.list[i].vaildType = '季卡';
+                    break;
+                  case 2:
+                    res.data.list[i].vaildType = '年卡';
+                    break;
+                  default:
+                    res.data.list[i].vaildType = '';
+                }
+                switch (res.data.list[i].status) {
+                  case 0:
+                    res.data.list[i].status = '正常';
+                    break;
+                  case 1:
+                    res.data.list[i].status = '过期';
+                    break;
+                  default:
+                    res.data.list[i].status = '';
+                }
+                switch (res.data.list[i].userStatus) {
+                  case 0:
+                    res.data.list[i].userStatus = '物业人员';
+                    break;
+                  case 1:
+                    res.data.list[i].userStatus = '外部人员';
+                    break;
+                  default:
+                    res.data.list[i].userStatus = '';
+                }
+                switch (res.data.list[i].cardType) {
+                  case 1:
+                    res.data.list[i].cardType = 'IC';
+                    break;
+                  case 2:
+                    res.data.list[i].cardType = 'ID';
+                    break;
+                  default:
+                    res.data.list[i].cardType = '';
+                }
+              }
+              this.page.total = res.data.total;
+              this.publicCardList = res.data.list;
+              this.listLen = res.data.list.length;
+            }
+          }
+        })
+      },
+
     },
     created() {
       this._getPublicCard(1);

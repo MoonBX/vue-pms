@@ -41,9 +41,6 @@
     },
     methods: {},
     props:['item'],
-    created() {
-      console.log(this.item)
-      this.item;
-    }
+    created() {}
   }
 </script>

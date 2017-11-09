@@ -255,12 +255,7 @@
     created() {
       this._getDeviceDetail();
 
-      console.log(this.$data)
-
-      console.log(cardInit)
-
       if(cardInit){
-
 
         if (!cardInit.TryConnect()) {
           alert("浏览器不支持，请更换浏览器后重试！");
@@ -277,6 +272,7 @@
               break;
           }
         });
+
       }
     }
   }

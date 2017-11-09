@@ -96,7 +96,7 @@
           </v-form-item>
         </v-col>
 
-        <v-col span="18" v-if="dateShow&& model.effectiveType != 0">
+        <v-col span="18" v-if="dateShow && model.effectiveType != 0">
           <v-form-item :label-col="{span:3}"
                        :wrapper-col="{span:15}"
                        prop="effectiveEndTime"

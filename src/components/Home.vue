@@ -245,7 +245,6 @@
       handleCancel () {
         this.customTextVisible = false;
       },
-
       _getComplaint(pageNo, params){
         params = {status: 0}
         api.getComplaint(pageNo, 6, params)

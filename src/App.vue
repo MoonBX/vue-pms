@@ -194,4 +194,8 @@
   .ant-calendar-top{
     display: none !important;
   }
+
+  .ant-upload-list-item-info {
+    float: right !important;
+  }
 </style>
