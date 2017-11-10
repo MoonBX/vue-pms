@@ -38,7 +38,6 @@ export function post(url, data) {
     axios.post(url, data)
       .then(response => {
         if(response.data.code == '401'){
-          // bus.$emit('please_login', response.data.message);
           window.location.href = '/#/login'
           localStorage.removeItem('vueToken');
         }else{

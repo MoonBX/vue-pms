@@ -70,7 +70,7 @@
                     <td>
                       <a href="javascript:;" class="m-r-xs"
                          v-if="item.status == '已处理'"
-                         @click="showModal('detail', item.id)">
+                         @click="showModal('detail', item)">
                         详情
                       </a>
                       <v-popconfirm placement="left"
@@ -89,6 +89,21 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="g-modal">
+        <v-modal title="防拆报警详情"
+                 :visible="modalVisible.detail"
+                 :width="400"
+                 @cancel="handleCancel('detail')">
+          <jcbj :item="itemParam" ref="complainDetailRef"></jcbj>
+          <div slot="footer">
+            <v-button key="confirm"
+                      type="primary"
+                      @click="handleCancel('detail')">
+              确 定
+            </v-button>
+          </div>
+        </v-modal>
       </div>
 
       <v-pagination class="m-t-md m-b-md"
@@ -109,6 +124,7 @@
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
   import { checkFilter } from '../util/option'
+  import jcbj from '@/components/jcbj'
   export default {
     data() {
       return {
@@ -129,8 +145,15 @@
           total: 0,
           value: 1
         },
-        hijackList: []
+        modalVisible:{
+          detail: false
+        },
+        hijackList: [],
+        itemParam: {}
       }
+    },
+    components:{
+      jcbj
     },
     methods: {
       showTotal(total){
@@ -139,14 +162,23 @@
       loadPage(i){
         this._getHijack(i, this.filterList)
       },
+      showModal(value, param){
+        this.itemParam = param;
+        this.modalVisible[value] = true;
+      },
+      handleCancel (value) {
+        this.modalVisible[value] = false;
+      },
       filterTable(){
         var newObj = checkFilter(this.filterList);
         if(newObj.dateTime){
           if(newObj.dateTime[0]&&newObj.dateTime[1]){
             newObj.startTime = Date.parse(new Date(newObj.dateTime[0]));
-            newObj.endTime = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
+            newObj.endTime = Date.parse(new Date(newObj.dateTime[1])) + 24 * 60 * 60 * 1000 - 1000;
           }
+          delete newObj.dateTime;
         }
+        console.log(newObj)
         this._getHijack(1, newObj)
       },
       resetTable(){

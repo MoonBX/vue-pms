@@ -213,6 +213,8 @@
 </style>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
+//  import koApi from '../fetch/koApi'
+  import axios from 'axios'
   import { checkFilter } from '../util/option'
   import { bus } from '../util/bus.js'
 
@@ -471,9 +473,11 @@
     },
     created() {
       this._getHousehold(1);
-
       api.getPartitions().then(res=>{
         for(let i=0;i<res.data.length;i++){
+          // 白骨阵一案，让吕狄对廷尉府和洛阳府失望透顶。
+          // 他是廷尉府的老人，恪尽职守十几年，加官进爵对他来说希望渺茫，但他也不图这，他的人生哲学是比下不比上。
+          //
           res.data[i].label = res.data[i].name;
           res.data[i].value = res.data[i].id;
         }
@@ -493,9 +497,19 @@
         api.createResident(data).then(res=>{
           console.log(res);
           if(res.success){
-            this.$notification.success({
-              message: '新建成功！',
-              duration: 2
+            axios.post('http://192.168.22.139:8088/account/openAccountMoneyStatus', {phoneNumberList: [data.mobile]}).then(response => {
+              // success callback
+              if(response.status == '200'){
+                this.$notification.success({
+                  message: '新建成功！',
+                  duration: 2
+                });
+              }else{
+                this.$notification.error({
+                  message: response.data.errorMsg,
+                  duration: 2
+                });
+              }
             });
             this.handleCancel('create');
             this.loadPage(1);
@@ -506,7 +520,7 @@
             });
           }
         })
-      })
+      });
 
       bus.$on('householdForm_data_edit', (data) => {
         console.log(data)

@@ -4,7 +4,7 @@
       <v-row class="m-b-xs">
         <div class="pull-left">
           <span class="title">报警时间:</span>
-          <span class="value">{{hijackObj.time}}</span>
+          <span class="value">{{hijackObj.time | formatDate('YMDHMS')}}</span>
         </div>
       </v-row>
       <v-row class="m-b-xs">
@@ -54,8 +54,8 @@
         this.hijackObj = {
           userName:res.data.userName,
           mobile: res.data.mobile,
-          time: this.item.time,
-          address: this.item.address
+          time: res.data.alarmTime,
+          address: res.data.address
         }
       })
     }

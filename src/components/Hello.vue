@@ -119,7 +119,7 @@
             localStorage.removeItem('vueEstate');
             localStorage.removeItem('vueCommunityId');
             this.$router.push('/login');
-            this.socket.close();
+            window.ws.close();
             this.$notification.close('1')
           })
           .catch(error => {
@@ -129,14 +129,14 @@
       send(message, callback) {
         var that = this;
         waitForConnection(function () {
-          that.socket.send(message);
+          window.ws.send(message);
           if (typeof callback !== 'undefined') {
             callback();
           }
         }, 1000);
 
         function waitForConnection(callback, interval) {
-          if (that.socket.readyState === 1) {
+          if (window.ws.readyState === 1) {
             clearTimeout(t)
             callback();
           } else {
@@ -201,24 +201,34 @@
     },
     created(){
       this.setSideBarAndTitle();
-      this.socket = new WebSocket('ws://192.168.23.241:8081/websocket');
+      window.ws = new WebSocket('ws://114.55.143.170:8081/websocket');
       this.send(localStorage.vueCommunityId);
 
-      this.socket.onopen = function() {
+      if(!localStorage.vueToken){
+        this.$router.push('/login');
+      }
+
+      window.ws.onopen = function() {
         console.log('open');
       };
 
-      this.socket.onmessage = (evt) => {
+      window.ws.onmessage = (evt) => {
         if(evt.data){
+          console.log(evt.data);
           let arr = evt.data.split('/');
           let obj = {
             id: arr[0],
             address: arr[2]
           };
-          obj.time = this.format(arr[1]);
+          if(arr[1]){
+            obj.time = this.format(arr[1]);
+          }else{
+            obj.time = ""
+          }
+
           this.$notification.error({
             message: '劫持报警',
-            description: obj.time + ': ' + obj.address + "住户智能门锁发出劫持报警事件，请尽快前往处理！",
+            description: (obj.time||"") + ': ' + (obj.address||"") + "住户智能门锁发出劫持报警事件，请尽快前往处理！",
             duration: 0,
             selfKey: '1',
             onClose: ()=>{
@@ -229,9 +239,11 @@
 
       };
 
-      this.socket.onclose = function(e) {
+      window.ws.onclose = function(e) {
         console.log(e)
       };
+
+
 
     },
     watch: {
@@ -240,8 +252,9 @@
       }
     },
     beforeRouteLeave (to, from, next) {
+      console.log(this.$data.socket)
       next(vm => {
-        console.log(vm.$data.socket.close())
+        console.log(window.ws.close())
       })
     }
   }

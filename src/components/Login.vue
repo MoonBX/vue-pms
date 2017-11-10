@@ -360,7 +360,8 @@
       }
     },
     created(){
-
+      window.ws.close();
+      localStorage.removeItem('vueToken');
     }
   }
 </script>
