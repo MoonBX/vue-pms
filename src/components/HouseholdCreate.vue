@@ -389,7 +389,19 @@
 
 
               }else{
-                test('读卡失败')
+                console.log(resultdata.Result);
+                if(resultdata.Result == -3){
+                  this.$notification.error({
+                    message: '卡类型错误',
+                    duration: 2
+                  });
+                }else{
+                  this.$notification.error({
+                    message: '读卡失败',
+                    duration: 2
+                  });
+                }
+
               }
               break;
           }
