@@ -46,62 +46,53 @@
       </v-more-panel>
     </div>
     <div class="g-table-content m-t-sm m-b-md p-h-md p-v-sm">
-      <div class="ant-table ant-table-large" style="width: 100%;">
-        <div class="ant-table-content">
-          <div class="ant-table-body">
-            <div class="ant-spin-nested-loading" style="min-height: auto;">
-              <div class="ant-spin-container">
+      <v-table>
+        <table class="wk-table" style="table-layout:fixed;">
+          <thead class="ant-table-thead">
+          <tr>
+            <th>设备SN</th>
+            <th>设备类型</th>
+            <th>单元信息</th>
+            <th>门口编号</th>
+            <th>版本信息</th>
+            <th>锁类型</th>
+            <th>安装时间</th>
+            <th>锁状态</th>
+            <th>设备状态</th>
+            <th>用户/人</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody class="ant-table-tbody">
+          <tr v-for="item in deviceList">
+            <td>{{item.sn || '-'}}</td>
+            <td>{{item.type || '-'}}</td>
+            <td>{{item.blockName || '-'}}</td>
+            <td>{{item.location || '-'}}</td>
+            <td>{{item.apkVersion || '-'}}</td>
+            <td>{{item.lockType_cn || '-'}}</td>
+            <td>{{item.gmtCreated | formatDate('YMD') }}</td>
+            <td>{{item.lockStatus_cn || '-'}}</td>
+            <td> {{item.status_cn || '-'}}</td>
+            <td>{{item.amount}}</td>
+            <td>
+              <a href="javascript:;" class="m-r-xs"
+                 @click="showModal('detail', item)">
+                详情
+              </a>
+              <a href="javascript:;" @click="toggleDoor(item.id, item.lockStatus)">
+                手动
+                <span v-if="item.lockStatus == 0">开</span>
+                <span v-if="item.lockStatus != 0">关</span>
+                门
+              </a>
+            </td>
+          </tr>
+          <div style="width: 100%;height: 20px;"></div>
+          </tbody>
+        </table>
+      </v-table>
 
-                <table class="wk-table" style="table-layout:fixed;">
-                  <thead class="ant-table-thead">
-                  <tr>
-                    <th>设备SN</th>
-                    <th>设备类型</th>
-                    <th>单元信息</th>
-                    <th>门口编号</th>
-                    <th>版本信息</th>
-                    <th>锁类型</th>
-                    <th>安装时间</th>
-                    <th>锁状态</th>
-                    <th>设备状态</th>
-                    <th>用户/人</th>
-                    <th>操作</th>
-                  </tr>
-                  </thead>
-                  <tbody class="ant-table-tbody">
-                  <tr v-for="item in deviceList">
-                    <td>{{item.sn || '-'}}</td>
-                    <td>{{item.type || '-'}}</td>
-                    <td>{{item.blockName || '-'}}</td>
-                    <td>{{item.location || '-'}}</td>
-                    <td>{{item.apkVersion || '-'}}</td>
-                    <td>{{item.lockType_cn || '-'}}</td>
-                    <td>{{item.gmtCreated | formatDate('YMD') }}</td>
-                    <td>{{item.lockStatus_cn || '-'}}</td>
-                    <td> {{item.status_cn || '-'}}</td>
-                    <td>{{item.amount}}</td>
-                    <td>
-                      <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('detail', item)">
-                        详情
-                      </a>
-                      <a href="javascript:;" @click="toggleDoor(item.id, item.lockStatus)">
-                        手动
-                        <span v-if="item.lockStatus == 0">开</span>
-                        <span v-if="item.lockStatus != 0">关</span>
-                        门
-                      </a>
-                    </td>
-                  </tr>
-                  <div style="width: 100%;height: 20px;"></div>
-                  </tbody>
-                </table>
-
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <v-pagination class="m-t-md m-b-md"
                     v-model="page.value"
                     :pageSize="10"
@@ -135,6 +126,7 @@
   import api from '../fetch/api'
   import { checkFilter } from '../util/option'
   import DeviceDetail from '@/components/DeviceDetail'
+  import vTable from '@/components/table'
 
   export default {
     data() {
@@ -175,7 +167,8 @@
       }
     },
     components:{
-      DeviceDetail
+      DeviceDetail,
+      vTable
     },
     methods: {
       showTotal(total){
@@ -302,6 +295,7 @@
       },
     },
     created() {
+      document.title = '设备管理';
       this._getDevice(1);
       api.getPartitions()
         .then(res=>{

@@ -308,7 +308,7 @@
       }
     },
     created(){
-
+      document.title = '首页';
       this._getComplaint(1);
       this._getAlarmInfo();
       this._getStatistics();

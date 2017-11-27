@@ -22,10 +22,9 @@
             </v-select>
           </v-form-item>
           <v-form-item label="时间范围" class="m-b-sm">
-            <v-date-picker v-model="filterList.dateTime"
-                           range
-                           clearable>
-            </v-date-picker>
+            <v-date-picker v-model="filterList.st" :disabled-date="disabledStartDate"></v-date-picker>
+            <span>-</span>
+            <v-date-picker v-model="filterList.et" :disabled-date="disabledEndDate"></v-date-picker>
           </v-form-item>
           <v-form-item label="位置信息" class="m-b-sm">
             <v-select v-model="filterList.partitionId"
@@ -61,96 +60,87 @@
       </v-more-panel>
     </div>
     <div class="g-table-content m-t-sm m-b-md p-h-md p-v-sm">
-      <div class="ant-table ant-table-large" style="width: 100%;">
-        <div class="ant-table-content">
-          <div class="ant-table-body">
-            <div class="ant-spin-nested-loading" style="min-height: auto;">
-              <div class="ant-spin-container">
+      <v-table>
+        <table class="wk-table" style="table-layout:fixed;">
+          <thead class="ant-table-thead">
 
-                <table class="wk-table" style="table-layout:fixed;">
-                  <thead class="ant-table-thead">
-
-                  <tr>
-                    <th width="18%">单元信息</th>
-                    <th width="10%">设备类型</th>
-                    <th width="10%">姓名</th>
-                    <th width="10%">通话时长</th>
-                    <th width="18%">开门时间</th>
-                    <th width="12%">开门类型</th>
-                    <th width="12%">缩略图</th>
-                    <th width="10%">操作</th>
-                  </tr>
-                  </thead>
-                  <tbody class="ant-table-tbody">
-                  <tr v-for="(item, index) in openList">
-                    <td>{{item.blockName || '-'}}</td>
-                    <td>{{item.deviceType || '-'}}</td>
-                    <td>{{item.name || '-'}}</td>
-                    <td>{{item.duration || '-'}}</td>
-                    <td>{{item.unlockTime | formatDate('YMDHMS')  || '-'}}</td>
-                    <td>{{item.type || '-'}}</td>
-                    <td>
-                      <div>
-                        <v-popover title="Title"
-                                   trigger="click"
-                                   v-if="index==0"
-                                   placement="leftTop">
-                          <img :src="item.snapshot"
-                               alt="..." style="width: 88px;">
-                          <div slot="title">
-                            缩略图
-                          </div>
-                          <div slot="content">
-                            <img :src="item.snapshot"
-                                 alt="..." style="height: 288px">
-                          </div>
-                        </v-popover>
-                        <v-popover title="Title"
-                                   trigger="click"
-                                   v-if="index==9"
-                                   placement="leftBottom">
-                          <img :src="item.snapshot"
-                               alt="..." style="width: 88px;">
-                          <div slot="title">
-                            缩略图
-                          </div>
-                          <div slot="content">
-                            <img :src="item.snapshot"
-                                 alt="..." style="height: 288px">
-                          </div>
-                        </v-popover>
-                        <v-popover title="Title"
-                                   trigger="click"
-                                   v-if="index!=0&&index!=9"
-                                   placement="left">
-                          <img :src="item.snapshot"
-                               alt="..." style="width: 88px;">
-                          <div slot="title">
-                            缩略图
-                          </div>
-                          <div slot="content">
-                            <img :src="item.snapshot"
-                                 alt="..." style="height: 288px">
-                          </div>
-                        </v-popover>
-                      </div>
-                    </td>
-                    <td>
-                      <a href="javascript:;"
-                         @click="showModal('detail', item)">
-                        详情
-                      </a>
-                    </td>
-                  </tr>
-                  <div style="width: 100%;height: 20px;"></div>
-                  </tbody>
-                </table>
-
+          <tr>
+            <th width="18%">单元信息</th>
+            <th width="10%">设备类型</th>
+            <th width="10%">姓名</th>
+            <th width="10%">通话时长</th>
+            <th width="18%">开门时间</th>
+            <th width="12%">开门类型</th>
+            <th width="12%">缩略图</th>
+            <th width="10%">操作</th>
+          </tr>
+          </thead>
+          <tbody class="ant-table-tbody">
+          <tr v-for="(item, index) in openList">
+            <td>{{item.blockName || '-'}}</td>
+            <td>{{item.deviceType || '-'}}</td>
+            <td>{{item.name || '-'}}</td>
+            <td>{{item.duration || '-'}}</td>
+            <td>{{item.unlockTime | formatDate('YMDHMS')  || '-'}}</td>
+            <td>{{item.type || '-'}}</td>
+            <td>
+              <div>
+                <v-popover title="Title"
+                           trigger="click"
+                           v-if="index==0"
+                           placement="leftTop">
+                  <img :src="item.snapshot"
+                       alt="..." style="width: 88px;">
+                  <div slot="title">
+                    缩略图
+                  </div>
+                  <div slot="content">
+                    <img :src="item.snapshot"
+                         alt="..." style="height: 288px">
+                  </div>
+                </v-popover>
+                <v-popover title="Title"
+                           trigger="click"
+                           v-if="index==9"
+                           placement="leftBottom">
+                  <img :src="item.snapshot"
+                       alt="..." style="width: 88px;">
+                  <div slot="title">
+                    缩略图
+                  </div>
+                  <div slot="content">
+                    <img :src="item.snapshot"
+                         alt="..." style="height: 288px">
+                  </div>
+                </v-popover>
+                <v-popover title="Title"
+                           trigger="click"
+                           v-if="index!=0&&index!=9"
+                           placement="left">
+                  <img :src="item.snapshot"
+                       alt="..." style="width: 88px;">
+                  <div slot="title">
+                    缩略图
+                  </div>
+                  <div slot="content">
+                    <img :src="item.snapshot"
+                         alt="..." style="height: 288px">
+                  </div>
+                </v-popover>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            </td>
+            <td>
+              <a href="javascript:;"
+                 @click="showModal('detail', item)">
+                详情
+              </a>
+            </td>
+          </tr>
+          <div style="width: 100%;height: 20px;"></div>
+          </tbody>
+        </table>
+      </v-table>
+
       <v-pagination class="m-t-md m-b-md"
                     v-model="page.value"
                     :pageSize="10"
@@ -184,19 +174,13 @@
   import api from '../fetch/api'
   import { checkFilter } from '../util/option'
   import OpenDetail from '@/components/OpenDetail'
+  import vTable from '@/components/table'
   export default {
     data() {
       return {
         filterList:{
-          userName:"",
-          deviceType:"",
-          dateTime: "",
-          type: "",
-          partitionId: "",
-          blockId: "",
-          unitId: "",
-          et: null,
-          st: null
+          et: "",
+          st: ""
         },
         page: {
           total: 0,
@@ -236,7 +220,8 @@
       }
     },
     components:{
-      OpenDetail
+      OpenDetail,
+      vTable
     },
     methods: {
       showTotal(total){
@@ -251,29 +236,26 @@
       },
       filterTable(){
         var newObj = checkFilter(this.filterList);
-        if(newObj.dateTime){
-          if(newObj.dateTime[0]&&newObj.dateTime[1]){
-            newObj.st = Date.parse(new Date(newObj.dateTime[0]));
-            newObj.et = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
-          }
+        if(newObj.st&&newObj.et){
+          newObj.st = Date.parse(new Date(newObj.st));
+          newObj.et = Date.parse(new Date(newObj.et))+ 24 * 60 * 60 * 1000 - 1000;
         }
         this._getIntercom(1, newObj)
       },
       resetTable(){
         this.filterList = {
-          userName:"",
-          deviceType:"",
-          dateTime: "",
-          type: "",
-          partitionId: "",
-          blockId: "",
-          unitId: "",
-          et: null,
-          st: null
+          et: "",
+          st: ""
         };
         this.blockOptions = [];
         this.unitOptions = [];
         this._getIntercom(1);
+      },
+      disabledStartDate(current){
+        return current && current.valueOf() > Date.parse(new Date(this.filterList.et));
+      },
+      disabledEndDate(current){
+        return current && current.valueOf() < Date.parse(new Date(this.filterList.st));
       },
       loadPage(i){
         this._getIntercom(i, this.filterList)
@@ -339,8 +321,6 @@
               }
             }
           })
-        // 第二章：吕狄查案记，孙俊忠对浪人刀的困惑，小井的黑色浪漫史
-//        一吕狄对初晓白的调查，五百姓的生活情况，六连环杀人案
       },
       changeBlock(val){
         api.getBlocks(val)
@@ -371,6 +351,7 @@
 
     },
     created() {
+      document.title = '开门日志';
       this._getIntercom(1);
       api.getPartitions()
         .then(res=>{

@@ -36,13 +36,12 @@
       </v-form-item>
 
       <v-form-item label="公告时间"
-                   :label-col="labelCol" :wrapper-col="{span: 10}"
+                   :label-col="labelCol" :wrapper-col="{span: 20}"
                    prop="dateTime"
                    has-feedback>
-        <v-date-picker placeholder="请输入公告时间"
-                       v-model="model.dateTime"
-                       range clearable>
-        </v-date-picker>
+        <v-date-picker v-model="model.effectiveStartTime" :disabled-date="disabledStartDate"></v-date-picker>
+        <span>-</span>
+        <v-date-picker v-model="model.effectiveEndTime" :disabled-date="disabledEndDate"></v-date-picker>
       </v-form-item>
 
     </v-form>
@@ -79,8 +78,7 @@
           content: "",
           range: "请在右侧选择",
           effectiveEndTime: "",
-          effectiveStartTime: "",
-          dateTime: ""
+          effectiveStartTime: ""
         },
         rules: {
           title: [{
@@ -96,11 +94,10 @@
           content: [{
             required: true,
             message: '请输入公告内容'
+          },{
+            pattern: '(^.{1,200}$)',
+            message: '公告长度不得大于200字'
           }],
-          dateTime: [{
-            required: true,
-            message: '请选择公告时间'
-          }]
         },
         labelCol: { span: 4 },
         wrapperCol: { span: 14 },
@@ -118,8 +115,8 @@
               content: this.model.content,
               fenceIds : a.fenceIds,
               unitIds : a.unitIds,
-              effectiveStartTime : Date.parse(new Date(this.model.dateTime[0])),
-              effectiveEndTime : Date.parse(new Date(this.model.dateTime[1])) + 24 * 60 * 60 * 1000 - 1000
+              effectiveStartTime : Date.parse(new Date(this.model.effectiveStartTime)),
+              effectiveEndTime : Date.parse(new Date(this.model.effectiveEndTime)) + 24 * 60 * 60 * 1000 - 1000
             };
             bus.$emit('announceForm_data_create', newObj);
           } else {
@@ -134,6 +131,12 @@
         }else{
           this.model.range='请在右侧选择'
         }
+      },
+      disabledStartDate(current){
+        return current && current.valueOf() > Date.parse(new Date(this.model.effectiveEndTime));
+      },
+      disabledEndDate(current){
+        return current && current.valueOf() < Date.parse(new Date(this.model.effectiveStartTime));
       },
       getTreeNode(){
         var fenceIdsArr = [], fenceIds = '';

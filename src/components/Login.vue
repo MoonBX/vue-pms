@@ -360,7 +360,9 @@
       }
     },
     created(){
+      document.title = "Weker物业管理平台";
       window.ws.close();
+
       localStorage.removeItem('vueToken');
     }
   }

@@ -89,63 +89,55 @@
       </div>
       <div id="dvjson">
       </div>
-      <div class="ant-table ant-table-large" style="width: 100%;">
-        <div class="ant-table-content">
-          <div class="ant-table-body">
-            <div class="ant-spin-nested-loading" style="min-height: auto;">
-              <div class="ant-spin-container">
 
-                <table class="wk-table" style="table-layout:fixed;">
-                  <thead class="ant-table-thead">
-                  <tr>
-                    <th>单元信息</th>
-                    <th>住户姓名</th>
-                    <th>手机号码</th>
-                    <th width="25%">卡号</th>
-                    <th>住户身份</th>
-                    <th>住户状态</th>
-                    <th>创建时间</th>
-                    <th>操作</th>
-                  </tr>
-                  </thead>
-                  <tbody class="ant-table-tbody">
-                  <tr v-for="item in householdList">
-                    <td>{{item.partitionName + '-' + item.blockName + '-' + item.unitName + '-' + item.roomNo}}</td>
-                    <td>{{item.name || '-'}}</td>
-                    <td>{{item.mobile || '-'}}</td>
-                    <td>{{item.cardTypeName || '-'}}</td>
-                    <td>{{item.userType_cn || '-'}}</td>
-                    <td>
-                      {{item.status_cn || '-'}}
-                    </td>
-                    <td>{{item.gmtCreated | formatDate('YMD') }}</td>
-                    <td>
-                      <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('detail', item)">
-                        详情
-                      </a>
-                      <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('edit', item)">
-                        修改
-                      </a>
-                      <v-popconfirm placement="left"
-                                    title="确定删除吗?"
-                                    @confirm="deleteHousehold(item.id)">
-                        <a href="javascript:;" class="m-r-xs">
-                          删除
-                        </a>
-                      </v-popconfirm>
-                    </td>
-                  </tr>
-                  <div style="width: 100%;height: 20px;"></div>
-                  </tbody>
-                </table>
+      <v-table>
+        <table class="wk-table" style="table-layout:fixed;">
+          <thead class="ant-table-thead">
+          <tr>
+            <th>单元信息</th>
+            <th>住户姓名</th>
+            <th>手机号码</th>
+            <th width="25%">卡号</th>
+            <th>住户身份</th>
+            <th>住户状态</th>
+            <th>创建时间</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody class="ant-table-tbody">
+          <tr v-for="item in householdList">
+            <td>{{item.partitionName + '-' + item.blockName + '-' + item.unitName + '-' + item.roomNo}}</td>
+            <td>{{item.name || '-'}}</td>
+            <td>{{item.mobile || '-'}}</td>
+            <td>{{item.cardTypeName || '-'}}</td>
+            <td>{{item.userType_cn || '-'}}</td>
+            <td>
+              {{item.status_cn || '-'}}
+            </td>
+            <td>{{item.gmtCreated | formatDate('YMD') }}</td>
+            <td>
+              <a href="javascript:;" class="m-r-xs"
+                 @click="showModal('detail', item)">
+                详情
+              </a>
+              <a href="javascript:;" class="m-r-xs"
+                 @click="showModal('edit', item)">
+                修改
+              </a>
+              <v-popconfirm placement="left"
+                            title="确定删除吗?"
+                            @confirm="deleteHousehold(item.id)">
+                <a href="javascript:;" class="m-r-xs">
+                  删除
+                </a>
+              </v-popconfirm>
+            </td>
+          </tr>
+          <div style="width: 100%;height: 20px;"></div>
+          </tbody>
+        </table>
+      </v-table>
 
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <v-pagination class="m-t-md m-b-md"
                     v-model="page.value"
                     :pageSize="10"
@@ -213,7 +205,6 @@
 </style>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
-//  import koApi from '../fetch/koApi'
   import axios from 'axios'
   import { checkFilter } from '../util/option'
   import { bus } from '../util/bus.js'
@@ -221,6 +212,7 @@
   import HouseholdCreate from '@/components/HouseholdCreate'
   import HouseholdEdit from '@/components/HouseholdEdit'
   import HouseholdDetails from '@/components/HouseholdDetails'
+  import vTable from '@/components/table'
 
   export default {
     data() {
@@ -283,7 +275,8 @@
     components: {
       HouseholdCreate,
       HouseholdEdit,
-      HouseholdDetails
+      HouseholdDetails,
+      vTable
     },
     methods: {
       showTotal(total){
@@ -472,12 +465,10 @@
       },
     },
     created() {
+      document.title = '住户管理';
       this._getHousehold(1);
       api.getPartitions().then(res=>{
         for(let i=0;i<res.data.length;i++){
-          // 白骨阵一案，让吕狄对廷尉府和洛阳府失望透顶。
-          // 他是廷尉府的老人，恪尽职守十几年，加官进爵对他来说希望渺茫，但他也不图这，他的人生哲学是比下不比上。
-          //
           res.data[i].label = res.data[i].name;
           res.data[i].value = res.data[i].id;
         }

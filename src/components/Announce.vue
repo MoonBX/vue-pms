@@ -8,7 +8,9 @@
             <v-input v-model="filterList.title" placeholder="请输入公告标题" style="width: 240px;"></v-input>
           </v-form-item>
           <v-form-item label="发布时间" class="m-b-sm">
-            <v-date-picker v-model="filterList.dateTime" range clearable></v-date-picker>
+            <v-date-picker v-model="filterList.st" :disabled-date="disabledStartDate"></v-date-picker>
+            <span>-</span>
+            <v-date-picker v-model="filterList.et" :disabled-date="disabledEndDate"></v-date-picker>
           </v-form-item>
           <v-form-item label="发布状态" class="m-b-sm">
             <v-select v-model="filterList.status" tags style="width: 120px;" :data="selectOptions"></v-select>
@@ -34,60 +36,50 @@
         </div>
       </div>
 
-      <div class="ant-table ant-table-large" style="width: 100%;">
-        <div class="ant-table-content">
-          <div class="ant-table-body">
-            <div class="ant-spin-nested-loading" style="min-height: auto;">
-              <div class="ant-spin-container">
+      <v-table>
+        <table class="wk-table" style="table-layout:fixed;">
+          <thead class="ant-table-thead">
 
-                <table class="wk-table" style="table-layout:fixed;">
-                  <thead class="ant-table-thead">
-
-                  <tr>
-                    <th width="15%">标题</th>
-                    <th width="24%">内容</th>
-                    <th width="10%">发布时间</th>
-                    <th width="8%">发布对象</th>
-                    <th width="10%">开始时间</th>
-                    <th width="10%">结束时间</th>
-                    <th width="8%">状态</th>
-                    <th width="15%">操作</th>
-                  </tr>
-                  </thead>
-                  <tbody class="ant-table-tbody">
-                  <tr v-for="item in announceList">
-                    <td>{{item.title}}</td>
-                    <td class="word-break">{{item.content}}</td>
-                    <td>{{item.gmtCreated | formatDate('YMD') }}</td>
-                    <td>{{item.creator}}</td>
-                    <td>{{item.effectiveStartTime | formatDate('YMD') }}</td>
-                    <td>{{item.effectiveEndTime | formatDate('YMD') }}</td>
-                    <td>{{item.status}}</td>
-                    <td>
-                      <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('detail', item.id)">
-                        详情
-                      </a>
-                      <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('edit', item.id)">
-                        编辑
-                      </a>
-                      <v-popconfirm placement="left"
-                                    title="确定删除吗?"
-                                    @confirm="deleteAnnounce(item.id)">
-                        <a href="javascript:;">删除</a>
-                      </v-popconfirm>
-                    </td>
-                  </tr>
-                  <div style="width: 100%;height: 20px;"></div>
-                  </tbody>
-                </table>
-
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+          <tr>
+            <th width="15%">标题</th>
+            <th width="24%">内容</th>
+            <th width="10%">发布时间</th>
+            <th width="8%">发布对象</th>
+            <th width="10%">开始时间</th>
+            <th width="10%">结束时间</th>
+            <th width="8%">状态</th>
+            <th width="15%">操作</th>
+          </tr>
+          </thead>
+          <tbody class="ant-table-tbody">
+          <tr v-for="item in announceList">
+            <td>{{item.title}}</td>
+            <td class="word-break">{{item.content}}</td>
+            <td>{{item.gmtCreated | formatDate('YMD') }}</td>
+            <td>{{item.creator}}</td>
+            <td>{{item.effectiveStartTime | formatDate('YMD') }}</td>
+            <td>{{item.effectiveEndTime | formatDate('YMD') }}</td>
+            <td>{{item.status}}</td>
+            <td>
+              <a href="javascript:;" class="m-r-xs"
+                 @click="showModal('detail', item.id)">
+                详情
+              </a>
+              <a href="javascript:;" class="m-r-xs"
+                 @click="showModal('edit', item.id)">
+                编辑
+              </a>
+              <v-popconfirm placement="left"
+                            title="确定删除吗?"
+                            @confirm="deleteAnnounce(item.id)">
+                <a href="javascript:;">删除</a>
+              </v-popconfirm>
+            </td>
+          </tr>
+          <div style="width: 100%;height: 20px;"></div>
+          </tbody>
+        </table>
+      </v-table>
 
       <v-pagination class="m-t-md m-b-md"
                     v-model="page.value"
@@ -98,6 +90,7 @@
                     show-quick-jumper
                     :total="page.total">
       </v-pagination>
+
     </div>
     <div class="g-modal">
 
@@ -187,17 +180,15 @@
   import AnnounceCreate from '@/components/AnnounceCreate'
   import AnnounceEdit from '@/components/AnnounceEdit'
   import AnnounceDetails from '@/components/AnnounceDetails'
+  import vTable from '@/components/table'
 
   export default{
     name: 'announce',
     data(){
       return {
         filterList:{
-          title: null,
-          dateTime: "",
-          status: null,
-          et: null,
-          st: null
+          st: "",
+          et: ""
         },
         selectOptions: [{
           value: '1',
@@ -227,7 +218,8 @@
     components: {
       AnnounceCreate,
       AnnounceEdit,
-      AnnounceDetails
+      AnnounceDetails,
+      vTable
     },
     methods: {
       showTotal(total){
@@ -242,26 +234,27 @@
         }
         this.modalVisible[value] = true;
       },
+      disabledStartDate(current){
+        return current && current.valueOf() > Date.parse(new Date(this.filterList.et));
+      },
+      disabledEndDate(current){
+        return current && current.valueOf() < Date.parse(new Date(this.filterList.st));
+      },
       handleCancel (value) {
         this.modalVisible[value] = false;
       },
       filterTable(){
         var newObj = checkFilter(this.filterList);
-        if(newObj.dateTime){
-          if(newObj.dateTime[0]&&newObj.dateTime[1]){
-            newObj.st = Date.parse(new Date(newObj.dateTime[0]));
-            newObj.et = Date.parse(new Date(newObj.dateTime[1]))+ 24 * 60 * 60 * 1000 - 1000;
-          }
+        if(newObj.st&&newObj.et){
+          newObj.st = Date.parse(new Date(this.filterList.st));
+          newObj.et = Date.parse(new Date(this.filterList.et))+ 24 * 60 * 60 * 1000 - 1000;
         }
         this._getAnnounce(1, newObj)
       },
       resetTable(){
         this.filterList = {
-          title: null,
-          dateTime: "",
-          status: null,
-          et: null,
-          st: null
+          st: "",
+          et: ""
         };
         this._getAnnounce(1);
       },
@@ -332,6 +325,7 @@
       }
     },
     created(){
+      document.title = '公告管理';
       this._getAnnounce(1);
 
       if(sessionStorage.from == '1'){

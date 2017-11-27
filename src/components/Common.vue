@@ -35,57 +35,49 @@
           </v-button>
         </div>
       </div>
-      <div class="ant-table ant-table-large" style="width: 100%;">
-        <div class="ant-table-content">
-          <div class="ant-table-body">
-            <div class="ant-spin-nested-loading" style="min-height: auto;">
-              <div class="ant-spin-container">
 
-                <table class="wk-table" style="table-layout:fixed;">
-                  <thead class="ant-table-thead">
+      <v-table>
+        <table class="wk-table" style="table-layout:fixed;">
+          <thead class="ant-table-thead">
 
-                  <tr>
-                    <th>人员姓名</th>
-                    <th>人员身份</th>
-                    <th>手机号码</th>
-                    <th>卡类型</th>
-                    <th>卡号</th>
-                    <th>有效期</th>
-                    <th>卡片状态</th>
-                    <th>操作</th>
-                  </tr>
-                  </thead>
-                  <tbody class="ant-table-tbody">
-                  <tr v-for="item in publicCardList">
-                    <td>{{item.userName || '-'}}</td>
-                    <td>{{item.userStatus || '-'}}</td>
-                    <td>{{item.mobile || '-'}}</td>
-                    <td>{{item.cardType || '-'}}</td>
-                    <td>{{item.cardNo || '-'}}</td>
-                    <td>{{item.startTime | formatDate('YMD') }} 至 {{item.endTime | formatDate('YMD') }}</td>
-                    <td>{{item.status || '-'}}</td>
-                    <td>
-                      <a href="javascript:;" class="m-r-xs"
-                         @click="showModal('detail', item.id)">
-                        详情
-                      </a>
-                      <v-popconfirm placement="left"
-                                    title="确定删除吗?"
-                                    @confirm="deletePublicCard(item.id)">
-                        <a href="javascript:;">删除</a>
-                      </v-popconfirm>
+          <tr>
+            <th>人员姓名</th>
+            <th>人员身份</th>
+            <th>手机号码</th>
+            <th>卡类型</th>
+            <th>卡号</th>
+            <th>有效期</th>
+            <th>卡片状态</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody class="ant-table-tbody">
+          <tr v-for="item in publicCardList">
+            <td>{{item.userName || '-'}}</td>
+            <td>{{item.userStatus || '-'}}</td>
+            <td>{{item.mobile || '-'}}</td>
+            <td>{{item.cardType || '-'}}</td>
+            <td>{{item.cardNo || '-'}}</td>
+            <td>{{item.startTime | formatDate('YMD') }} 至 {{item.endTime | formatDate('YMD') }}</td>
+            <td>{{item.status || '-'}}</td>
+            <td>
+              <a href="javascript:;" class="m-r-xs"
+                 @click="showModal('detail', item.id)">
+                详情
+              </a>
+              <v-popconfirm placement="left"
+                            title="确定删除吗?"
+                            @confirm="deletePublicCard(item.id)">
+                <a href="javascript:;">删除</a>
+              </v-popconfirm>
 
-                    </td>
-                  </tr>
-                  <div style="width: 100%;height: 20px;"></div>
-                  </tbody>
-                </table>
+            </td>
+          </tr>
+          <div style="width: 100%;height: 20px;"></div>
+          </tbody>
+        </table>
+      </v-table>
 
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <v-pagination class="m-t-md m-b-md"
                     v-model="page.value"
                     :pageSize="10"
@@ -143,6 +135,7 @@
 
   import CommonCreate from '@/components/CommonCreate'
   import CommonDetails from '@/components/CommonDetails'
+  import vTable from '@/components/table'
   export default {
     data() {
       return {
@@ -181,7 +174,8 @@
     },
     components: {
       CommonCreate,
-      CommonDetails
+      CommonDetails,
+      vTable
     },
 
     methods: {
@@ -299,6 +293,7 @@
 
     },
     created() {
+      document.title = '公卡管理';
       this._getPublicCard(1);
 
       if(sessionStorage.from == '1'){
