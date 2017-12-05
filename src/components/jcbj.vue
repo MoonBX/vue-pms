@@ -55,7 +55,7 @@
           userName:res.data.userName,
           mobile: res.data.mobile,
           time: res.data.alarmTime,
-          address: res.data.address
+          address: this.item.address
         }
       })
     }

@@ -295,7 +295,6 @@
       },
     },
     created() {
-      document.title = '设备管理';
       this._getDevice(1);
       api.getPartitions()
         .then(res=>{

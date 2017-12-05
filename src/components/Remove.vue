@@ -96,7 +96,8 @@
         return `全部 ${total} 条`;
       },
       loadPage(i){
-        this._getAlarmInfo(i,this.filterList)
+        let obj = checkFilter(this.filterList);
+        this._getAlarmInfo(i,obj)
       },
       filterTable(){
         var newObj = checkFilter(this.filterList);

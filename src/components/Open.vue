@@ -4,7 +4,7 @@
       <v-more-panel class="p-v-lg p-h-md">
         <v-form slot="form">
           <v-form-item label="人员姓名" class="m-b-sm">
-            <v-input v-model="filterList.userName"
+            <v-input v-model="filterList.name"
                      placeholder="请输入人员姓名"
                      style="width: 180px;">
             </v-input>
@@ -258,7 +258,8 @@
         return current && current.valueOf() < Date.parse(new Date(this.filterList.st));
       },
       loadPage(i){
-        this._getIntercom(i, this.filterList)
+        let obj = checkFilter(this.filterList);
+        this._getIntercom(i, obj)
       },
       _getIntercom(pageNo, params){
         api.getIntercom(pageNo, 10, params)

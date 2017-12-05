@@ -149,7 +149,8 @@
         return `全部 ${total} 条`;
       },
       loadPage(i){
-        this._getHijack(i, this.filterList)
+        let obj = checkFilter(this.filterList);
+        this._getHijack(i, obj)
       },
       showModal(value, param){
         this.itemParam = param;

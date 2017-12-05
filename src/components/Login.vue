@@ -345,6 +345,7 @@
               localStorage.vueEstate = res.data.community.eatateName;
               localStorage.vueUsername = res.data.community.name;
               localStorage.vueCommunityId = res.data.community.id;
+              localStorage.vueUserType = res.data.community.type;
 
               this.$router.push('/wk/home');
               this.error = false;

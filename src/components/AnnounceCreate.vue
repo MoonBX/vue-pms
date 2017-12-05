@@ -52,6 +52,7 @@
               @check="onCheck"
               ref="rangeTree">
       </v-tree>
+
     </div>
   </div>
 </template>
@@ -84,6 +85,9 @@
           title: [{
             required: true,
             message: '请输入公告标题'
+          },{
+            pattern: '(^.{1,30}$)',
+            message: '公告标题长度不得大于30字'
           }],
           range: [{
             required: true,

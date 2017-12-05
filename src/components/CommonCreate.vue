@@ -60,6 +60,7 @@
         <v-input placeholder="请读取卡号"
                  id="cardNo" allow
                  style="width: 140px;"
+                 :disabled="true"
                  v-model="model.cardNo">
         </v-input>
         <a href="javascript:;" @click="go" class="read">读取</a>
@@ -73,6 +74,9 @@
               @check="onCheck"
               ref="rangeTree">
       </v-tree>
+      <div v-if="!treeData.length">
+        暂无设备
+      </div>
     </div>
 
   </div>
@@ -113,6 +117,9 @@
           userName: [{
             required: true,
             message: '请输入人员姓名'
+          },{
+            pattern: '(^.{1,20}$)',
+            message: '住户姓名长度不得大于20字'
           }],
           userStatus: [{
             required: true,
@@ -121,6 +128,9 @@
           mobile: [{
             required: true,
             message: '请输入手机号码'
+          },{
+            pattern: '(^(0[0-9]{2,3}\\-)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?$)|(^((\\(\\d{3}\\))|(\\d{3}\\-))?(1[3578]\\d{9})$)',
+            message: '请输入正确的手机号码'
           }],
           vaildType: [{
             required: true,
@@ -175,23 +185,23 @@
       },
       washData(){
         this.$refs.commonCreateForm.validate((valid) => {
-            if (valid) {
-              this.model.cardNo = document.getElementById('cardNo').value;
-              var a = this.getTreeNode();
-              var newObj = {
-                userName: this.model.userName,
-                vaildType: this.model.vaildType,
-                fenceIds : a.fenceIds,
-                unitIds : a.unitIds,
-                userStatus : this.model.userStatus,
-                cardNo : this.model.cardNo,
-                mobile : this.model.mobile
-              }
-              bus.$emit('CommonForm_data_create', newObj);
-            } else {
-              console.log('error submit!!');
-              return false;
+          if (valid) {
+            this.model.cardNo = document.getElementById('cardNo').value;
+            var a = this.getTreeNode();
+            var newObj = {
+              userName: this.model.userName,
+              vaildType: this.model.vaildType,
+              fenceIds : a.fenceIds,
+              unitIds : a.unitIds,
+              userStatus : this.model.userStatus,
+              cardNo : this.model.cardNo,
+              mobile : this.model.mobile
             }
+            bus.$emit('CommonForm_data_create', newObj);
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
         })
       },
       onCheck(val){

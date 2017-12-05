@@ -138,7 +138,7 @@
                           </tbody>
                         </table>
                         <v-modal title="详情" :visible="customTextVisible" @cancel="handleCancel">
-                          <home-details :single-complaint="singleComplaint" ref="homeDetailsRef"></home-details>
+                          <complain-detail :id="idParam" ref="complainDetailsRef"></complain-detail>
                           <div slot="footer">
                             <v-button key="confirm" type="primary" @click="customTextOk">
                               确 定
@@ -152,11 +152,11 @@
               </div>
 
               <!--<v-pagination class="m-t-md" v-model="value"-->
-                            <!--:pageSize="6"-->
-                            <!--:showTotal="showTotal"-->
-                            <!--@change="loadPage"-->
-                            <!--show-quick-jumper-->
-                            <!--:total="pageTotal">-->
+              <!--:pageSize="6"-->
+              <!--:showTotal="showTotal"-->
+              <!--@change="loadPage"-->
+              <!--show-quick-jumper-->
+              <!--:total="pageTotal">-->
               <!--</v-pagination>-->
             </div>
           </div>
@@ -191,7 +191,7 @@
 </template>
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
-  import HomeDetails from '@/components/HomeDetails'
+  import ComplainDetail from '@/components/ComplainDetail'
   import HouseholdCreate from '@/components/HouseholdCreate'
 
   import {bus} from '../util/bus'
@@ -210,11 +210,12 @@
         dealState: {success: false, fail: false},
         customTextVisible: false,
         singleComplaint: {},
-        modalVisible: {household: false}
+        modalVisible: {household: false},
+        idParam: ""
       }
     },
     components: {
-      HomeDetails,
+      ComplainDetail,
       HouseholdCreate
     },
     methods: {
@@ -230,7 +231,7 @@
       },
 
       showCustomTextModal (item) {
-        this.singleComplaint = item;
+        this.idParam = item.id;
         this.customTextVisible = true;
       },
       skipPage(path, value){

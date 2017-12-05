@@ -119,22 +119,22 @@
     <div class="p-v-md clear b-t" v-if="isEntranceExist">
       <div class="left pull-left" style="width: 70%;">
         <v-row>
-            <v-form-item :label-col="{span: 5}"
-                         :wrapper-col="{span:19}"
-                         v-for="(item, index) in cardNoList.cardNo"
-                         :label="'卡号' + (index+1) ">
-              <v-input v-model="item.value" disabled style="width:70%;margin-right:5px"></v-input>
+          <v-form-item :label-col="{span: 5}"
+                       :wrapper-col="{span:19}"
+                       v-for="(item, index) in cardNoList.cardNo"
+                       :label="'卡号' + (index+1) ">
+            <v-input v-model="item.value" disabled style="width:70%;margin-right:5px"></v-input>
 
-              <v-button v-if="cardNoList.cardNo.length == 1"
-                        @click.prevent="resetCard(item)">
-                清空
-              </v-button>
-              <v-button v-if="cardNoList.cardNo.length > 1"
-                        @click.prevent="removeCard(item)">
-                删除
-              </v-button>
+            <v-button v-if="cardNoList.cardNo.length == 1"
+                      @click.prevent="resetCard(item)">
+              清空
+            </v-button>
+            <v-button v-if="cardNoList.cardNo.length > 1"
+                      @click.prevent="removeCard(item)">
+              删除
+            </v-button>
 
-            </v-form-item>
+          </v-form-item>
         </v-row>
       </div>
       <div class="right pull-left text-center" style="width: 30%; margin-top: 2px;">
@@ -184,6 +184,9 @@
           name: [{
             required: true,
             message: '请输入住户姓名'
+          },{
+            pattern: '(^.{1,20}$)',
+            message: '住户姓名长度不得大于20字'
           }],
           userType: [{
             required: true,
@@ -241,6 +244,11 @@
         cardInit.HaltAfterSuccess = 0;
         cardInit.BeepOnSuccess = 0;
         cardInit.RequestTypeACardNo(FormatID, OrderID);
+      },
+      readCard2(){
+        cardInit.Repeat = 0;
+        cardInit.HaltAfterSuccess = 0;
+        cardInit.RequestChinaIDCardNo();
       },
       resetCard(){
         this.cardNoList.cardNo[0].value = "";
@@ -375,6 +383,7 @@
                   }
 
                   if(this.$data.cardNoList.cardNo[j].value == ''){
+
                     this.$data.cardNoList.cardNo[j].value = "IC-"+resultdata.strData.slice(2)
                     break;
                   }
@@ -404,6 +413,54 @@
 
               }
               break;
+
+            case 3:
+              if (resultdata.Result > 0) {
+
+
+                for(let j=0; j < this.$data.cardNoList.cardNo.length; j++){
+
+                  if(("IC-"+resultdata.strData.slice(2)) == this.$data.cardNoList.cardNo[j].value){
+                    this.$notification.error({
+                      message: '重复读卡',
+                      duration: 2
+                    });
+                    break;
+                  }
+
+                  if(this.$data.cardNoList.cardNo[j].value == ''){
+
+                    console.log(parseInt(resultdata.strData, 16));
+                    this.$data.cardNoList.cardNo[j].value = "IC-" + parseInt(resultdata.strData, 16).toString().slice(11)
+                    break;
+                  }
+
+                  if(j == this.$data.cardNoList.cardNo.length - 1){
+                    this.$data.cardNoList.cardNo.push({
+                      value: "IC-" + parseInt(resultdata.strData, 16).toString().slice(11)
+                    });
+                    break;
+                  }
+                }
+
+
+              }else{
+                console.log(resultdata.Result);
+                if(resultdata.Result == -3){
+                  this.$notification.error({
+                    message: '卡类型错误',
+                    duration: 2
+                  });
+                }else{
+                  this.$notification.error({
+                    message: '读卡失败',
+                    duration: 2
+                  });
+                }
+
+              }
+
+
           }
         });
       }

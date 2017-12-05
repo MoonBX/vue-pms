@@ -84,7 +84,6 @@
               导入
             </v-button>
           </v-upload>
-
         </div>
       </div>
       <div id="dvjson">
@@ -141,8 +140,8 @@
       <v-pagination class="m-t-md m-b-md"
                     v-model="page.value"
                     :pageSize="10"
-                    :showTotal="showTotal"
-                    @change="loadPage"
+                    :showTotal="pageOption().showTotal"
+                    @change="pageOption().loadPage()"
                     ref="pagination"
                     show-quick-jumper
                     :total="page.total">
@@ -153,6 +152,7 @@
       <v-modal title="添加住户"
                :visible="modalVisible.create"
                :width="600"
+               :maskClosable="false"
                @cancel="handleCancel('create')">
         <household-create ref="householdCreateRef"></household-create>
         <div slot="footer">
@@ -170,6 +170,7 @@
       <v-modal title="编辑住户"
                :visible="modalVisible.edit"
                :width="600"
+               :maskClosable="false"
                @cancel="handleCancel('edit')">
         <household-edit :item="itemParam" ref="householdEditRef"></household-edit>
         <div slot="footer">
@@ -279,8 +280,20 @@
       vTable
     },
     methods: {
-      showTotal(total){
-        return `全部 ${total} 条`;
+      pageOption(){
+        var obj = {
+          showTotal: (total)=>{
+            return `全部 ${total} 条`;
+          },
+          loadPage: (i)=>{
+            let pageNo;
+            if(!i){ pageNo = this.$refs.pagination.current }
+            else{ pageNo = i; }
+
+            this._getHousehold(pageNo, this.filterList);
+          }
+        };
+        return obj;
       },
       showModal(value, param){
         if(typeof param == 'number'){
@@ -293,9 +306,7 @@
       handleCancel (value) {
         this.modalVisible[value] = false;
       },
-      loadPage(i){
-        this._getHousehold(i, this.filterList)
-      },
+
       createHousehold(){
         this.$refs.householdCreateRef.washData();
       },
@@ -303,6 +314,7 @@
         this.$refs.householdEditRef.washData();
       },
       _getHousehold(pageNo, params){
+
         api.getResident(pageNo, 10, params)
           .then(res => {
             console.log(res);
@@ -347,11 +359,11 @@
               message: '删除成功！',
               duration: 2
             });
-            this.listLen -= 1;
+            this.listLen = 1;
             if(this.listLen!=0){
-              this.loadPage(this.$refs.pagination.value)
+              this.pageOption().loadPage(this.$refs.pagination.value)
             }else{
-              this.loadPage(this.$refs.pagination.value-1)
+              this.pageOption().loadPage(this.$refs.pagination.value-1)
               this.$refs.pagination.current = this.$refs.pagination.value-1;
             }
           }else{
@@ -488,8 +500,9 @@
         api.createResident(data).then(res=>{
           console.log(res);
           if(res.success){
-            axios.post('http://192.168.22.139:8088/account/openAccountMoneyStatus', {phoneNumberList: [data.mobile]}).then(response => {
+            axios.post('http://project.ibutler.cn:8080/backend/account/setAccountMoneyStatus', {phoneNumberList: [data.mobile]}).then(response => {
               // success callback
+              console.log(response);
               if(response.status == '200'){
                 this.$notification.success({
                   message: '新建成功！',
@@ -502,8 +515,10 @@
                 });
               }
             });
+
             this.handleCancel('create');
-            this.loadPage(1);
+            this.pageOption().loadPage(1);
+
           }else{
             this.$notification.error({
               message: res.message,
@@ -523,7 +538,7 @@
               duration: 2
             });
             this.handleCancel('edit');
-            this.loadPage(this.$refs.pagination.value)
+            this.pageOption().loadPage(this.$refs.pagination.value)
           }else{
             this.$notification.error({
               message: res.message,
