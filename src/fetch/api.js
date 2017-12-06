@@ -199,5 +199,9 @@ export default {
 //  导入文件
   importExcel(data){
     return post('community/resident/import', data)
+  },
+  // 人证合一
+  getIdCardInfo(identityNum){
+    return get('/idCard/info/query/'+ identityNum)
   }
 }

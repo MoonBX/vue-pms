@@ -200,6 +200,7 @@
       }
     },
     created(){
+      console.log(localStorage.vueUserType)
       document.title = 'weker物业管理平台';
       this.setSideBarAndTitle();
       window.ws = new WebSocket('ws://114.55.143.170:8081/websocket');

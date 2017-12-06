@@ -198,4 +198,18 @@
   .ant-upload-list-item-info {
     float: right !important;
   }
+  .ant-input-group-addon {
+    color: #fff;
+    background-color: #108ee9;
+    border: 1px solid #108ee9;
+  }
+  .ant-collapse-content{
+    padding: 0;
+  }
+  .ant-collapse-content > .ant-collapse-content-box {
+    padding: 0;
+  }
+  .ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content{
+    border-top: none;
+  }
 </style>

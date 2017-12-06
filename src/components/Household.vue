@@ -166,6 +166,23 @@
           </v-button>
         </div>
       </v-modal>
+      <v-modal title="添加住户"
+               :visible="modalVisible.createWuhan"
+               :width="600"
+               :maskClosable="false"
+               @cancel="handleCancel('create')">
+        <household-create-wuhan ref="householdCreateWuhanRef"></household-create-wuhan>
+        <div slot="footer">
+          <v-button key="cancel"
+                    @click="handleCancel('create')">
+            取 消
+          </v-button>
+          <v-button key="confirm"
+                    type="primary" @click="createHouseholdWuhan">
+            提 交
+          </v-button>
+        </div>
+      </v-modal>
 
       <v-modal title="编辑住户"
                :visible="modalVisible.edit"
@@ -180,6 +197,23 @@
           </v-button>
           <v-button key="confirm"
                     type="primary" @click="editHousehold">
+            提 交
+          </v-button>
+        </div>
+      </v-modal>
+      <v-modal title="编辑住户"
+               :visible="modalVisible.editWuhan"
+               :width="600"
+               :maskClosable="false"
+               @cancel="handleCancel('edit')">
+        wuhan
+        <div slot="footer">
+          <v-button key="cancel"
+                    @click="handleCancel('edit')">
+            取 消
+          </v-button>
+          <v-button key="confirm"
+                    type="primary" @click="createHousehold">
             提 交
           </v-button>
         </div>
@@ -211,6 +245,7 @@
   import { bus } from '../util/bus.js'
 
   import HouseholdCreate from '@/components/HouseholdCreate'
+  import HouseholdCreateWuhan from '@/components/HouseholdCreateWuhan'
   import HouseholdEdit from '@/components/HouseholdEdit'
   import HouseholdDetails from '@/components/HouseholdDetails'
   import vTable from '@/components/table'
@@ -265,8 +300,10 @@
         }],
         modalVisible: {
           create: false,
+          createWuhan: false,
           edit: false,
-          detail: false
+          detail: false,
+          editWuhan: false
         },
         idParam: "",
         itemParam: {},
@@ -275,6 +312,7 @@
     },
     components: {
       HouseholdCreate,
+      HouseholdCreateWuhan,
       HouseholdEdit,
       HouseholdDetails,
       vTable
@@ -301,14 +339,27 @@
         }else{
           this.itemParam = param;
         }
-        this.modalVisible[value] = true;
+        if(localStorage.vueUserType == 1&&value != 'detail'){
+          this.modalVisible[value+'Wuhan'] = true;
+        }else{
+          this.modalVisible[value] = true;
+        }
+
       },
       handleCancel (value) {
-        this.modalVisible[value] = false;
+        if(localStorage.vueUserType == 1&&value != 'detail'){
+          this.modalVisible[value+'Wuhan'] = false;
+        }else{
+          this.modalVisible[value] = false;
+        }
+
       },
 
       createHousehold(){
         this.$refs.householdCreateRef.washData();
+      },
+      createHouseholdWuhan(){
+        this.$refs.householdCreateWuhanRef.washData();
       },
       editHousehold(){
         this.$refs.householdEditRef.washData();

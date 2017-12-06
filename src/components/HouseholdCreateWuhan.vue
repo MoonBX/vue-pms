@@ -1,34 +1,75 @@
 <template>
-  <div>
-    <v-form direction="horizontal" :model="model" :rules="rules" ref="householdForm">
-      <v-row>
-        <v-col span="12">
-          <v-form-item label="住户姓名"
-                       :label-col="{span: 8}"
-                       :wrapper-col="{span:13}"
-                       prop="name"
-                       has-feedback>
-            <v-input style="width: 150px;"
-                     v-model="model.name">
-            </v-input>
-          </v-form-item>
-        </v-col>
-
-        <v-col span="12">
-          <v-form-item label="住户身份"
-                       :label-col="{span: 8}"
-                       :wrapper-col="{span:13}"
-                       prop="userType"
-                       has-feedback>
-            <v-select style="width: 150px;"
-                      :data="userTypeOption"
-                      v-model="model.userType"
-                      @change="userChangeEffective">
-            </v-select>
-          </v-form-item>
-        </v-col>
+  <div class="householdCreateWuhan">
+    <v-form direction="horizontal">
+      <v-row :class="{'padding-t':!visible.idCard, 'padding-o': visible.idCard}" >
+        <v-form-item label=""
+                     :label-col="labelCol"
+                     :wrapper-col="{span: 24}"
+                     prop="idCard"
+                     has-feedback>
+          <v-input v-model="model.idCard" placeholder="请输入身份证号码">
+            <span slot="after" class="input-button" @click="searchIdCard">人证查询</span>
+          </v-input>
+        </v-form-item>
       </v-row>
+      <!--<transition name="fade">-->
+      <v-collapse @change="onChange" :active-index="activeIndexMore" :bordered="false" v-if="idCardInfo" style="padding: 0 95px">
+        <v-panel index="1" :style="customPanelStyle" header="身份证信息">
+          <div class="idCard-box" >
+            <div class="id-card p-v-sm p-h-md">
+              <div class="card-info pos-relative">
+                <div class="row m-b-sm">
+                  <label>姓 名：</label>
+                  <label>{{idCardInfo.customerName}}</label>
+                </div>
+                <div class="row m-b-sm">
+                  <label>性 别：</label>
+                  <label>{{idCardInfo.sex}}</label>
+                </div>
+                <div class="row m-b-sm">
+                  <label>出 生：</label>
+                  <label>{{idCardInfo.birthDate}}</label>
+                </div>
+                <div class="row m-b-sm b-b" style="display: flex;padding-bottom: 10px">
+                  <label>地 址：</label>
+                  <label style="width: 180px;display: inline-block">{{idCardInfo.address}}</label>
+                </div>
+                <div class="photo-collection text-center">
+                  <div class="m-b-xs photo-box">
+                    <img width="77" height="100" :src="idCardInfo.idenImage">
+                    <!--<div>身份证照</div>-->
+                  </div>
+                </div>
+              </div>
+              <div class="other-info pos-relative" style="padding-bottom: 20px">
+                <div class="row m-b-sm m-t-sm">
+                  <label>身份证号：</label>
+                  <label>{{idCardInfo.identityNum}}</label>
+                </div>
+                <div class="row m-b-sm">
+                  <label>签发机关：</label>
+                  <label>{{idCardInfo.issuingOrgan}}</label>
+                </div>
+                <div class="row m-b-sm">
+                  <label>有效日期：</label>
+                  <label>{{idCardInfo.indate}}</label>
+                </div>
+                <div class="photo-collection text-center">
+                  <div class="m-b-xs photo-box">
+                    <img width="77px" height="100" :src="idCardInfo.faceImage">
+                    <!--<div>人脸采集</div>-->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </v-panel>
 
+      </v-collapse>
+
+      <!--</transition>-->
+    </v-form>
+    <v-form class="m-t-md" direction="horizontal" :model="model" :rules="rules" v-if="idCardInfo" ref="householdWuhanForm">
       <v-row>
         <v-form-item label="手机号码"
                      :label-col="labelCol"
@@ -39,12 +80,26 @@
         </v-form-item>
       </v-row>
       <v-row>
-        <v-form-item label="身份证号"
-                     :label-col="labelCol"
-                     :wrapper-col="{span: 11}"
-                     prop="idCard"
+        <v-form-item label="住户类型"
+                     :label-col="{span: 4}"
+                     :wrapper-col="{span:8}"
+                     prop="type"
                      has-feedback>
-          <v-input style="width: 260px;" v-model="model.idCard"></v-input>
+          <v-select :data="typeOption"
+                    v-model="model.type">
+          </v-select>
+        </v-form-item>
+      </v-row>
+      <v-row>
+        <v-form-item label="住户身份"
+                     :label-col="{span: 4}"
+                     :wrapper-col="{span:8}"
+                     prop="userType"
+                     has-feedback>
+          <v-select :data="userTypeOption"
+                    v-model="model.userType"
+                    @change="userChangeEffective">
+          </v-select>
         </v-form-item>
       </v-row>
 
@@ -80,7 +135,6 @@
           </v-select>
         </v-form-item>
       </v-row>
-
       <v-row v-if="isEntranceExist">
         <v-col span="6">
           <v-form-item label="永久有效"
@@ -114,45 +168,72 @@
           </v-form-item>
         </v-col>
       </v-row>
+      <!--210724199308230611-->
+      <v-row v-if="isEntranceExist">
+        <v-form-item label="增加卡片"
+                     :label-col="labelCol"
+                     :wrapper-col="{span: 11}"
+                     prop="cardNo"
+                     has-feedback>
+          <v-input v-model="model.cardNo">
+            <span slot="after" class="input-button" @click="go">读卡</span>
+          </v-input>
+        </v-form-item>
+      </v-row>
     </v-form>
-
-    <div class="p-v-md clear b-t" v-if="isEntranceExist">
-      <div class="left pull-left" style="width: 70%;">
-        <v-row>
-          <v-form-item :label-col="{span: 5}"
-                       :wrapper-col="{span:19}"
-                       v-for="(item, index) in cardNoList.cardNo"
-                       :label="'卡号' + (index+1) ">
-            <v-input v-model="item.value" disabled style="width:70%;margin-right:5px"></v-input>
-
-            <v-button v-if="cardNoList.cardNo.length == 1"
-                      @click.prevent="resetCard(item)">
-              清空
-            </v-button>
-            <v-button v-if="cardNoList.cardNo.length > 1"
-                      @click.prevent="removeCard(item)">
-              删除
-            </v-button>
-
-          </v-form-item>
-        </v-row>
-      </div>
-      <div class="right pull-left text-center" style="width: 30%; margin-top: 2px;">
-        <v-button type="primary" @click="readCard2">
-          读取卡号
-        </v-button>
-        <div class="m-t-sm">
-          <a href="http://www.youwokeji.com.cn/CloudReader/YOWORFIDReaderCloudForWeb.exe">
-            下载插件
-          </a>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 <style lang="scss" scoped>
-  .content-tip{
-    line-height: 28px;
+  .householdCreateWuhan{
+    .ant-collapse-content{
+      padding: 0;
+    }
+    .padding-t{
+      padding: 15px 95px 0;
+    }
+    .padding-o{
+      padding: 0 95px;
+    }
+    .pos-relative{
+      position: relative;
+    }
+    .photo-collection {
+      position: absolute;
+      top: 0;
+      right: 0px;
+    }
+    .photo-box {
+      width: 89px;
+      height: 100px;
+      background-color: #fff;
+      display: flex;
+      align-items: center;
+    }
+    .input-button{
+      padding-left: 14px;
+      padding-right: 14px;
+      cursor: pointer;
+    }
+    .id-card {
+      background: #ffffff;
+      min-height: 200px;
+      border-radius: 5px;
+      border: 1px solid #e1e1e1;
+
+      .no-card-info{
+        height: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    .fade-enter-active, .fade-leave-active {
+      transition: opacity .5s
+    }
+    .fade-enter, .fade-leave-to /* .fade-leave-active in below version 2.1.8 */ {
+      opacity: 0
+    }
   }
 </style>
 <script type="text/ecmascript-6">
@@ -162,8 +243,14 @@
   export default {
     data() {
       return {
+        activeIndexMore:['1'],
+        customPanelStyle: {
+          background: '#f7f7f7',
+          borderRadius: '4px',
+          marginBottom: '24px',
+          border: 0,
+        },
         model: {
-          name: "",
           userType: "",
           mobile: "",
           idCard: "",
@@ -173,20 +260,18 @@
           roomNoId: "",
           effectiveType: "",
           effectiveStartTime: "",
-          effectiveEndTime: ""
+          effectiveEndTime: "",
+          cardNo: ""
         },
-        cardNoList: {
-          cardNo: [{
-            value: ''
-          }]
+        labelCol: { span: 4 },
+        wrapperCol: { span: 20 },
+        visible: {
+          idCard: false
         },
         rules: {
-          name: [{
+          type: [{
             required: true,
-            message: '请输入住户姓名'
-          },{
-            pattern: '(^.{1,20}$)',
-            message: '住户姓名长度不得大于20字'
+            message: '请选择住户类型'
           }],
           userType: [{
             required: true,
@@ -203,84 +288,78 @@
             pattern: '(^(0[0-9]{2,3}\\-)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?$)|(^((\\(\\d{3}\\))|(\\d{3}\\-))?(1[3578]\\d{9})$)',
             message: '请输入正确的手机号码'
           }],
-          idCard: [{
-            pattern: '(^[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)|(^[1-9]\\d{5}\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{2}$)',
-            message: '请输入正确的身份证号码'
-          }],
           effectiveEndTime: [{
             required: true,
             message: '请选择结束时间'
           }]
         },
-        labelCol: { span: 4 },
-        wrapperCol: { span: 21 },
         userTypeOption:[{
-          value: 0,
-          label: "户主"
-        },{
           value: 1,
-          label: "家人"
+          label: "业主"
         },{
           value: 2,
           label: "租客"
         }],
+        typeOption: [{
+          value: 0,
+          label: "一般住户"
+        },{
+          value: 1,
+          label: "空巢老人"
+        },{
+          value: 2,
+          label: "留守儿童"
+        },{
+          value: 3,
+          label: "上访人员"
+        },{
+          value: 4,
+          label: "吸毒人员"
+        },{
+          value: 5,
+          label: "前科人员"
+        },{
+          value: 6,
+          label: "新疆"
+        },{
+          value: 7,
+          label: "西藏"
+        },],
         partitionOptions: [],
         blockOptions: [],
         unitOptions: [],
         roomOptions: [],
         disabled: false,
         dateShow: false,
-        isEntranceExist : false
+        isEntranceExist : false,
+        idCardInfo: null
       }
     },
     methods: {
-      disabledDate(current){
-        return current && current.valueOf() < Date.now();
-      },
-      readCard(){
-        var OrderID = 0;
-        var FormatID = 1;
-        cardInit.Repeat = 0;
-        cardInit.HaltAfterSuccess = 0;
-        cardInit.BeepOnSuccess = 0;
-        cardInit.RequestTypeACardNo(FormatID, OrderID);
-      },
-      readCard2(){
+      go(){
         cardInit.Repeat = 0;
         cardInit.HaltAfterSuccess = 0;
         cardInit.RequestChinaIDCardNo();
       },
-      resetCard(){
-        this.cardNoList.cardNo[0].value = "";
-        console.log(this.cardNoList.cardNo);
-      },
-      removeCard(item) {
-        var index = this.cardNoList.cardNo.indexOf(item)
-        if (index !== -1) {
-          this.cardNoList.cardNo.splice(index, 1)
-        }
-        console.log(this.cardNoList.cardNo);
-      },
       washData(){
-        this.$refs.householdForm.validate((valid) => {
+        this.$refs.householdWuhanForm.validate((valid) => {
           if (valid) {
-            console.log(this.cardNoList.cardNo)
-            let arr = [];
-            for(let i=0;i<this.cardNoList.cardNo.length;i++){
-              arr.push(this.cardNoList.cardNo[i].value)
-            }
-            this.model.cardTypeNames = arr.join(',');
-            var newObj = this.model;
-            if(newObj.effectiveEndTime){
-              newObj.effectiveStartTime = Date.parse(new Date());
-              newObj.effectiveEndTime = Date.parse(new Date(newObj.effectiveEndTime));
-            }
-            bus.$emit('householdForm_data_create', newObj);
+            console.log('lofi!!')
           } else {
             console.log('error submit!!');
             return false;
           }
         });
+      },
+      searchIdCard(){
+//        this.visible.idCard = !this.visible.idCard;
+        api.getIdCardInfo(this.model.idCard).then(res => {
+          if(res.success){
+            this.idCardInfo = res.data;
+          }else{
+            this.idCardInfo = null
+          }
+        })
       },
       userChangeEffective(val){
         if(val == 0){
@@ -347,7 +426,7 @@
             this.roomOptions = [];
             this.roomOptions = res.data;
           })
-      },
+      }
     },
     created() {
       api.getPartitions()
@@ -359,9 +438,7 @@
           this.partitionOptions = res.data;
         })
 
-
       if(cardInit){
-
 
         if (!cardInit.TryConnect()) {
           alert("浏览器不支持，请更换浏览器后重试！");
@@ -371,101 +448,31 @@
           switch (resultdata.FunctionID) {
             case 0:
               if (resultdata.Result > 0) {
-
-                for(let j=0; j < this.$data.cardNoList.cardNo.length; j++){
-
-                  if(("IC-"+resultdata.strData.slice(2)) == this.$data.cardNoList.cardNo[j].value){
-                    this.$notification.error({
-                      message: '重复读卡',
-                      duration: 2
-                    });
-                    break;
-                  }
-
-                  if(this.$data.cardNoList.cardNo[j].value == ''){
-
-                    this.$data.cardNoList.cardNo[j].value = "IC-"+resultdata.strData.slice(2)
-                    break;
-                  }
-
-                  if(j == this.$data.cardNoList.cardNo.length - 1){
-                    this.$data.cardNoList.cardNo.push({
-                      value: "IC-"+resultdata.strData.slice(2)
-                    });
-                    break;
-                  }
-                }
-
-
+                this.$data.model.cardNo = "IC-"+resultdata.strData.slice(2)
               }else{
-                console.log(resultdata.Result);
-                if(resultdata.Result == -3){
-                  this.$notification.error({
-                    message: '卡类型错误',
-                    duration: 2
-                  });
-                }else{
-                  this.$notification.error({
-                    message: '读卡失败',
-                    duration: 2
-                  });
-                }
-
+                this.$notification.error({
+                  message: '读卡失败',
+                  duration: 2
+                });
               }
               break;
-
             case 3:
               if (resultdata.Result > 0) {
-
                 var ten = parseInt(resultdata.strData, 16).toString()
                 console.log(ten);
-                for(let j=0; j < this.$data.cardNoList.cardNo.length; j++){
-
-                  if(("IC-"+resultdata.strData.slice(2)) == this.$data.cardNoList.cardNo[j].value){
-                    this.$notification.error({
-                      message: '重复读卡',
-                      duration: 2
-                    });
-                    break;
-                  }
-
-                  if(this.$data.cardNoList.cardNo[j].value == ''){
-
-                    this.$data.cardNoList.cardNo[j].value = "IC-" + ten.slice(11)
-                    break;
-                  }
-
-                  if(j == this.$data.cardNoList.cardNo.length - 1){
-                    this.$data.cardNoList.cardNo.push({
-                      value: "IC-" + ten.slice(11)
-                    });
-                    break;
-                  }
-                }
-
-
+                console.log('idn')
+                this.$data.model.cardNo = "IC-"+ten.slice(11)
               }else{
-                console.log(resultdata.Result);
-                if(resultdata.Result == -3){
-                  this.$notification.error({
-                    message: '卡类型错误',
-                    duration: 2
-                  });
-                }else{
-                  this.$notification.error({
-                    message: '读卡失败',
-                    duration: 2
-                  });
-                }
-
+                this.$notification.error({
+                  message: '读卡失败',
+                  duration: 2
+                });
               }
-
-
+              break;
           }
         });
+
       }
-
-
     }
   }
 </script>
