@@ -169,7 +169,7 @@
           label: "年卡"
         }],
         dateTime: "",
-        labelCol: { span: 4 },
+        labelCol: { span: 5 },
         wrapperCol: { span: 14 },
         treeData: [],
       }
@@ -247,11 +247,12 @@
                 if (originArr[i].children[j].units) {
                   originArr[i].children[j].children = originArr[i].children[j].units;
                   delete originArr[i].children[j].units;
+                  for(var k=0; k < originArr[i].children[j].children.length; k++){
+                    originArr[i].children[j].children[k].title = originArr[i].children[j].children[k].name;
+                    delete originArr[i].children[j].children[k].name;
+                  }
                 }
-                for(var k=0; k < originArr[i].children[j].children.length; k++){
-                  originArr[i].children[j].children[k].title = originArr[i].children[j].children[k].name;
-                  delete originArr[i].children[j].children[k].name;
-                }
+
               }
               delete originArr[i].blockDevices;
               delete originArr[i].fenceLocations;
@@ -275,9 +276,12 @@
           switch (resultdata.FunctionID) {
             case 0:
               if (resultdata.Result > 0) {
-                this.$data.model.cardNo = "IC-"+resultdata.strData.slice(2)
+                this.$data.model.cardNo = "ICA-"+resultdata.strData.slice(2)
               }else{
-                test('读卡失败')
+                this.$notification.error({
+                  message: '读卡失败',
+                  duration: 2
+                });
               }
               break;
           }

@@ -4,7 +4,7 @@
       <div class="row m-b-sm">
         <span class="title">{{detailList.proposerName}}</span>
         <span class="phone">{{detailList.proposerMobile}}</span>
-        <span class="date pull-right" style="width: 180px;">投诉时间：{{detailList.gmtCreated | formatDate('YMD')}}</span>
+        <span class="date pull-right" style="width: 180px;">报修时间：{{detailList.gmtCreated | formatDate('YMD')}}</span>
       </div>
       <div class="row m-b-sm">
         <span class="address">{{detailList.location}}</span>

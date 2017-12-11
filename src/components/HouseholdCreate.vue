@@ -116,8 +116,21 @@
       </v-row>
     </v-form>
 
+
     <div class="p-v-md clear b-t" v-if="isEntranceExist">
+      <div>
+
+      </div>
+
       <div class="left pull-left" style="width: 70%;">
+        <v-row>
+          <v-form-item :label-col="{span: 5}"
+                       :wrapper-col="{span:19}"
+                       label="卡类型">
+            <v-radio-group v-model="cardType" :data="[{value: 'b', text: '身份证'},{value: 'a', text: 'IC卡'}]">
+            </v-radio-group>
+          </v-form-item>
+        </v-row>
         <v-row>
           <v-form-item :label-col="{span: 5}"
                        :wrapper-col="{span:19}"
@@ -138,14 +151,17 @@
         </v-row>
       </div>
       <div class="right pull-left text-center" style="width: 30%; margin-top: 2px;">
-        <v-button type="primary" @click="readCard2">
+        <v-button type="primary" v-if="cardType == 'b'" @click="readCard2">
           读取卡号
         </v-button>
-        <div class="m-t-sm">
-          <a href="http://www.youwokeji.com.cn/CloudReader/YOWORFIDReaderCloudForWeb.exe">
-            下载插件
-          </a>
-        </div>
+        <v-button type="primary" v-if="cardType == 'a'" @click="readCard">
+          读取卡号
+        </v-button>
+        <!--<div class="m-t-sm">-->
+          <!--<a href="http://www.youwokeji.com.cn/CloudReader/YOWORFIDReaderCloudForWeb.exe">-->
+            <!--下载插件-->
+          <!--</a>-->
+        <!--</div>-->
       </div>
     </div>
   </div>
@@ -162,6 +178,7 @@
   export default {
     data() {
       return {
+        cardType: "b",
         model: {
           name: "",
           userType: "",
@@ -273,7 +290,7 @@
             var newObj = this.model;
             if(newObj.effectiveEndTime){
               newObj.effectiveStartTime = Date.parse(new Date());
-              newObj.effectiveEndTime = Date.parse(new Date(newObj.effectiveEndTime));
+              newObj.effectiveEndTime = Date.parse(new Date(newObj.effectiveEndTime)) + 24 * 60 * 60 * 1000 - 1000;
             }
             bus.$emit('householdForm_data_create', newObj);
           } else {
@@ -282,7 +299,7 @@
           }
         });
       },
-      userChangeEffective(val){
+      userChangeEffective(val) {
         if(val == 0){
           this.disabled = true;
           this.model.effectiveType = 0;
@@ -374,7 +391,7 @@
 
                 for(let j=0; j < this.$data.cardNoList.cardNo.length; j++){
 
-                  if(("IC-"+resultdata.strData.slice(2)) == this.$data.cardNoList.cardNo[j].value){
+                  if(("ICA-"+resultdata.strData.slice(2)) == this.$data.cardNoList.cardNo[j].value){
                     this.$notification.error({
                       message: '重复读卡',
                       duration: 2
@@ -384,13 +401,13 @@
 
                   if(this.$data.cardNoList.cardNo[j].value == ''){
 
-                    this.$data.cardNoList.cardNo[j].value = "IC-"+resultdata.strData.slice(2)
+                    this.$data.cardNoList.cardNo[j].value = "ICA-"+resultdata.strData.slice(2)
                     break;
                   }
 
                   if(j == this.$data.cardNoList.cardNo.length - 1){
                     this.$data.cardNoList.cardNo.push({
-                      value: "IC-"+resultdata.strData.slice(2)
+                      value: "ICA-"+resultdata.strData.slice(2)
                     });
                     break;
                   }
@@ -421,7 +438,7 @@
                 console.log(ten);
                 for(let j=0; j < this.$data.cardNoList.cardNo.length; j++){
 
-                  if(("IC-"+resultdata.strData.slice(2)) == this.$data.cardNoList.cardNo[j].value){
+                  if(("ICB-"+resultdata.strData.slice(2)) == this.$data.cardNoList.cardNo[j].value){
                     this.$notification.error({
                       message: '重复读卡',
                       duration: 2
@@ -431,13 +448,13 @@
 
                   if(this.$data.cardNoList.cardNo[j].value == ''){
 
-                    this.$data.cardNoList.cardNo[j].value = "IC-" + ten.slice(11)
+                    this.$data.cardNoList.cardNo[j].value = "ICB-" + ten.slice(11)
                     break;
                   }
 
                   if(j == this.$data.cardNoList.cardNo.length - 1){
                     this.$data.cardNoList.cardNo.push({
-                      value: "IC-" + ten.slice(11)
+                      value: "ICB-" + ten.slice(11)
                     });
                     break;
                   }

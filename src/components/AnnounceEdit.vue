@@ -37,13 +37,12 @@
       </v-form-item>
 
       <v-form-item label="公告时间"
-                   :label-col="labelCol" :wrapper-col="{span: 10}"
-                   prop="dateTime"
+                   :label-col="labelCol" :wrapper-col="{span: 11}"
+                   prop="effectiveEndTime"
                    has-feedback>
-        <v-date-picker placeholder="请输入公告时间"
-                       v-model="model.dateTime"
-                       range clearable>
-        </v-date-picker>
+        <v-date-picker v-model="model.effectiveStartTime" :disabled-date="disabledStartDate"></v-date-picker>
+        <span>-</span>
+        <v-date-picker v-model="model.effectiveEndTime" :disabled-date="disabledEndDate"></v-date-picker>
       </v-form-item>
     </v-form>
     <!--<div class="pull-left b-l" style="width: 35%;min-height: 300px;height: auto;">-->
@@ -71,6 +70,13 @@
           callback();
         }
       };
+      var validatePass3 = (rule, value, callback) => {
+        if (this.$data.model.effectiveEndTime === ""||this.$data.model.effectiveStartTime === "") {
+          callback(new Error('请选择公告时间'));
+        } else {
+          callback();
+        }
+      };
       return{
         model: {
           title: "",
@@ -94,12 +100,14 @@
             required: true,
             message: '请输入公告内容'
           }],
-          dateTime: [{
+          effectiveEndTime: [{
             required: true,
             message: '请选择公告时间'
-          }]
+          },{
+            validator: validatePass3
+          }],
         },
-        labelCol: { span: 4 },
+        labelCol: { span: 5 },
         wrapperCol: { span: 15 },
         treeData: [],
         fuArr: [],
@@ -114,6 +122,12 @@
         }else{
           this.model.range='请在右侧选择'
         }
+      },
+      disabledStartDate(current){
+        return current && current.valueOf() > Date.parse(new Date(this.model.effectiveEndTime));
+      },
+      disabledEndDate(current){
+        return current && current.valueOf() < Date.parse(new Date(this.model.effectiveStartTime));
       },
       washData(){
         this.$refs.announceEditForm.validate((valid) => {

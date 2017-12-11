@@ -36,8 +36,9 @@
       </v-form-item>
 
       <v-form-item label="公告时间"
-                   :label-col="labelCol" :wrapper-col="{span: 20}"
-                   prop="dateTime"
+                   :label-col="labelCol"
+                   :wrapper-col="{span: 12}"
+                   prop="effectiveEndTime"
                    has-feedback>
         <v-date-picker v-model="model.effectiveStartTime" :disabled-date="disabledStartDate"></v-date-picker>
         <span>-</span>
@@ -71,6 +72,13 @@
           callback();
         }
       };
+      var validatePass3 = (rule, value, callback) => {
+        if (this.$data.model.effectiveEndTime === ""||this.$data.model.effectiveStartTime === "") {
+          callback(new Error('请选择公告时间'));
+        } else {
+          callback();
+        }
+      };
       return{
         model: {
           title: "",
@@ -95,6 +103,12 @@
           },{
             validator: validatePass2
           }],
+          effectiveEndTime: [{
+            required: true,
+            message: '请选择公告时间'
+          },{
+            validator: validatePass3
+          }],
           content: [{
             required: true,
             message: '请输入公告内容'
@@ -103,7 +117,7 @@
             message: '公告长度不得大于200字'
           }],
         },
-        labelCol: { span: 4 },
+        labelCol: { span: 5 },
         wrapperCol: { span: 14 },
         treeData: [],
       }
@@ -178,11 +192,12 @@
                 if (originArr[i].children[j].units) {
                   originArr[i].children[j].children = originArr[i].children[j].units;
                   delete originArr[i].children[j].units;
+                  for(var k=0; k < originArr[i].children[j].children.length; k++){
+                    originArr[i].children[j].children[k].title = originArr[i].children[j].children[k].name;
+                    delete originArr[i].children[j].children[k].name;
+                  }
                 }
-                for(var k=0; k < originArr[i].children[j].children.length; k++){
-                  originArr[i].children[j].children[k].title = originArr[i].children[j].children[k].name;
-                  delete originArr[i].children[j].children[k].name;
-                }
+
               }
               delete originArr[i].blockDevices;
               delete originArr[i].fenceLocations;

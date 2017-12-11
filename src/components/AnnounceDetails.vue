@@ -14,7 +14,7 @@
       </v-row>
       <v-row class="b-b p-b-sm">
         <v-col span="24">
-          <span class="content">{{detailList.content}}</span>
+          <div class="pull-left word-break" style="position: relative;">{{detailList.content}}</div>
         </v-col>
       </v-row>
     </div>

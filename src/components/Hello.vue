@@ -197,12 +197,53 @@
           }
         }
         this.themeMenuData = data;
+      },
+      setWuhanSideBarAndTitle(){
+        this.title = this.$route.name;
+        let routePath = this.$route.path.split('/')[2];
+        let data = [
+          {name: '首页',  icon: 'home', href: 'home'},
+          { name: '物业中心', icon: 'building', children: [
+            {name: "公告管理", href: 'announce'},
+            {name: "投诉", href: 'complain'},
+            {name: "维修", href: 'repair'}]
+          },
+          {name: '设备管理', icon: 'cog', href: 'device'},
+          {name: '门禁管理', icon: 'unlock-alt', children: [
+            {name: "住户管理", href: 'household'},
+            {name: "公卡管理", href: 'common'}]
+          },
+          {name: '日志管理', icon: 'file-text-o', children: [
+            {name: "开门日志", href: 'open'},
+            {name: "防拆日志", href: 'remove'},
+            {name: "访客日志", href: 'visitor'}]
+          }
+        ];
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].href == routePath) {
+            data[i].selected = true;
+          } else {
+            if (data[i].children) {
+              for (let j = 0; j < data[i].children.length; j++) {
+                if (data[i].children[j].href == routePath) {
+                  data[i].children[j].selected = true;
+                  data[i].expand = true;
+                }
+              }
+            }
+          }
+        }
+        this.themeMenuData = data;
       }
     },
     created(){
       console.log(localStorage.vueUserType)
       document.title = 'weker物业管理平台';
-      this.setSideBarAndTitle();
+      if(localStorage.vueUserType == 1){
+        this.setWuhanSideBarAndTitle();
+      }else{
+        this.setSideBarAndTitle();
+      }
       window.ws = new WebSocket('ws://114.55.143.170:8081/websocket');
       this.send(localStorage.vueCommunityId);
 
@@ -250,7 +291,11 @@
     },
     watch: {
       $route(){
-        this.setSideBarAndTitle();
+        if(localStorage.vueUserType == 1){
+          this.setWuhanSideBarAndTitle();
+        }else{
+          this.setSideBarAndTitle();
+        }
       }
     },
     beforeRouteLeave (to, from, next) {

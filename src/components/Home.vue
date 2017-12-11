@@ -295,7 +295,7 @@
             console.log('处理消息', res);
             if(res.success){
               this.dealState.success = true;
-              this._getComplaint();
+              this._getComplaint(1);
               setTimeout(()=>{
                 this.dealState.success = false;
               }, 2000)

@@ -21,7 +21,12 @@
           </v-form-item>
           <v-form-item label="设备类型" class="m-b-sm">
             <v-select v-model="filterList.type" style="width: 150px;"
+                      v-if="userType == 0"
                       :data="typeOptions">
+            </v-select>
+            <v-select v-model="filterList.type" style="width: 150px;"
+                      v-if="userType == 1"
+                      :data="typeWuhanOptions">
             </v-select>
           </v-form-item>
           <v-form-item label="设备状态" class="m-b-sm">
@@ -138,6 +143,7 @@
           blockId: "",
           unitId: ""
         },
+        userType: localStorage.vueUserType,
         page: {
           total: 0,
           value: 1
@@ -152,6 +158,16 @@
         }, {
           value: '1',
           label: '单元机'
+        }],
+        typeWuhanOptions: [{
+          value: '1',
+          label: '单元机'
+        }, {
+          value: '0',
+          label: '围墙机-进门'
+        }, {
+          value: '2',
+          label: '围墙机-出门'
         }],
         statusOptions: [{
           value: '0',
@@ -230,16 +246,6 @@
             if(res.success){
               if(res.data.list){
                 for (var i = 0; i < res.data.list.length; i++) {
-                  switch (res.data.list[i].type) {
-                    case 0:
-                      res.data.list[i].type = '围墙机';
-                      break;
-                    case 1:
-                      res.data.list[i].type = '单元机';
-                      break;
-                    default:
-                      res.data.list[i].type = '';
-                  }
                   switch (res.data.list[i].status) {
                     case 0:
                       res.data.list[i].status_cn = '离线';
@@ -270,6 +276,39 @@
                     default:
                       res.data.list[i].lockStatus_cn = '';
                   }
+                }
+                if(localStorage.vueUserType == 1){
+                  console.log(localStorage.vueUserType)
+                  for (var i = 0; i < res.data.list.length; i++) {
+                    switch (res.data.list[i].type) {
+                      case 0:
+                        res.data.list[i].type = '围墙机-进门';
+                        break;
+                      case 1:
+                        res.data.list[i].type = '单元机';
+                        break;
+                      case 2:
+                        res.data.list[i].type = '围墙机-出门';
+                        break;
+                      default:
+                        res.data.list[i].type = '';
+                    }
+                  }
+
+                }else{
+                  for (var i = 0; i < res.data.list.length; i++) {
+                    switch (res.data.list[i].type) {
+                      case 0:
+                        res.data.list[i].type = '围墙机';
+                        break;
+                      case 1:
+                        res.data.list[i].type = '单元机';
+                        break;
+                      default:
+                        res.data.list[i].type = '';
+                    }
+                  }
+
                 }
                 this.page.total = res.data.total;
                 this.deviceList = res.data.list;

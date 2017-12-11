@@ -58,10 +58,10 @@
                   <thead class="ant-table-thead">
 
                   <tr>
-                    <th width="10%">投诉人</th>
+                    <th width="10%">报修人</th>
                     <th width="15%">联系方式</th>
                     <th width="24%">地址</th>
-                    <th width="14%">投诉时间</th>
+                    <th width="14%">报修时间</th>
                     <th width="14%">处理时间</th>
                     <th width="11%">处理状态</th>
                     <th width="12%">操作</th>

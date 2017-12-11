@@ -1,38 +1,9 @@
 <template>
-  <div class="householdCreateWuhan">
+  <div class="householdEditWuhan">
     <v-form direction="horizontal">
-      <v-row :class="{'padding-t':!visible.idCard, 'padding-o': visible.idCard}" >
-        <v-form-item label=""
-                     :label-col="labelCol"
-                     :wrapper-col="{span: 24}"
-                     prop="idCard"
-                     has-feedback>
-          <v-input v-model="model.idCard" placeholder="请输入/选择身份证号码">
-            <span slot="after" class="input-button" @click="searchIdCard(model.idCard)">人证查询</span>
-          </v-input>
-
-        </v-form-item>
-      </v-row>
-
-
-      <v-collapse :active-index="activeIndexMore" :bordered="false" v-if="!idCardInfo||idCardToggle" style="padding: 0 95px">
-        <v-panel index="1" :style="customPanelStyle" header="身份证列表">
-          <div class="list-box" style="height: 275px;width: 100%;padding: 15px 10px;border: 1px solid #eee;border-radius: 5px;overflow-y: scroll">
-            <ul>
-              <li>
-                <a href="javascript:;" @click="searchIdCard(item.identityNum)" v-for="item in idCardList">
-                  <span class="m-r-sm">{{item.name}}：</span><span>{{item.identityNum}}</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-          <a class="pull-right m-t-xs m-r-xs" @click="showCardInfo">返回身份证信息</a>
-        </v-panel>
-      </v-collapse>
-
-      <v-collapse :active-index="activeIndexMore" :bordered="false" v-if="idCardInfo&&!idCardToggle" style="padding: 0 95px">
+      <v-collapse :active-index="activeIndexMore" :bordered="false" v-if="idCardInfo" style="padding: 0 95px">
         <v-panel index="1" :style="customPanelStyle" header="身份证信息">
-          <div class="idCard-box">
+          <div class="idCard-box" >
             <div class="id-card p-v-sm p-h-md">
               <div class="card-info pos-relative">
                 <div class="row m-b-sm">
@@ -80,19 +51,43 @@
               </div>
             </div>
           </div>
-          <a class="pull-right m-t-xs m-r-xs" @click="showCardInfo">返回身份证列表</a>
         </v-panel>
-      </v-collapse>
 
+      </v-collapse>
     </v-form>
-    <v-form class="m-t-md" direction="horizontal" :model="model" :rules="rules" v-if="idCardInfo" ref="householdWuhanForm">
+    <v-form class="m-t-md" direction="horizontal" :model="model" :rules="rules" v-if="idCardInfo" ref="householdWuhanEditForm">
       <v-row>
         <v-form-item label="手机号码"
                      :label-col="labelCol"
                      :wrapper-col="{span: 11}"
                      prop="mobile"
                      has-feedback>
-          <v-input style="width: 260px;" v-model="model.mobile"></v-input>
+          <v-input style="width: 260px;" v-model="model.mobile" disabled></v-input>
+        </v-form-item>
+      </v-row>
+      <v-row>
+        <v-form-item label="住户身份"
+                     :label-col="{span: 4}"
+                     :wrapper-col="{span:8}"
+                     prop="userType"
+                     has-feedback>
+          <v-select :data="userTypeOption"
+                    v-model="model.userType"
+                    disabled
+                    @change="userChangeEffective">
+          </v-select>
+        </v-form-item>
+      </v-row>
+      <v-row>
+        <v-form-item label="住户房号"
+                     :label-col="labelCol"
+                     :wrapper-col="{span:17}"
+                     prop="roomNoId"
+                     has-feedback>
+          <v-input disabled v-model="model.partitionName" style="width: 120px;"></v-input>
+          <v-input disabled v-model="model.blockName" style="width: 90px;"></v-input>
+          <v-input disabled v-model="model.unitName" style="width: 90px;"></v-input>
+          <v-input disabled v-model="model.roomNo" style="width: 90px;"></v-input>
         </v-form-item>
       </v-row>
       <v-row>
@@ -106,53 +101,7 @@
           </v-select>
         </v-form-item>
       </v-row>
-      <v-row>
-        <v-form-item label="住户身份"
-                     :label-col="{span: 4}"
-                     :wrapper-col="{span:8}"
-                     prop="userType"
-                     has-feedback>
-          <v-select :data="userTypeOption"
-                    v-model="model.userType"
-                    @change="userChangeEffective">
-          </v-select>
-        </v-form-item>
-      </v-row>
-
-      <v-row>
-        <v-form-item label="住户房号"
-                     :label-col="labelCol"
-                     :wrapper-col="{span:17}"
-                     prop="roomNoId"
-                     has-feedback>
-          <v-select v-model="model.partitionId"
-                    :allowClear="false"
-                    style="width: 120px;"
-                    :data="partitionOptions"
-                    @change="changeBlock">
-          </v-select>
-          <v-select v-model="model.blockId"
-                    :allowClear="false"
-                    style="width: 90px;"
-                    :data="blockOptions"
-                    @change="changeUnit">
-          </v-select>
-          <v-select v-model="model.unitId"
-                    :allowClear="false"
-                    style="width: 90px;"
-                    :data="unitOptions"
-                    @change="changeRoom">
-          </v-select>
-          <v-select v-model="model.roomNoId"
-                    :allowClear="false"
-                    :optionOnChange="true"
-                    style="width: 90px;"
-                    :data="roomOptions"
-                    @change="checkEntranceExist">
-          </v-select>
-        </v-form-item>
-      </v-row>
-      <v-row v-if="model.roomNoId">
+      <v-row v-if="model.roomNo">
         <v-form-item label="房屋类型"
                      :label-col="{span: 4}"
                      :wrapper-col="{span:8}"
@@ -163,8 +112,7 @@
           </v-select>
         </v-form-item>
       </v-row>
-      <div v-if="isEntranceExist&&model.roomNoId">
-
+      <div v-if="isEntranceExist&&model.roomNo">
         <v-row>
           <v-col span="6">
             <v-form-item label="永久有效"
@@ -185,7 +133,8 @@
                          :wrapper-col="{span:15}"
                          prop="effectiveEndTime"
                          has-feedback>
-              <v-date-picker style="width: 100px;"
+              <v-date-picker v-model="model.effectiveStartTime"
+                             style="width: 100px;"
                              placeholder="今天"
                              disabled>
               </v-date-picker>
@@ -226,7 +175,7 @@
   </div>
 </template>
 <style lang="scss" scoped>
-  .householdCreateWuhan{
+  .householdEditWuhan{
     .ant-collapse-content{
       padding: 0;
     }
@@ -245,7 +194,7 @@
       right: 0px;
     }
     .photo-box {
-      width: 77px;
+      width: 89px;
       height: 100px;
       background-color: #fff;
       display: flex;
@@ -276,32 +225,6 @@
     .fade-enter, .fade-leave-to /* .fade-leave-active in below version 2.1.8 */ {
       opacity: 0
     }
-    .list-box{
-      li{
-        font-size: 13px;
-        margin-bottom: 5px;
-        cursor: pointer;
-        a{
-          text-decoration: none;
-          display: inline-block;
-          width: 100%;
-          color: rgba(0,0,0,0.65);
-          &:hover{
-            background: rgba(0,0,0,0.05);
-          }
-          &:active{
-            background: rgba(0,0,0,0.05);
-          }
-          &:visited{
-            background: rgba(0,0,0,0.05);
-          }
-          &:focus{
-            background: rgba(0,0,0,0.05);
-          }
-        }
-
-      }
-    }
   }
 </style>
 <script type="text/ecmascript-6">
@@ -311,6 +234,8 @@
   export default {
     data() {
       return {
+        idCardInfo: null,
+        isEntranceExist: false,
         activeIndexMore:['1'],
         customPanelStyle: {
           background: '#f7f7f7',
@@ -318,56 +243,22 @@
           marginBottom: '24px',
           border: 0,
         },
-        cardType: "b",
         model: {
-          userType: "",
-          mobile: "",
-          idCard: "",
-          partitionId: "",
-          blockId: "",
-          unitId: "",
-          roomNoId: "",
-          effectiveType: "",
           effectiveStartTime: "",
-          effectiveEndTime: "",
-          cardTypeNames: "",
-          roomType: "",
-          type: 0
-        },
-        labelCol: { span: 4 },
-        wrapperCol: { span: 20 },
-        visible: {
-          idCard: false
+          effectiveEndTime: ""
         },
         rules: {
-          type: [{
-            required: true,
-            message: '请选择住户类型'
-          }],
           roomType: [{
             required: true,
             message: '请选择房屋类型'
-          }],
-          userType: [{
-            required: true,
-            message: '请选择住户身份'
-          }],
-          roomNoId: [{
-            required: true,
-            message: '请选择住户房号'
-          }],
-          mobile: [{
-            required: true,
-            message: '请输入手机号码'
-          },{
-            pattern: '(^(0[0-9]{2,3}\\-)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?$)|(^((\\(\\d{3}\\))|(\\d{3}\\-))?(1[3578]\\d{9})$)',
-            message: '请输入正确的手机号码'
-          }],
-          effectiveEndTime: [{
-            required: true,
-            message: '请选择结束时间'
           }]
         },
+        disabled: false,
+        dateShow: false,
+        cardType: 'b',
+        model: {},
+        labelCol: { span: 4 },
+        wrapperCol: { span: 20 },
         userTypeOption:[{
           value: 1,
           label: "业主"
@@ -409,20 +300,14 @@
         },{
           value: 7,
           label: "西藏"
-        },],
-        partitionOptions: [],
-        blockOptions: [],
-        unitOptions: [],
-        roomOptions: [],
-        disabled: false,
-        dateShow: false,
-        isEntranceExist : false,
-        idCardInfo: null,
-        idCardList: [],
-        idCardToggle: true
+        }],
       }
     },
+    props:['item'],
     methods: {
+      disabledDate(current){
+        return current && current.valueOf() < Date.now();
+      },
       go(){
         cardInit.Repeat = 0;
         cardInit.HaltAfterSuccess = 0;
@@ -436,82 +321,77 @@
         cardInit.BeepOnSuccess = 0;
         cardInit.RequestTypeACardNo(FormatID, OrderID);
       },
-      disabledDate(current){
-        return current && current.valueOf() < Date.now();
-      },
-      showCardInfo(){
-        this.idCardToggle = !this.idCardToggle;
-      },
-      washData(){
-        this.$refs.householdWuhanForm.validate((valid) => {
-          if (valid) {
-            if(this.idCardInfo){
-              var newObj = {
-                blockId: this.model.blockId,
-                cardTypeNames: this.model.cardTypeNames,
-                effectiveType: this.model.effectiveType,
-                idCard: this.idCardInfo.identityNum,
-                mobile: this.model.mobile,
-                name: this.idCardInfo.customerName,
-                partitionId:this.model.partitionId,
-                roomNoId:this.model.roomNoId,
-                roomType:this.model.roomType,
-                type:this.model.type,
-                unitId:this.model.unitId,
-                userType:this.model.userType
-              };
-              if(this.model.effectiveEndTime){
-                newObj.effectiveStartTime = Date.parse(new Date());
-                newObj.effectiveEndTime = Date.parse(new Date(this.model.effectiveEndTime)) + 24 * 60 * 60 * 1000 - 1000;
-                console.log(newObj.effectiveEndTime);
-              }
-              bus.$emit('householdWuhanForm_data_create', [newObj, this.idCardInfo]);
-            }
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      },
-      setIdCardText(value){
-        this.model.idCard = value;
-      },
-      searchIdCard(value){
-        this.model.idCard = value;
+      searchIdCard(){
 //        this.visible.idCard = !this.visible.idCard;
-        api.getIdCardInfo(value).then(res => {
+        api.getIdCardInfo(this.item.idCard).then(res => {
           if(res.success){
             console.log(res.data)
             this.idCardInfo = res.data;
-            this.idCardToggle = false;
           }else{
-            this.idCardInfo = null;
-            this.$notification.error({
-              message: res.message,
-              duration: 2
-            });
-
+            this.idCardInfo = null
+          }
+        })
+      },
+      trimRight(s){
+        if(s == null) return "";
+        var whitespace = new String(" \t\n\r");
+        var str = new String(s);
+        if (whitespace.indexOf(str.charAt(str.length-1)) != -1){
+          var i = str.length - 1;
+          while (i >= 0 && whitespace.indexOf(str.charAt(i)) != -1){
+            i--;
+          }
+          str = str.substring(0, i+1);
+        }
+        return str;
+      },
+      washData(){
+        this.$refs.householdWuhanEditForm.validate((valid) => {
+          if (valid) {
+            let newObj = {
+              mobile: this.model.mobile,
+              name: this.model.name,
+              type: this.model.type,
+              userType: this.model.userType,
+              partitionId: this.model.partitionId,
+              blockId: this.model.blockId,
+              unitId: this.model.unitId,
+              roomNoId: this.model.roomNoId,
+              effectiveType: this.model.effectiveType,
+              effectiveStartTime: this.model.effectiveStartTime,
+              effectiveEndTime: this.model.effectiveEndTime,
+              cardTypeNames: this.model.cardTypeNames,
+              idCard: this.model.idCard,
+              id: this.model.id,
+              roomType: this.model.roomType
+            }
+            newObj.cardTypeNames = this.trimRight(newObj.cardTypeNames)
+            if(newObj.effectiveType == 0){
+              newObj.effectiveStartTime = 0;
+              newObj.effectiveEndTime = 0;
+            }else{
+              if(newObj.effectiveEndTime){
+                newObj.effectiveStartTime = Date.parse(new Date());
+                newObj.effectiveEndTime = Date.parse(new Date(newObj.effectiveEndTime)) + 24 * 60 * 60 * 1000 - 1000;
+              }
+            }
+            bus.$emit('householdWuhanForm_data_edit', newObj);
           }
         })
       },
       userChangeEffective(val){
         if(val == 0){
           this.disabled = true;
-          this.model.effectiveType = 0;
           this.dateShow = false;
         }else if(val == 1){
           this.disabled = false;
-          this.model.effectiveType = 0;
           this.dateShow = true;
         }else{
           this.disabled = true;
-          this.model.effectiveType = 1;
           this.dateShow = true;
         }
       },
-      checkEntranceExist(value){
-        console.log(value)
-        this.model.roomType = value.type;
+      checkEntranceExist(){
         api.checkExist(this.model.partitionId, this.model.unitId).then(res=>{
           console.log(res)
           if(res.success){
@@ -519,71 +399,13 @@
           }
         })
       },
-      changeBlock(val){
-        api.getBlocks(val)
-          .then(res => {
-            for(let i=0;i<res.data.length;i++){
-              res.data[i].label = res.data[i].name;
-              res.data[i].value = res.data[i].id;
-            }
-            this.model.blockId = "";
-            this.blockOptions = [];
-            this.model.unitId = "";
-            this.unitOptions = [];
-            this.model.roomNoId = "";
-            this.roomOptions = [];
-            this.blockOptions = res.data;
-          })
-      },
-      changeUnit(val){
-        api.getUnits(val)
-          .then(res => {
-            for(let i=0;i<res.data.length;i++){
-              res.data[i].label = res.data[i].name;
-              res.data[i].value = res.data[i].id;
-            }
-            this.model.unitId = "";
-            this.unitOptions = [];
-            this.model.roomNoId = "";
-            this.roomOptions = [];
-            this.unitOptions = res.data;
-          })
-      },
-      changeRoom(val){
-        api.getRooms(val)
-          .then(res => {
-            console.log(res);
-            for(let i=0;i<res.data.length;i++){
-              res.data[i].label = res.data[i].code;
-              res.data[i].value = res.data[i].id;
-            }
-            this.model.roomNoId = "";
-            this.roomOptions = [];
-            this.roomOptions = res.data;
-          })
-      }
     },
     created() {
-      api.getPartitions()
-        .then(res=>{
-          for(let i=0;i<res.data.length;i++){
-            res.data[i].label = res.data[i].name;
-            res.data[i].value = res.data[i].id;
-          }
-          this.partitionOptions = res.data;
-        })
-
-      api.getIdCardList().then(res => {
-        console.log(res);
-        if(res.success){
-          this.idCardList = res.data
-        }else{
-          this.$notification.error({
-            message: '获取身份证信息列表失败',
-            duration: 2
-          });
-        }
-      })
+      console.log(this.item)
+      this.model = this.item;
+      this.searchIdCard();
+      this.userChangeEffective(this.model.userType);
+      this.checkEntranceExist();
 
       if(cardInit){
 

@@ -12,6 +12,7 @@ import Common from '@/components/Common'
 import Open from '@/components/Open'
 import Remove from '@/components/Remove'
 import Hijack from '@/components/Hijack'
+import Visitor from '@/components/Visitor'
 
 Vue.use(Router);
 
@@ -72,6 +73,11 @@ export default new Router({
           path: 'hijack',
           name: '日志管理 - 劫持报警日志',
           component: Hijack
+        },
+        {
+          path: 'visitor',
+          name: '日志管理 - 访客日志',
+          component: Visitor
         }
       ]
     },

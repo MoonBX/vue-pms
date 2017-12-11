@@ -17,8 +17,14 @@
           </v-form-item>
           <v-form-item label="开门类型" class="m-b-sm">
             <v-select v-model="filterList.type"
+                      v-if="userType == 0"
                       style="width: 150px;"
                       :data="typeOptions">
+            </v-select>
+            <v-select v-model="filterList.type"
+                      v-if="userType == 1"
+                      style="width: 150px;"
+                      :data="typeOptions2">
             </v-select>
           </v-form-item>
           <v-form-item label="时间范围" class="m-b-sm">
@@ -190,6 +196,7 @@
         partitionOptions: [],
         blockOptions: [],
         unitOptions: [],
+        userType: localStorage.vueUserType,
         deviceTypeOptions: [{
           value: '0',
           label: '围墙机'
@@ -202,7 +209,7 @@
           label: '呼叫'
         }, {
           value: '1',
-          label: '刷卡'
+          label: 'IC卡开门'
         },{
           value: '2',
           label: '密码'
@@ -212,6 +219,25 @@
         },{
           value: '4',
           label: '人脸开门'
+        }],
+        typeOptions2: [{
+          value: '0',
+          label: '呼叫'
+        }, {
+          value: '3',
+          label: '手机开门'
+        },{
+          value: '4',
+          label: '人脸开门'
+        },{
+          value: '1',
+          label: 'IC卡开门'
+        },  {
+          value: '5',
+          label: '身份证开门'
+        },{
+          value: '6',
+          label: '扫码开门'
         }],
         modalVisible: {
           detail: false
@@ -273,7 +299,7 @@
                       res.data.list[i].type = '呼叫';
                       break;
                     case 1:
-                      res.data.list[i].type = '刷卡';
+                      res.data.list[i].type = 'IC卡开门';
                       break;
                     case 2:
                       res.data.list[i].type = '密码';
@@ -352,6 +378,7 @@
 
     },
     created() {
+      console.log(this.userType)
       document.title = '开门日志';
       this._getIntercom(1);
       api.getPartitions()

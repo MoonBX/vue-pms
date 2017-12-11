@@ -199,17 +199,23 @@
     float: right !important;
   }
   .ant-input-group-addon {
-    color: #fff;
-    background-color: #108ee9;
-    border: 1px solid #108ee9;
+    color: #fff !important;
+    background-color: #108ee9 !important;
+    border: 1px solid #108ee9 !important;
   }
   .ant-collapse-content{
-    padding: 0;
+    padding: 0 !important;
   }
   .ant-collapse-content > .ant-collapse-content-box {
-    padding: 0;
+    padding: 0 !important;
   }
   .ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content{
-    border-top: none;
+    border-top: none !important;
+  }
+  .ant-select-disabled {
+    color: rgba(0, 0, 0, 0.45) !important;
+  }
+  .ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content{
+    background-color: #fff !important;
   }
 </style>

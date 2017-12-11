@@ -110,6 +110,14 @@
     <div class="p-v-md clear b-t" v-if="model.isHasEntrance == 1 && isEntranceExist">
       <div class="left pull-left" style="width: 70%;">
         <v-row>
+          <v-form-item :label-col="{span: 5}"
+                       :wrapper-col="{span:19}"
+                       label="卡类型">
+            <v-radio-group v-model="cardType" :data="[{value: 'b', text: '身份证'},{value: 'a', text: 'IC卡'}]">
+            </v-radio-group>
+          </v-form-item>
+        </v-row>
+        <v-row>
           <v-form-item v-if="cardNoList.cardNo.length"
                        :label-col="{span: 4}" :wrapper-col="{span:19}"
                        v-for="(item, index) in cardNoList.cardNo"
@@ -130,11 +138,6 @@
         <v-button type="primary" @click="readCard">
           读取卡号
         </v-button>
-        <div class="m-t-sm">
-          <a href="http://www.youwokeji.com.cn/CloudReader/YOWORFIDReaderCloudForWeb.exe">
-            下载插件
-          </a>
-        </div>
       </div>
 
     </div>
@@ -276,7 +279,7 @@
             }else{
               if(newObj.effectiveEndTime){
                 newObj.effectiveStartTime = Date.parse(new Date());
-                newObj.effectiveEndTime = Date.parse(new Date(newObj.effectiveEndTime));
+                newObj.effectiveEndTime = Date.parse(new Date(newObj.effectiveEndTime)) + 24 * 60 * 60 * 1000 - 1000;
               }
             }
 

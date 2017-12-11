@@ -309,11 +309,11 @@
                 message: '删除成功！',
                 duration: 2
               });
-              this.listLen -= 1;
+              this.listLen = 1;
               if(this.listLen!=0){
-                this.loadPage(this.$refs.pagination.value)
+                this.pageOption().loadPage(this.$refs.pagination.value)
               }else{
-                this.loadPage(this.$refs.pagination.value-1)
+                this.pageOption().loadPage(this.$refs.pagination.value-1);
                 this.$refs.pagination.current = this.$refs.pagination.value-1;
               }
             }else{
