@@ -379,9 +379,8 @@
 
       if(cardInit){
 
-
         if (!cardInit.TryConnect()) {
-          alert("浏览器不支持，请更换浏览器后重试！");
+          alert("读卡器连接失败，请检查连接！");
         }
 
         cardInit.onResult((resultdata) => {
@@ -434,11 +433,10 @@
             case 3:
               if (resultdata.Result > 0) {
 
-                var ten = parseInt(resultdata.strData, 16).toString()
-                console.log(ten);
+                var ten = resultdata.strData;
                 for(let j=0; j < this.$data.cardNoList.cardNo.length; j++){
 
-                  if(("ICB-"+resultdata.strData.slice(2)) == this.$data.cardNoList.cardNo[j].value){
+                  if(("ICB-"+ten) == this.$data.cardNoList.cardNo[j].value){
                     this.$notification.error({
                       message: '重复读卡',
                       duration: 2
@@ -448,13 +446,13 @@
 
                   if(this.$data.cardNoList.cardNo[j].value == ''){
 
-                    this.$data.cardNoList.cardNo[j].value = "ICB-" + ten.slice(11)
+                    this.$data.cardNoList.cardNo[j].value = "ICB-" + ten
                     break;
                   }
 
                   if(j == this.$data.cardNoList.cardNo.length - 1){
                     this.$data.cardNoList.cardNo.push({
-                      value: "ICB-" + ten.slice(11)
+                      value: "ICB-" + ten
                     });
                     break;
                   }

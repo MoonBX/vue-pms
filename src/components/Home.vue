@@ -19,11 +19,11 @@
             </li>
             <li>
               <div class="title">总户数</div>
-              <div class="count">{{statisticsList.userNum}}</div>
+              <div class="count">{{statisticsList.residentRoomNum}}</div>
             </li>
             <li>
-              <div class="title">App用户数</div>
-              <div class="count">{{statisticsList.appNum}}</div>
+              <div class="title">住户数</div>
+              <div class="count">{{statisticsList.userNum}}</div>
             </li>
             <li>
               <div class="title">住户卡数</div>

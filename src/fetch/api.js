@@ -3,13 +3,15 @@
  */
 import axios from 'axios';
 
-// axios.defaults.baseURL = 'http://114.55.143.170:8082';
-axios.defaults.baseURL = 'http://116.62.39.38:8081';
+axios.defaults.baseURL = 'http://114.55.143.170:8082';
+// axios.defaults.baseURL = 'http://116.62.39.38:8081';
 // axios.defaults.baseURL = 'http://192.168.23.241:8082';
+// axios.defaults.baseURL = 'https://manage.weker.me:8443';
+// axios.defaults.baseURL = 'https://mt.weker.me:8443';
 
 axios.interceptors.request.use(function (config) {    // 这里的config包含每次请求的内容
   if (localStorage.vueToken) {
-    if(config.url.split('/')[config.url.split('/').length-1]!=='login'){
+    if (config.url.split('/')[config.url.split('/').length - 1] !== 'login') {
       // 给login请求之外的所有请求添加header: token
       config.headers.token = localStorage.vueToken;
     }
@@ -38,10 +40,10 @@ export function post(url, data) {
   return new Promise((resolve, reject) => {
     axios.post(url, data)
       .then(response => {
-        if(response.data.code == '401'){
+        if (response.data.code == '401') {
           window.location.href = '/#/login'
           localStorage.removeItem('vueToken');
-        }else{
+        } else {
           resolve(response.data);
         }
       }, err => {
@@ -54,14 +56,15 @@ export function post(url, data) {
 }
 
 export function get(url, params) {
+
   return new Promise((resolve, reject) => {
     axios.get(url, {params: params})
       .then(response => {
-        if(response.data.code == '401'){
+        if (response.data.code == '401') {
           // bus.$emit('please_login', response.data.message);
           window.location.href = '/#/login'
           localStorage.removeItem('vueToken');
-        }else{
+        } else {
           resolve(response.data);
         }
       }, err => {
@@ -73,10 +76,41 @@ export function get(url, params) {
   })
 }
 
+export function formDataPost(url, formData) {
+  let config = {
+    headers: {
+      'Content-Type': 'multipart/form-data'  //之前说的以表单传数据的格式来传递fromdata
+    }
+  };
+  return new Promise((resolve, reject) => {
+    axios.post(url, formData, config)
+      .then(response => {
+        if (response.data.code == '401') {
+          // bus.$emit('please_login', response.data.message);
+          window.location.href = '/#/login'
+          localStorage.removeItem('vueToken');
+        } else {
+          resolve(response.data);
+        }
+      }, err => {
+        reject(err);
+      })
+      .catch((error) => {
+        reject(error);
+      })
+  })
+}
+
 export default {
   /**
    * 用户登录
    */
+  validateApi(){
+    return axios.defaults.baseURL;
+  },
+  exportHost(){
+    return axios.defaults.baseURL;
+  },
   Login(data) {
     return post('/account/login', data)
   },
@@ -86,138 +120,150 @@ export default {
   },
 
   getComplaint(pageNo, limit, params) {
-    return get('/estate/complaint/list/'+pageNo+'/'+limit, params);
+    return get('/estate/complaint/list/' + pageNo + '/' + limit, params);
   },
 
-  getAlarmInfo(){
+  getAlarmInfo() {
     return get('/device/alarmInfo/list')
   },
 
-  getStatistics(){
+  getStatistics() {
     return get('/community/statistics/homepage')
   },
 
-  dealComplaint(id, data){
-    return get('/estate/complaint/'+id+'/updateStatus/'+data)
+  dealComplaint(id, data) {
+    return get('/estate/complaint/' + id + '/updateStatus/' + data)
   },
 
   // 公告管理
-  getAnnounce(pageNo, limit, params){
+  getAnnounce(pageNo, limit, params) {
     return get('/community/announcement/list/' + pageNo + '/' + limit, params);
   },
-  getDeviceDetail(){
+  getDeviceDetail() {
     return get('/community/device/detail/');
   },
-  createAnnounce(data){
+  createAnnounce(data) {
     return post('/community/announcement/add', data);
   },
-  deleteAnnounce(id){
-    return post('/community/announcement/'+id+'/delete')
+  deleteAnnounce(id) {
+    return post('/community/announcement/' + id + '/delete')
   },
-  editAnnounce(id){
-    return post('/community/announcement/'+id+'/edit')
+  editAnnounce(id) {
+    return post('/community/announcement/' + id + '/edit')
   },
-  editAnnounceSave(data){
+  editAnnounceSave(data) {
     return post('/community/announcement/editSave', data)
   },
-  getAnnounceDetail(id){
-    return post('/community/announcement/'+id+'/detail')
+  getAnnounceDetail(id) {
+    return post('/community/announcement/' + id + '/detail')
   },
   // 投诉
-  getComplaint(pageNo, limit, params){
-    return get('/estate/complaint/list/'+ pageNo + '/' + limit, params);
+  getComplaint(pageNo, limit, params) {
+    return get('/estate/complaint/list/' + pageNo + '/' + limit, params);
   },
-  dealComplaint(id, data){
-    return get('/estate/complaint/'+id+'/updateStatus/'+data);
+  dealComplaint(id, data) {
+    return get('/estate/complaint/' + id + '/updateStatus/' + data);
   },
-  getComplaintDetail(id){
-    return get('/estate/complaint/'+id+'/detail');
+  getComplaintDetail(id) {
+    return get('/estate/complaint/' + id + '/detail');
   },
   // 设备管理
-  getDevice(pageNo, limit, obj){
+  getDevice(pageNo, limit, obj) {
     return get('/device/list/' + pageNo + '/' + limit, obj)
   },
-  closeDoor(id, status){
-    return post('/device/'+id+'/'+status+'/change')
+  closeDoor(id, status) {
+    return post('/device/' + id + '/' + status + '/change')
   },
   // 门禁管理
-  getResident(pageNo, limit, obj){
+  getResident(pageNo, limit, obj) {
     return get('/community/resident/list/' + pageNo + '/' + limit, obj)
   },
-  checkExist(partitionId, unitId){
-    return get('/device/isExist/'+partitionId+'/'+unitId);
+  checkExist(partitionId, unitId) {
+    return get('/device/isExist/' + partitionId + '/' + unitId);
   },
-  createResident(obj){
+  createResident(obj) {
     return post('/community/resident/add', obj);
   },
-  createResidentWuhan(obj){
+  createResidentWuhan(obj) {
     return post('/community/resident/add/wuhan', obj);
   },
-  editResident(obj){
+  editResident(obj) {
     return post('/community/resident/edit', obj);
   },
-  deleteResident(id){
-    return post('/community/resident/'+id+'/delete');
+  deleteResident(id) {
+    return post('/community/resident/' + id + '/delete');
   },
-  getPublicCard(pageNo, limit, obj){
+  getPublicCard(pageNo, limit, obj) {
     return get('/public/card/list/' + pageNo + '/' + limit, obj);
   },
-  createPublicCard(obj){
+  createPublicCard(obj) {
     return post('/public/card/add', obj);
   },
-  detailPublicCard(id){
-    return post('/public/card/'+id+'/detail');
+  detailPublicCard(id) {
+    return post('/public/card/' + id + '/detail');
   },
-  deletePublicCard(id){
-    return post('/public/card/'+id+'/delete')
+  deletePublicCard(id) {
+    return post('/public/card/' + id + '/delete')
   },
   // 日志管理
-  getIntercom(pageNo, limit, obj){
+  getIntercom(pageNo, limit, obj) {
     return get('/log/intercom/' + pageNo + '/' + limit, obj);
   },
-  getAlarmInfo(pageNo, limit, obj){
+  getAlarmInfo(pageNo, limit, obj) {
     return get('/device/alarmInfo/log/list/' + pageNo + '/' + limit, obj);
   },
-  getHijack(pageNo, limit, obj){
+  getHijack(pageNo, limit, obj) {
     return get('/lock/alarm/list/' + pageNo + '/' + limit, obj);
   },
-  getSingleHijack(id){
+  getSingleHijack(id) {
     return get('/lock/alarm/query/' + id);
   },
-  handleHijack(obj){
+  handleHijack(obj) {
     return post('/lock/alarm/handle', obj);
   },
-  getVisitorList(pageNo, limit, obj){
+  getVisitorList(pageNo, limit, obj) {
     return get('/visitor/record/list/' + pageNo + '/' + limit, obj)
   },
   // 获取位置信息
-  getPartitions(){
+  getPartitions() {
     return get('/community/partitions');
   },
-  getBlocks(partitionId){
-    return get('/community/'+partitionId+'/blocks');
+  getBlocks(partitionId) {
+    return get('/community/' + partitionId + '/blocks');
   },
-  getUnits(blockId){
+  getUnits(blockId) {
     return get('/community/' + blockId + '/units');
   },
-  getRooms(unitId){
+  getRooms(unitId) {
     return get('/community/' + unitId + '/rooms');
   },
 //  导入文件
-  importExcel(data){
+  importExcel(data) {
     return post('community/resident/import', data)
   },
   // 人证合一
-  getIdCardInfo(identityNum){
-    return get('/idCard/info/query/'+ identityNum)
+  getIdCardInfo(identityNum) {
+    return get('/idCard/info/query/' + identityNum)
   },
-  getEditRoomNo(obj){
+  getEditRoomNo(obj) {
     return post('/community/edit/roomNo', obj)
   },
-  uploadFaceImage(obj){
+  uploadFaceImage(obj) {
     return post('/face/recognition/facesetAddUser', obj)
   },
-  getIdCardList(){
-    return get('/idCard/info/query/list')
+  getIdCardList() {
+    return get('/idCard/info/community/query/list')
+  },
+  faceAdd(formData) {
+    return formDataPost('/idCard/info/face/add', formData)
+  },
+  faceEdit(formData){
+    return formDataPost('/face/recognition/editUser', formData);
+  },
+  exportTable(params){
+    return get('/community/resident/export', params)
+  },
+  deleteIdCard(params){
+    return post('/idCard/info/mapper/update', params)
   }
 }

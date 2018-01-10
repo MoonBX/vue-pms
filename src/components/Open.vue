@@ -284,7 +284,12 @@
         return current && current.valueOf() < Date.parse(new Date(this.filterList.st));
       },
       loadPage(i){
-        let obj = checkFilter(this.filterList);
+        var newObj = checkFilter(this.filterList);
+        if(newObj.st&&newObj.et){
+          newObj.st = Date.parse(new Date(newObj.st));
+          newObj.et = Date.parse(new Date(newObj.et))+ 24 * 60 * 60 * 1000 - 1000;
+        }
+        let obj = checkFilter(newObj);
         this._getIntercom(i, obj)
       },
       _getIntercom(pageNo, params){

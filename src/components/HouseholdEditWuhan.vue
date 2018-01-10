@@ -1,7 +1,7 @@
 <template>
   <div class="householdEditWuhan">
     <v-form direction="horizontal">
-      <v-collapse :active-index="activeIndexMore" :bordered="false" v-if="idCardInfo" style="padding: 0 95px">
+      <v-collapse :active-index="activeIndexMore" :bordered="false" v-if="idCardInfo&&model.hasIdCard==0" style="padding: 0 95px">
         <v-panel index="1" :style="customPanelStyle" header="身份证信息">
           <div class="idCard-box" >
             <div class="id-card p-v-sm p-h-md">
@@ -56,6 +56,50 @@
       </v-collapse>
     </v-form>
     <v-form class="m-t-md" direction="horizontal" :model="model" :rules="rules" v-if="idCardInfo" ref="householdWuhanEditForm">
+      <div class="b-b m-b-md" v-if="model.hasIdCard==1">
+        <v-row>
+          <v-form-item label="身份证号"
+                       :label-col="labelCol"
+                       :wrapper-col="{span: 11}"
+                       prop="identity"
+                       has-feedback>
+            <v-input style="width: 260px;" v-model="model.idCard" disabled class="m-r-sm"></v-input>
+          </v-form-item>
+        </v-row>
+        <v-row>
+          <v-form-item label="民族"
+                       :label-col="labelCol"
+                       :wrapper-col="{span: 11}"
+                       prop="nation"
+                       has-feedback>
+            <v-select :data="nationOption" v-model="idCardInfo.nationality" disabled></v-select>
+          </v-form-item>
+        </v-row>
+        <v-row>
+          <v-form-item label="住户姓名"
+                       :label-col="labelCol"
+                       :wrapper-col="{span: 11}"
+                       prop="name"
+                       has-feedback>
+            <v-input style="width: 260px;" disabled v-model="model.name"></v-input>
+          </v-form-item>
+        </v-row>
+        <v-row>
+          <v-form-item label="拍摄照片"
+                       :label-col="labelCol"
+                       :wrapper-col="{span: 11}"
+                       class="m-b-sm"
+                       prop="photo"
+                       has-feedback>
+            <v-button type="primary" @click="getMedia();">打开摄像头</v-button><br>
+            <video height="180px" autoplay="autoplay" style="border: 1px solid #e3e5e7;"></video>
+            <v-button type="primary" @click="getPhoto()">拍照</v-button>
+            <br>
+            <img width="180px" height="180px" :src="idCardInfo.faceImage" v-if="!newImage">
+            <canvas id="canvas2" v-show="newImage" height="180px" width="180px" style="border: 1px solid #e3e5e7;"></canvas>
+          </v-form-item>
+        </v-row>
+      </div>
       <v-row>
         <v-form-item label="手机号码"
                      :label-col="labelCol"
@@ -163,7 +207,7 @@
                        :wrapper-col="{span: 16}"
                        prop="cardTypeNames"
                        has-feedback>
-            <v-input v-model="model.cardTypeNames">
+            <v-input v-model="model.cardTypeNames" disabled>
               <span slot="after" class="input-button" @click="go" v-if="cardType == 'b'">读卡</span>
               <span slot="after" class="input-button" @click="go2" v-if="cardType == 'a'">读卡</span>
             </v-input>
@@ -231,6 +275,7 @@
   import api from '../fetch/api'
   import { bus } from '../util/bus.js'
   import cardInit from '../util/card'
+  import nationList from '../store/nation'
   export default {
     data() {
       return {
@@ -245,7 +290,8 @@
         },
         model: {
           effectiveStartTime: "",
-          effectiveEndTime: ""
+          effectiveEndTime: "",
+          race: "汉"
         },
         rules: {
           roomType: [{
@@ -253,10 +299,10 @@
             message: '请选择房屋类型'
           }]
         },
+        nationOption: nationList.data,
         disabled: false,
         dateShow: false,
         cardType: 'b',
-        model: {},
         labelCol: { span: 4 },
         wrapperCol: { span: 20 },
         userTypeOption:[{
@@ -301,6 +347,9 @@
           value: 7,
           label: "西藏"
         }],
+        newImageData: null,
+        blob: null,
+        newImage: false
       }
     },
     props:['item'],
@@ -345,37 +394,151 @@
         }
         return str;
       },
+      getMedia() {
+        var video = document.querySelector('video');
+        console.log(navigator.getUserMedia)
+        var exArray = []; //存储设备源ID
+        if (navigator.getUserMedia) {
+          navigator.getUserMedia({
+            'video': {
+              'optional': [{
+                'sourceId': exArray[1]
+              }]
+            },
+          }, successFunc, errorFunc);
+        }
+        else {
+        }
+
+        function successFunc(stream) {
+          if (video.mozSrcObject !== undefined) {
+            video.mozSrcObject = stream;
+          }
+          else {
+            video.src = window.URL && window.URL.createObjectURL(stream) || stream;
+          }
+        }
+
+        function errorFunc(e) {
+          alert('Error！' + e);
+        }
+      },
+      getPhoto() {
+        var video = document.querySelector('video');
+        var canvas2 = document.getElementById('canvas2');
+        console.log(canvas2);
+        var context1 = canvas2.getContext('2d');
+        var that = this;
+
+        context1.drawImage(video, 0, 0, 180, 180);
+        convertCanvasToImage(canvas2);
+
+        function convertCanvasToImage(canvas) {
+          var cvs = document.createElement('canvas')
+          var ctx = cvs.getContext('2d')
+          var img = new window.Image()
+          img.src = canvas.toDataURL("image/png");
+          img.onload = () => {
+            cvs.width = img.width
+            cvs.height = img.height
+            setTimeout(() => {
+              ctx.drawImage(img, 0, 0, cvs.width, cvs.height)
+              that.newImageData = cvs.toDataURL('image/jpeg', 0.5)
+              console.log(that.newImageData);
+              that.blob = getBlobBydataURI(that.newImageData, 'image/jpeg')
+              that.newImage = true;
+            }, 0)
+          }
+        }
+
+        function getBlobBydataURI(dataURI,type) {
+          var binary = atob(dataURI.split(',')[1]);
+          var array = [];
+          for(var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+          }
+          return new Blob([new Uint8Array(array)], {type:type });
+        }
+      },
       washData(){
         this.$refs.householdWuhanEditForm.validate((valid) => {
           if (valid) {
-            let newObj = {
-              mobile: this.model.mobile,
-              name: this.model.name,
-              type: this.model.type,
-              userType: this.model.userType,
-              partitionId: this.model.partitionId,
-              blockId: this.model.blockId,
-              unitId: this.model.unitId,
-              roomNoId: this.model.roomNoId,
-              effectiveType: this.model.effectiveType,
-              effectiveStartTime: this.model.effectiveStartTime,
-              effectiveEndTime: this.model.effectiveEndTime,
-              cardTypeNames: this.model.cardTypeNames,
-              idCard: this.model.idCard,
-              id: this.model.id,
-              roomType: this.model.roomType
-            }
-            newObj.cardTypeNames = this.trimRight(newObj.cardTypeNames)
-            if(newObj.effectiveType == 0){
-              newObj.effectiveStartTime = 0;
-              newObj.effectiveEndTime = 0;
-            }else{
-              if(newObj.effectiveEndTime){
-                newObj.effectiveStartTime = Date.parse(new Date());
-                newObj.effectiveEndTime = Date.parse(new Date(newObj.effectiveEndTime)) + 24 * 60 * 60 * 1000 - 1000;
+            if(this.model.hasIdCard == 0){
+              let newObj = {
+                mobile: this.model.mobile,
+                name: this.model.name,
+                type: this.model.type,
+                userType: this.model.userType,
+                partitionId: this.model.partitionId,
+                blockId: this.model.blockId,
+                unitId: this.model.unitId,
+                roomNoId: this.model.roomNoId,
+                effectiveType: this.model.effectiveType,
+                effectiveStartTime: this.model.effectiveStartTime,
+                effectiveEndTime: this.model.effectiveEndTime,
+                cardTypeNames: this.model.cardTypeNames,
+                idCard: this.model.idCard,
+                id: this.model.id,
+                roomType: this.model.roomType,
+                race: this.model.race
               }
+              newObj.cardTypeNames = this.trimRight(newObj.cardTypeNames)
+              if(newObj.effectiveType == 0){
+                newObj.effectiveStartTime = 0;
+                newObj.effectiveEndTime = 0;
+              }else{
+                if(newObj.effectiveEndTime){
+                  newObj.effectiveStartTime = Date.parse(new Date());
+                  newObj.effectiveEndTime = Date.parse(new Date(newObj.effectiveEndTime));
+                }
+              }
+              bus.$emit('householdWuhanForm_data_edit', [newObj, 'd', 'hasIdentity']);
+            }else{
+              var newObj2 = {
+                idCard: this.model.identity,
+                name: this.model.name,
+                face: this.newImageData
+              };
+
+              var formData = new FormData();
+              formData.append("face", this.blob ,"file_"+Date.parse(new Date())+".jpeg");
+              formData.append("mobile", this.model.mobile);
+              formData.append("id", this.model.idCardId);
+              formData.append("communityId", this.model.communityId);
+              // formData.append("idCard", "");
+              // formData.append("type", 1);
+
+              let newObj3 = {
+                mobile: this.model.mobile,
+                name: this.model.name,
+                type: this.model.type,
+                userType: this.model.userType,
+                partitionId: this.model.partitionId,
+                blockId: this.model.blockId,
+                unitId: this.model.unitId,
+                roomNoId: this.model.roomNoId,
+                effectiveType: this.model.effectiveType,
+                effectiveStartTime: this.model.effectiveStartTime,
+                effectiveEndTime: this.model.effectiveEndTime,
+                cardTypeNames: this.model.cardTypeNames,
+                idCard: this.model.idCard,
+                id: this.model.id,
+                roomType: this.model.roomType
+              };
+              newObj3.cardTypeNames = this.trimRight(newObj3.cardTypeNames)
+              if(newObj3.effectiveType == 0){
+                newObj3.effectiveStartTime = 0;
+                newObj3.effectiveEndTime = 0;
+              }else{
+                if(newObj3.effectiveEndTime){
+                  newObj3.effectiveStartTime = Date.parse(new Date());
+                  newObj3.effectiveEndTime = Date.parse(new Date(newObj3.effectiveEndTime));
+                }
+              }
+
+              bus.$emit('householdWuhanForm_data_edit', [formData, newObj3, "noIdentity", this.newImage]);
             }
-            bus.$emit('householdWuhanForm_data_edit', newObj);
+
           }
         })
       },
@@ -401,8 +564,11 @@
       },
     },
     created() {
+      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+      window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
       console.log(this.item)
       this.model = this.item;
+
       this.searchIdCard();
       this.userChangeEffective(this.model.userType);
       this.checkEntranceExist();
@@ -410,7 +576,7 @@
       if(cardInit){
 
         if (!cardInit.TryConnect()) {
-          alert("浏览器不支持，请更换浏览器后重试！");
+          alert("读卡器连接失败，请检查连接！");
         }
 
         cardInit.onResult((resultdata) => {
@@ -427,10 +593,8 @@
               break;
             case 3:
               if (resultdata.Result > 0) {
-                var ten = parseInt(resultdata.strData, 16).toString()
-                console.log(ten);
-                console.log('idn')
-                this.$data.model.cardTypeNames = "ICB-"+ten.slice(11)
+                var ten = resultdata.strData;
+                this.$data.model.cardTypeNames = "ICB-"+ten;
               }else{
                 this.$notification.error({
                   message: '读卡失败',

@@ -30,13 +30,15 @@
         <form class="login-content">
 
           <v-input-group class="p-v-sm p-h-md">
-            <div v-if="error" style="margin-left: 2px; font-size: 11px;" class="text-error">{{errorTip}}</div>
+            <div v-if="error" style="margin-left: 2px;margin-bottom: 4px;font-size: 11px;" class="text-error">{{errorTip}}</div>
             <v-input placeholder="请输入用户名"
+                     @keyup.enter.native="login"
                      v-model="loginObj.userName"
                      size="large"
                      class="m-b-sm">
             </v-input>
             <v-input placeholder="请输入密码"
+                     @keyup.enter.native="login"
                      type="password"
                      v-model="loginObj.pwd"
                      size="large"
@@ -362,8 +364,15 @@
     },
     created(){
       document.title = "Weker物业管理平台";
-      window.ws.close();
-
+      if(window.ws){
+        window.ws.close();
+      }
+      // document.onkeydown = (e) => {
+      //   var key=window.event.keyCode;
+      //   if(key==13){
+      //     this.login();
+      //   }
+      // }
       localStorage.removeItem('vueToken');
     }
   }

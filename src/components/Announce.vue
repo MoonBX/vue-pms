@@ -38,7 +38,6 @@
       <v-table>
         <table class="wk-table" style="table-layout:fixed;">
           <thead class="ant-table-thead">
-
           <tr>
             <th width="15%">标题</th>
             <th width="24%">内容</th>
@@ -352,7 +351,6 @@
                 this.page.total = res.data.total;
                 this.announceList = res.data.list;
                 this.listLen = res.data.list.length;
-
               }
             }
           })

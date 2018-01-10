@@ -340,8 +340,9 @@
       if(cardInit){
 
         if (!cardInit.TryConnect()) {
-          alert("浏览器不支持，请更换浏览器后重试！");
+          alert("读卡器连接失败，请检查连接！");
         }
+
         cardInit.onResult((resultdata) => {
           switch (resultdata.FunctionID) {
             case 0:

@@ -23,7 +23,7 @@
                       :data="userTypeOptionsWuhan">
             </v-select>
           </v-form-item>
-          <v-form-item label="住户类型" class="m-b-sm" v-if="userType == 1" >
+          <v-form-item label="住户类型" class="m-b-sm" v-if="userType == 1">
             <v-select v-model="filterList.userType" style="width: 150px;"
                       :data="typeOption">
             </v-select>
@@ -79,12 +79,18 @@
                     @click="showModal('create')">
             添加住户
           </v-button>
-          <v-button class="pull-right"
-                    v-if="file.uploadFailData.length"
-                    type="danger" ghost
-                    @click="download">
-            下载导入失败住户列表
+          <v-button class="m-r-sm"
+                    type="primary"
+                    v-if="page.total && page.total > 0"
+                    @click="exportTable">
+            导出
           </v-button>
+          <!--<v-button class="pull-right"-->
+                    <!--v-if="file.uploadFailData.length"-->
+                    <!--type="danger" ghost-->
+                    <!--@click="download">-->
+            <!--下载导入失败住户列表-->
+          <!--</v-button>-->
           <!--<v-upload :name="file.name"-->
                     <!--:action="file.action"-->
                     <!--@change="onChange">-->
@@ -234,7 +240,7 @@
                :visible="modalVisible.detail"
                :width="600"
                @cancel="handleCancel('detail')">
-        <household-details :item="itemParam" ></household-details>
+        <household-details :item="itemParam"></household-details>
         <div slot="footer">
           <v-button key="confirm"
                     type="primary"
@@ -252,8 +258,9 @@
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
   import axios from 'axios'
-  import { checkFilter } from '../util/option'
-  import { bus } from '../util/bus.js'
+  import $ from 'jquery'
+  import {checkFilter} from '../util/option'
+  import {bus} from '../util/bus.js'
 
   import HouseholdCreate from '@/components/HouseholdCreate'
   import HouseholdCreateWuhan from '@/components/HouseholdCreateWuhan'
@@ -265,10 +272,11 @@
   export default {
     data() {
       return {
-        filterList:{
-          name:"",
-          mobile:"",
-          userType:"",
+        key: 10012465,
+        filterList: {
+          name: "",
+          mobile: "",
+          userType: "",
           status: "",
           partitionId: "",
           blockId: "",
@@ -297,49 +305,49 @@
         userTypeOptions: [{
           value: '0',
           label: '户主'
-        },{
+        }, {
           value: '1',
           label: '家人'
-        },{
+        }, {
           value: '2',
           label: '租客'
         }],
         typeOption: [{
           value: 0,
           label: "一般住户"
-        },{
+        }, {
           value: 1,
           label: "空巢老人"
-        },{
+        }, {
           value: 2,
           label: "留守儿童"
-        },{
+        }, {
           value: 3,
           label: "上访人员"
-        },{
+        }, {
           value: 4,
           label: "吸毒人员"
-        },{
+        }, {
           value: 5,
           label: "前科人员"
-        },{
+        }, {
           value: 6,
           label: "新疆"
-        },{
+        }, {
           value: 7,
           label: "西藏"
         },],
         userTypeOptionsWuhan: [{
           value: '1',
           label: '业主'
-        },{
+        }, {
           value: '2',
           label: '租客'
         }],
-        statusOptions: [ {
+        statusOptions: [{
           value: '0',
           label: '正常'
-        },{
+        }, {
           value: '1',
           label: '已过期'
         }],
@@ -352,7 +360,8 @@
         },
         idParam: "",
         itemParam: {},
-        listLen: ""
+        listLen: "",
+        faceId: null
       }
     },
     components: {
@@ -364,62 +373,66 @@
       vTable
     },
     methods: {
-      pageOption(){
+      pageOption() {
         var obj = {
-          showTotal: (total)=>{
+          showTotal: (total) => {
             return `全部 ${total} 条`;
           },
-          loadPage: (i)=>{
+          loadPage: (i) => {
             let pageNo;
-            if(!i){ pageNo = this.$refs.pagination.current }
-            else{ pageNo = i; }
+            if (!i) {
+              pageNo = this.$refs.pagination.current
+            }
+            else {
+              pageNo = i;
+            }
 
             this._getHousehold(pageNo, this.filterList);
           }
         };
         return obj;
       },
-      showModal(value, param){
-        if(typeof param == 'number'){
+      showModal(value, param) {
+        if (typeof param == 'number') {
           this.idParam = param;
-        }else{
+        } else {
           this.itemParam = param;
         }
-        if(localStorage.vueUserType == 1&&value != 'detail'){
-          this.modalVisible[value+'Wuhan'] = true;
-        }else{
+        if (localStorage.vueUserType == 1 && value != 'detail') {
+          this.modalVisible[value + 'Wuhan'] = true;
+        } else {
           this.modalVisible[value] = true;
         }
 
       },
-      handleCancel (value) {
-        if(localStorage.vueUserType == 1&&value != 'detail'){
-          this.modalVisible[value+'Wuhan'] = false;
-        }else{
+      handleCancel(value) {
+        if (localStorage.vueUserType == 1 && value != 'detail') {
+          console.log(value + 'Wuhan')
+          this.modalVisible[value + 'Wuhan'] = false;
+        } else {
           this.modalVisible[value] = false;
         }
 
       },
-
-      createHousehold(){
+      createHousehold() {
         this.$refs.householdCreateRef.washData();
       },
-      createHouseholdWuhan(){
+      createHouseholdWuhan() {
         this.$refs.householdCreateWuhanRef.washData();
       },
-      editHousehold(){
+      editHousehold() {
         this.$refs.householdEditRef.washData();
       },
-      editHouseholdWuhan(){
+      editHouseholdWuhan() {
         this.$refs.householdEditWuhanRef.washData();
       },
-      _getHousehold(pageNo, params){
+      _getHousehold(pageNo, params) {
 
         api.getResident(pageNo, 10, params)
           .then(res => {
             console.log(res);
-            if(res.success){
-              if(res.data.list){
+            if (res.success) {
+              if (res.data.list) {
                 for (var i = 0; i < res.data.list.length; i++) {
                   switch (res.data.list[i].status) {
                     case 0:
@@ -432,7 +445,7 @@
                       res.data.list[i].status_cn = '';
                   }
                 }
-                if(localStorage.vueUserType == 0){
+                if (localStorage.vueUserType == 0) {
                   for (var i = 0; i < res.data.list.length; i++) {
                     switch (res.data.list[i].userType) {
                       case 0:
@@ -448,7 +461,7 @@
                         res.data.list[i].userType_cn = '';
                     }
                   }
-                }else{
+                } else {
                   for (var i = 0; i < res.data.list.length; i++) {
                     switch (res.data.list[i].userType) {
                       case 0:
@@ -500,21 +513,21 @@
             }
           })
       },
-      deleteHousehold(id){
+      deleteHousehold(id) {
         api.deleteResident(id).then(res => {
-          if(res.success){
+          if (res.success) {
             this.$notification.success({
               message: '删除成功！',
               duration: 2
             });
             this.listLen = 1;
-            if(this.listLen!=0){
+            if (this.listLen != 0) {
               this.pageOption().loadPage(this.$refs.pagination.value)
-            }else{
-              this.pageOption().loadPage(this.$refs.pagination.value-1)
-              this.$refs.pagination.current = this.$refs.pagination.value-1;
+            } else {
+              this.pageOption().loadPage(this.$refs.pagination.value - 1)
+              this.$refs.pagination.current = this.$refs.pagination.value - 1;
             }
-          }else{
+          } else {
             this.$notification.error({
               message: res.message,
               duration: 2
@@ -527,12 +540,12 @@
 
         }
         if (info.file.status === 'done') {
-          if(info.file.response.success && info.file.response.message == ""){
+          if (info.file.response.success && info.file.response.message == "") {
             this.$notification.success({
               message: '上传成功',
               duration: 2
             });
-          }else{
+          } else {
             this.file.uploadFailData = info.file.response.data;
             this.$notification.error({
               message: info.file.response.message,
@@ -547,21 +560,29 @@
           });
         }
       },
-      download(){
+      encrypt(plainText) {
+        return parseInt(plainText) ^ this.key;
+      },
+      exportTable() {
+        let plainText = this.encrypt(localStorage.vueCommunityId)
+        let host = api.exportHost();
+        window.open(host + '/community/resident/export?communityId=' + plainText);
+      },
+      download() {
         $("#dvjson").excelexportjs({
           containerid: "dvjson",
           datatype: 'json',
           dataset: this.file.uploadFailData,
           columns: [
-            { headertext: "mobile", datatype: "string", datafield: "mobile", width: "100px" },
-            { headertext: "name", datatype: "string", datafield: "name", width: "100px" }
+            {headertext: "mobile", datatype: "string", datafield: "mobile", width: "100px"},
+            {headertext: "name", datatype: "string", datafield: "name", width: "100px"}
           ]
         });
       },
-      changeBlock(val){
+      changeBlock(val) {
         api.getBlocks(val)
           .then(res => {
-            for(let i=0;i<res.data.length;i++){
+            for (let i = 0; i < res.data.length; i++) {
               res.data[i].label = res.data[i].name;
               res.data[i].value = res.data[i].id;
             }
@@ -575,10 +596,10 @@
           })
       },
 
-      changeUnit(val){
+      changeUnit(val) {
         api.getUnits(val)
           .then(res => {
-            for(let i=0;i<res.data.length;i++){
+            for (let i = 0; i < res.data.length; i++) {
               res.data[i].label = res.data[i].name;
               res.data[i].value = res.data[i].id;
             }
@@ -589,11 +610,11 @@
             this.unitOptions = res.data;
           })
       },
-      changeRoom(val){
+      changeRoom(val) {
         api.getRooms(val)
           .then(res => {
             console.log(res);
-            for(let i=0;i<res.data.length;i++){
+            for (let i = 0; i < res.data.length; i++) {
               res.data[i].label = res.data[i].code;
               res.data[i].value = res.data[i].id;
             }
@@ -602,16 +623,16 @@
             this.roomOptions = res.data;
           })
       },
-      filterTable(){
+      filterTable() {
         var newObj = checkFilter(this.filterList);
         console.log(newObj);
         this._getHousehold(1, newObj)
       },
-      resetTable(){
+      resetTable() {
         this.filterList = {
-          name:"",
-          mobile:"",
-          userType:"",
+          name: "",
+          mobile: "",
+          userType: "",
           status: "",
           partitionId: "",
           blockId: "",
@@ -627,15 +648,15 @@
     created() {
       document.title = '住户管理';
       this._getHousehold(1);
-      api.getPartitions().then(res=>{
-        for(let i=0;i<res.data.length;i++){
+      api.getPartitions().then(res => {
+        for (let i = 0; i < res.data.length; i++) {
           res.data[i].label = res.data[i].name;
           res.data[i].value = res.data[i].id;
         }
         this.partitionOptions = res.data;
       });
 
-      if(sessionStorage.from == '1'){
+      if (sessionStorage.from == '1') {
         this.showModal('create');
         sessionStorage.removeItem('from')
       }
@@ -647,29 +668,31 @@
 
       bus.$on('householdForm_data_create', (data) => {
         console.log(data)
-        api.createResident(data).then(res=>{
+        api.createResident(data).then(res => {
+          // axios.post('http://192.168.22.139:8082/community/resident/add', data).then(res=> {
           console.log(res);
-          if(res.success){
-            axios.post('http://project.ibutler.cn:8080/backend/account/setAccountMoneyStatus', {phoneNumberList: [data.mobile]}).then(response => {
+          if (res.success) {
+            axios.post('https://project.ibutler.cn/backend/account/setAccountMoneyStatus.json', {phoneNumberList: [data.mobile]}).then(response => {
               // success callback
               console.log(response);
-              if(response.status == '200'){
+              if (response.data.code == 0) {
                 this.$notification.success({
                   message: '新建成功！',
                   duration: 2
                 });
-              }else{
-                this.$notification.error({
-                  message: response.data.errorMsg,
-                  duration: 2
-                });
               }
+              // else {
+              //   this.$notification.error({
+              //     message: response.data.errorMsg,
+              //     duration: 2
+              //   });
+              // }
             });
 
             this.handleCancel('create');
             this.pageOption().loadPage(1);
 
-          }else{
+          } else {
             this.$notification.error({
               message: res.message,
               duration: 2
@@ -679,98 +702,191 @@
       });
 
       bus.$on('householdWuhanForm_data_edit', (data) => {
-        let editRoomObj = {
-          id: data.roomNoId,
-          type: data.roomType
-        }
-
-        api.getEditRoomNo(editRoomObj).then(res => {
-          console.log(res)
-          if(res.success){
-            api.editResident(data).then(res => {
-              if(res.success){
-                this.$notification.success({
-                  message: '修改成功！',
-                  duration: 2
-                });
-                this.handleCancel('edit');
-                this.pageOption().loadPage(1);
-              }else{
-                this.$notification.error({
-                  message: res.message,
-                  duration: 2
-                });
-              }
-            })
-          }else{
-            this.$notification.error({
-              message: res.message,
-              duration: 2
-            });
+        if (data[2] == 'hasIdentity') {
+          let editRoomObj = {
+            id: data[0].roomNoId,
+            type: data[0].roomType
           }
-        })
+          api.getEditRoomNo(editRoomObj).then(res => {
+            console.log(res)
+            if (res.success) {
+              api.editResident(data[0]).then(res => {
+                if (res.success) {
+                  this.$notification.success({
+                    message: '修改成功！',
+                    duration: 2
+                  });
+                  this.handleCancel('edit');
+                  this.pageOption().loadPage(this.$refs.pagination.value);
+                } else {
+                  this.$notification.error({
+                    message: res.message,
+                    duration: 2
+                  });
+                }
+              })
+            } else {
+              this.$notification.error({
+                message: res.message,
+                duration: 2
+              });
+            }
+          })
+        }
+        else {
+          let editRoomObj = {
+            id: data[1].roomNoId,
+            type: data[1].roomType
+          }
+          if (data[3]) {
+            api.faceEdit(data[0]).then(res => {
+              console.log(res);
+            })
+          }
+          api.getEditRoomNo(editRoomObj).then(res => {
+            console.log(res)
+            if (res.success) {
+              api.editResident(data[1]).then(res => {
+                if (res.success) {
+                  this.$notification.success({
+                    message: '修改成功！',
+                    duration: 2
+                  });
+                  this.handleCancel('edit');
+                  this.pageOption().loadPage(this.$refs.pagination.value);
+                } else {
+                  this.$notification.error({
+                    message: res.message,
+                    duration: 2
+                  });
+                }
+              })
+            } else {
+              this.$notification.error({
+                message: res.message,
+                duration: 2
+              });
+            }
+          })
+        }
       })
 
       bus.$on('householdWuhanForm_data_create', (data) => {
-        let editRoomObj = {
-          id: data[0].roomNoId,
-          type: data[0].roomType
+        console.log(data[2]);
+        if (data[2] == 'hasIdentity') {
+          let editRoomObj = {
+            id: data[0].roomNoId,
+            type: data[0].roomType
+          };
+          api.getEditRoomNo(editRoomObj).then(res => {
+            if (res.success) {
+              data[0].effectiveEndTime = Date.parse(new Date(data[0].effectiveEndTime));
+              api.createResidentWuhan(data[0]).then(res => {
+                if (res.success) {
+                  let faceObj = {
+                    communityId: localStorage.vueCommunityId,
+                    id: data[1].id,
+                    mobile: res.message
+                  };
+                  api.uploadFaceImage(faceObj).then(res => {
+                    if (res.success) {
+                      this.$notification.success({
+                        message: '新建成功！',
+                        duration: 2
+                      });
+                      this.handleCancel('create');
+                      this.pageOption().loadPage(1);
+                    } else {
+                      this.$notification.error({
+                        message: res.message,
+                        duration: 2
+                      });
+                    }
+                  })
+                } else {
+                  this.$notification.error({
+                    message: res.message,
+                    duration: 2
+                  });
+                }
+              })
+            } else {
+              this.$notification.error({
+                message: res.message,
+                duration: 2
+              });
+            }
+          })
+        } else {
+
+          api.faceAdd(data[0]).then(res => {
+            this.faceId = res.data;
+            if (res.success) {
+              let editRoomObj = {
+                id: data[1].roomNoId,
+                type: data[1].roomType
+              };
+              api.getEditRoomNo(editRoomObj).then(res => {
+                if (res.success) {
+                  data[1].effectiveEndTime = Date.parse(new Date(data[1].effectiveEndTime));
+                  api.createResidentWuhan(data[1]).then(res => {
+                    console.log(res);
+                    if (res.success) {
+                      let faceObj = {
+                        communityId: localStorage.vueCommunityId,
+                        id: this.faceId,
+                        mobile: res.message
+                      };
+                      api.uploadFaceImage(faceObj).then(res => {
+                        if (res.success) {
+                          this.$notification.success({
+                            message: '新建成功！',
+                            duration: 2
+                          });
+                          this.handleCancel('create');
+                          this.pageOption().loadPage(1);
+                        } else {
+                          this.$notification.error({
+                            message: res.message,
+                            duration: 2
+                          });
+                        }
+                      });
+                    } else {
+                      this.$notification.error({
+                        message: res.message,
+                        duration: 2
+                      });
+                    }
+                  })
+                } else {
+                  this.$notification.error({
+                    message: res.message,
+                    duration: 2
+                  });
+                }
+              })
+            } else {
+              this.$notification.error({
+                message: res.message,
+                duration: 2
+              });
+            }
+          });
         }
-        let faceObj = {
-          communityId: localStorage.vueCommunityId,
-          id: data[1].id,
-          mobile: data[0].mobile
-        }
-        console.log(data[0].effectiveEndTime);
-        api.getEditRoomNo(editRoomObj).then(res => {
-          if(res.success){
-            data[0].effectiveEndTime = Date.parse(new Date(data[0].effectiveEndTime)) + 24 * 60 * 60 * 1000 - 1000;
-            api.createResidentWuhan(data[0]).then(res => {
-              console.log(res);
-              if(res.success){
-                api.uploadFaceImage(faceObj).then(res => {
-                  if(res.success){
-                    this.$notification.success({
-                      message: '新建成功！',
-                      duration: 2
-                    });
-                    this.handleCancel('create');
-                    this.pageOption().loadPage(1);
-                  }else{
-                    this.$notification.error({
-                      message: res.message,
-                      duration: 2
-                    });
-                  }
-                })
-              }else{
-                this.$notification.error({
-                  message: res.message,
-                  duration: 2
-                });
-              }
-            })
-          }else{
-            this.$notification.error({
-              message: res.message,
-              duration: 2
-            });
-          }
-        })
-      })
+      });
 
       bus.$on('householdForm_data_edit', (data) => {
-        console.log(data)
-        api.editResident(data).then(res=>{
+        api.editResident(data).then(res => {
           console.log(res);
-          if(res.success){
+          if (res.success) {
             this.$notification.success({
               message: '编辑成功！',
               duration: 2
             });
             this.handleCancel('edit');
             this.pageOption().loadPage(this.$refs.pagination.value)
-          }else{
+          } else {
             this.$notification.error({
               message: res.message,
               duration: 2

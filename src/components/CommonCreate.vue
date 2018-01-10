@@ -195,6 +195,7 @@
               unitIds : a.unitIds,
               userStatus : this.model.userStatus,
               cardNo : this.model.cardNo,
+              cardType: 1,
               mobile : this.model.mobile
             }
             bus.$emit('CommonForm_data_create', newObj);
@@ -276,7 +277,7 @@
           switch (resultdata.FunctionID) {
             case 0:
               if (resultdata.Result > 0) {
-                this.$data.model.cardNo = "ICA-"+resultdata.strData.slice(2)
+                this.$data.model.cardNo = "ICA-"+resultdata.strData.slice(2);
               }else{
                 this.$notification.error({
                   message: '读卡失败',

@@ -7,22 +7,33 @@
 </template>
 
 <script>
-  import {bus} from './util/bus'
+  import api from '@/fetch/api'
   export default {
     name: 'app',
     data(){
       return{
-        isLogin: false,
-        websocket: null
+        isLogin: false
       }
     },
     created(){
+      var url = window.location.href;
+      var apiUrl = api.validateApi();
+      var apiHttp = apiUrl.split(':')[0];
+
       if(localStorage.vueToken){
         this.isLogin = true;
       }else{
         this.isLogin = false;
         this.$router.push('/login');
       }
+
+      if(apiHttp == 'https'){
+        if (url.indexOf("https") < 0) {
+          url = url.replace("http:", "https:");
+          window.location.replace(url);
+        }
+      }
+
     }
   }
 </script>

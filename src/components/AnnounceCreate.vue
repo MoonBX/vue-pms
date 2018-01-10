@@ -122,7 +122,6 @@
         treeData: [],
       }
     },
-//    https://zyqchat.rocket.chat/
     methods: {
       cleanData(){
         this.$refs.announceCreateForm.validate((valid) => {

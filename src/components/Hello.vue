@@ -70,12 +70,12 @@
 
 <script type="text/ecmascript-6">
   import api from '../fetch/api'
-  import { bus } from '../util/bus.js'
+  import {bus} from '../util/bus.js'
   import jcbj from '@/components/jcbj'
 
   export default {
     name: 'hello',
-    data () {
+    data() {
       return {
         userName: localStorage.vueUsername,
         theme: 'dark',
@@ -98,19 +98,19 @@
       jcbj
     },
     methods: {
-      showModal(value, param){
+      showModal(value, param) {
         this.jcObj = param;
         this.modalVisible[value] = true;
       },
-      handleCancel (value) {
+      handleCancel(value) {
         this.modalVisible[value] = false;
       },
-      dropdownClick(data){
-        if(data.content == '退出登录'){
+      dropdownClick(data) {
+        if (data.content == '退出登录') {
           this.logout();
         }
       },
-      logout(){
+      logout() {
         api.Logout()
           .then(res => {
             console.log('登出:', res);
@@ -127,8 +127,8 @@
           })
       },
       send(message, callback) {
-        var that = this;
         waitForConnection(function () {
+          console.log(message);
           window.ws.send(message);
           if (typeof callback !== 'undefined') {
             callback();
@@ -149,37 +149,40 @@
       format(timeStr) {
         var time = new Date(parseInt(timeStr));
         var y = time.getFullYear();
-        var m = time.getMonth()+1;
+        var m = time.getMonth() + 1;
         var d = time.getDate();
         var h = time.getHours();
         var mm = time.getMinutes();
         var s = time.getSeconds();
 
-        function add0(m){
-          return m<10?'0'+m:m
+        function add0(m) {
+          return m < 10 ? '0' + m : m
         }
 
-        return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+        return y + '-' + add0(m) + '-' + add0(d) + ' ' + add0(h) + ':' + add0(mm) + ':' + add0(s);
       },
-      setSideBarAndTitle(){
+      setSideBarAndTitle() {
         this.title = this.$route.name;
         let routePath = this.$route.path.split('/')[2];
         let data = [
-          {name: '首页',  icon: 'home', href: 'home'},
-          { name: '物业中心', icon: 'building', children: [
-            {name: "公告管理", href: 'announce'},
-            {name: "投诉", href: 'complain'},
-            {name: "维修", href: 'repair'}]
+          {name: '首页', icon: 'home', href: 'home'},
+          {
+            name: '物业中心', icon: 'building', children: [
+              {name: "公告管理", href: 'announce'},
+              {name: "投诉", href: 'complain'},
+              {name: "维修", href: 'repair'}]
           },
           {name: '设备管理', icon: 'cog', href: 'device'},
-          {name: '门禁管理', icon: 'unlock-alt', children: [
-            {name: "住户管理", href: 'household'},
-            {name: "公卡管理", href: 'common'}]
+          {
+            name: '门禁管理', icon: 'unlock-alt', children: [
+              {name: "住户管理", href: 'household'},
+              {name: "公卡管理", href: 'common'}]
           },
-          {name: '日志管理', icon: 'file-text-o', children: [
-            {name: "开门日志", href: 'open'},
-            {name: "防拆日志", href: 'remove'},
-            {name: "劫持报警日志", href: 'hijack'}]
+          {
+            name: '日志管理', icon: 'file-text-o', children: [
+              {name: "开门日志", href: 'open'},
+              {name: "防拆日志", href: 'remove'},
+              {name: "劫持报警日志", href: 'hijack'}]
           }
         ];
         for (let i = 0; i < data.length; i++) {
@@ -198,25 +201,29 @@
         }
         this.themeMenuData = data;
       },
-      setWuhanSideBarAndTitle(){
+      setWuhanSideBarAndTitle() {
         this.title = this.$route.name;
         let routePath = this.$route.path.split('/')[2];
         let data = [
-          {name: '首页',  icon: 'home', href: 'home'},
-          { name: '物业中心', icon: 'building', children: [
-            {name: "公告管理", href: 'announce'},
-            {name: "投诉", href: 'complain'},
-            {name: "维修", href: 'repair'}]
+          {name: '首页', icon: 'home', href: 'home'},
+          {
+            name: '物业中心', icon: 'building', children: [
+              {name: "公告管理", href: 'announce'},
+              {name: "投诉", href: 'complain'},
+              {name: "维修", href: 'repair'}]
           },
           {name: '设备管理', icon: 'cog', href: 'device'},
-          {name: '门禁管理', icon: 'unlock-alt', children: [
-            {name: "住户管理", href: 'household'},
-            {name: "公卡管理", href: 'common'}]
+          {
+            name: '门禁管理', icon: 'unlock-alt', children: [
+              {name: "住户管理", href: 'household'},
+              {name: "公卡管理", href: 'common'}]
           },
-          {name: '日志管理', icon: 'file-text-o', children: [
-            {name: "开门日志", href: 'open'},
-            {name: "防拆日志", href: 'remove'},
-            {name: "访客日志", href: 'visitor'}]
+          {
+            name: '日志管理', icon: 'file-text-o', children: [
+              {name: "开门日志", href: 'open'},
+              {name: "防拆日志", href: 'remove'},
+              {name: "访客日志", href: 'visitor'},
+              {name: "劫持报警日志", href: 'hijack'}]
           }
         ];
         for (let i = 0; i < data.length; i++) {
@@ -236,45 +243,49 @@
         this.themeMenuData = data;
       }
     },
-    created(){
+    created() {
       console.log(localStorage.vueUserType)
       document.title = 'weker物业管理平台';
-      if(localStorage.vueUserType == 1){
+      if (localStorage.vueUserType == 1) {
         this.setWuhanSideBarAndTitle();
-      }else{
+      } else {
         this.setSideBarAndTitle();
       }
-      window.ws = new WebSocket('ws://114.55.143.170:8081/websocket');
+      // window.ws = new WebSocket('ws://192.168.23.241:8081/websocket');
+      window.ws = new WebSocket('wss://mt.weker.me:8443/websocket');
+      // window.ws = new WebSocket('wss://manage.weker.me:8443/websocket');
       this.send(localStorage.vueCommunityId);
 
-      if(!localStorage.vueToken){
+      if (!localStorage.vueToken) {
         this.$router.push('/login');
       }
 
-      window.ws.onopen = function() {
+      window.ws.onopen = function (e) {
         console.log('open');
+
       };
 
       window.ws.onmessage = (evt) => {
-        if(evt.data){
+        console.log(evt);
+        if (evt.data) {
           console.log(evt.data);
           let arr = evt.data.split('/');
           let obj = {
             id: arr[0],
             address: arr[2]
           };
-          if(arr[1]){
+          if (arr[1]) {
             obj.time = this.format(arr[1]);
-          }else{
+          } else {
             obj.time = ""
           }
 
           this.$notification.error({
             message: '劫持报警',
-            description: (obj.time||"") + ': ' + (obj.address||"") + "住户智能门锁发出劫持报警事件，请尽快前往处理！",
+            description: (obj.time || "") + ': ' + (obj.address || "") + "住户智能门锁发出劫持报警事件，请尽快前往处理！",
             duration: 0,
             selfKey: '1',
-            onClose: ()=>{
+            onClose: () => {
               this.showModal('create', obj)
             }
           });
@@ -282,23 +293,22 @@
 
       };
 
-      window.ws.onclose = function(e) {
+      window.ws.onclose = function (e) {
         console.log(e)
       };
 
 
-
     },
     watch: {
-      $route(){
-        if(localStorage.vueUserType == 1){
+      $route() {
+        if (localStorage.vueUserType == 1) {
           this.setWuhanSideBarAndTitle();
-        }else{
+        } else {
           this.setSideBarAndTitle();
         }
       }
     },
-    beforeRouteLeave (to, from, next) {
+    beforeRouteLeave(to, from, next) {
       console.log(this.$data.socket)
       next(vm => {
         console.log(window.ws.close())
@@ -311,8 +321,8 @@
 <style lang="scss" scoped>
   .hello {
     .box-shadow {
-      -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
     height: 100%;
     margin-bottom: 20px;
