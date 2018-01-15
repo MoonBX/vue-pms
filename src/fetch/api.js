@@ -3,11 +3,11 @@
  */
 import axios from 'axios';
 
-axios.defaults.baseURL = 'http://114.55.143.170:8082';
+// axios.defaults.baseURL = 'http://114.55.143.170:8082';
 // axios.defaults.baseURL = 'http://116.62.39.38:8081';
 // axios.defaults.baseURL = 'http://192.168.23.241:8082';
 // axios.defaults.baseURL = 'https://manage.weker.me:8443';
-// axios.defaults.baseURL = 'https://mt.weker.me:8443';
+axios.defaults.baseURL = 'https://mt.weker.me:8443';
 
 axios.interceptors.request.use(function (config) {    // 这里的config包含每次请求的内容
   if (localStorage.vueToken) {

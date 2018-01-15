@@ -277,7 +277,7 @@
           switch (resultdata.FunctionID) {
             case 0:
               if (resultdata.Result > 0) {
-                this.$data.model.cardNo = "ICA-"+resultdata.strData.slice(2);
+                this.$data.model.cardNo = resultdata.strData.slice(2);
               }else{
                 this.$notification.error({
                   message: '读卡失败',

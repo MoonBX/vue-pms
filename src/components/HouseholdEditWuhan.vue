@@ -87,16 +87,25 @@
         <v-row>
           <v-form-item label="拍摄照片"
                        :label-col="labelCol"
-                       :wrapper-col="{span: 11}"
+                       :wrapper-col="{span: 19}"
                        class="m-b-sm"
                        prop="photo"
                        has-feedback>
-            <v-button type="primary" @click="getMedia();">打开摄像头</v-button><br>
-            <video height="180px" autoplay="autoplay" style="border: 1px solid #e3e5e7;"></video>
-            <v-button type="primary" @click="getPhoto()">拍照</v-button>
+            <v-button type="primary"
+                      style="margin-right: 130px"
+                      @click="open_camera()">
+              打开摄像头
+            </v-button>
+            <v-button type="primary"
+                      @click="take_snapshot()">
+              拍照
+            </v-button>
             <br>
-            <img width="180px" height="180px" :src="idCardInfo.faceImage" v-if="!newImage">
-            <canvas id="canvas2" v-show="newImage" height="180px" width="180px" style="border: 1px solid #e3e5e7;"></canvas>
+            <div id="my_camera" class="pull-left m-r-sm"></div>
+            <img width="215px" height="160px" :src="idCardInfo.faceImage" v-show="!newImage">
+            <div id="results" class="pull-left" v-show="newImage">
+              <img :src="newImageData" alt="" width="215" height="180">
+            </div>
           </v-form-item>
         </v-row>
       </div>
@@ -349,7 +358,8 @@
         }],
         newImageData: null,
         blob: null,
-        newImage: false
+        newImage: false,
+        isMedia: false
       }
     },
     props:['item'],
@@ -377,6 +387,10 @@
             console.log(res.data)
             this.idCardInfo = res.data;
           }else{
+            this.$notification.error({
+              message: res.message,
+              duration: 2
+            });
             this.idCardInfo = null
           }
         })
@@ -393,72 +407,6 @@
           str = str.substring(0, i+1);
         }
         return str;
-      },
-      getMedia() {
-        var video = document.querySelector('video');
-        console.log(navigator.getUserMedia)
-        var exArray = []; //存储设备源ID
-        if (navigator.getUserMedia) {
-          navigator.getUserMedia({
-            'video': {
-              'optional': [{
-                'sourceId': exArray[1]
-              }]
-            },
-          }, successFunc, errorFunc);
-        }
-        else {
-        }
-
-        function successFunc(stream) {
-          if (video.mozSrcObject !== undefined) {
-            video.mozSrcObject = stream;
-          }
-          else {
-            video.src = window.URL && window.URL.createObjectURL(stream) || stream;
-          }
-        }
-
-        function errorFunc(e) {
-          alert('Error！' + e);
-        }
-      },
-      getPhoto() {
-        var video = document.querySelector('video');
-        var canvas2 = document.getElementById('canvas2');
-        console.log(canvas2);
-        var context1 = canvas2.getContext('2d');
-        var that = this;
-
-        context1.drawImage(video, 0, 0, 180, 180);
-        convertCanvasToImage(canvas2);
-
-        function convertCanvasToImage(canvas) {
-          var cvs = document.createElement('canvas')
-          var ctx = cvs.getContext('2d')
-          var img = new window.Image()
-          img.src = canvas.toDataURL("image/png");
-          img.onload = () => {
-            cvs.width = img.width
-            cvs.height = img.height
-            setTimeout(() => {
-              ctx.drawImage(img, 0, 0, cvs.width, cvs.height)
-              that.newImageData = cvs.toDataURL('image/jpeg', 0.5)
-              console.log(that.newImageData);
-              that.blob = getBlobBydataURI(that.newImageData, 'image/jpeg')
-              that.newImage = true;
-            }, 0)
-          }
-        }
-
-        function getBlobBydataURI(dataURI,type) {
-          var binary = atob(dataURI.split(',')[1]);
-          var array = [];
-          for(var i = 0; i < binary.length; i++) {
-            array.push(binary.charCodeAt(i));
-          }
-          return new Blob([new Uint8Array(array)], {type:type });
-        }
       },
       washData(){
         this.$refs.householdWuhanEditForm.validate((valid) => {
@@ -481,7 +429,7 @@
                 id: this.model.id,
                 roomType: this.model.roomType,
                 race: this.model.race
-              }
+              };
               newObj.cardTypeNames = this.trimRight(newObj.cardTypeNames)
               if(newObj.effectiveType == 0){
                 newObj.effectiveStartTime = 0;
@@ -494,19 +442,16 @@
               }
               bus.$emit('householdWuhanForm_data_edit', [newObj, 'd', 'hasIdentity']);
             }else{
-              var newObj2 = {
-                idCard: this.model.identity,
-                name: this.model.name,
-                face: this.newImageData
-              };
 
               var formData = new FormData();
-              formData.append("face", this.blob ,"file_"+Date.parse(new Date())+".jpeg");
+              if(!this.newImageData){
+                formData.append("face", this.idCardInfo.faceImage);
+              }else{
+                formData.append("face", this.blob ,"file_"+Date.parse(new Date())+".jpeg");
+              }
               formData.append("mobile", this.model.mobile);
               formData.append("id", this.model.idCardId);
               formData.append("communityId", this.model.communityId);
-              // formData.append("idCard", "");
-              // formData.append("type", 1);
 
               let newObj3 = {
                 mobile: this.model.mobile,
@@ -562,11 +507,33 @@
           }
         })
       },
+      take_snapshot() {
+        Webcam.snap((data_uri) => {
+          this.newImageData = data_uri;
+          this.newImage = true;
+          this.blob = this. getBlobBydataURI(this.newImageData, 'image/jpeg')
+        });
+      },
+      getBlobBydataURI(dataURI, type) {
+        var binary = atob(dataURI.split(',')[1]);
+        var array = [];
+        for (var i = 0; i < binary.length; i++) {
+          array.push(binary.charCodeAt(i));
+        }
+        return new Blob([new Uint8Array(array)], {type: type});
+      },
+      open_camera(){
+        Webcam.set({
+          width: 215,
+          height: 180,
+          image_format: 'jpeg',
+          jpeg_quality: 60,
+          swfURL: '../static/webcam.swf'
+        });
+        Webcam.attach('#my_camera');
+      },
     },
     created() {
-      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-      window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
-      console.log(this.item)
       this.model = this.item;
 
       this.searchIdCard();

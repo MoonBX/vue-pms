@@ -23,8 +23,8 @@
                       :data="userTypeOptionsWuhan">
             </v-select>
           </v-form-item>
-          <v-form-item label="住户类型" class="m-b-sm" v-if="userType == 1">
-            <v-select v-model="filterList.userType" style="width: 150px;"
+          <v-form-item label="住户类型" class="m-b-sm">
+            <v-select v-model="filterList.type" style="width: 150px;"
                       :data="typeOption">
             </v-select>
           </v-form-item>
@@ -45,7 +45,10 @@
                       @change="changeRoom">
             </v-select>
             <v-select v-model="filterList.roomNoId"
-                      :allowClear="false" style="width: 120px;"
+                      :allowClear="false"
+                      style="width: 120px;"
+                      search
+                      :remote-method="remoteMethod"
                       :data="roomOptions">
             </v-select>
           </v-form-item>
@@ -79,24 +82,32 @@
                     @click="showModal('create')">
             添加住户
           </v-button>
-          <v-button class="m-r-sm"
-                    type="primary"
-                    v-if="page.total && page.total > 0"
-                    @click="exportTable">
-            导出
-          </v-button>
+          <!--<v-button class="m-r-sm"-->
+                    <!--type="primary"-->
+                    <!--v-if="page.total && page.total > 0"-->
+                    <!--@click="exportTable">-->
+            <!--导出-->
+          <!--</v-button>-->
+          <v-popover title="分批导出" placement="bottomRight" trigger="click">
+            <v-button type="primary">导出</v-button>
+            <div slot="content">
+              <li v-for="n in page.group" style="list-style: none">
+                <a @click="downloadExcel(n)">房屋信息({{n}}).xls</a>
+              </li>
+            </div>
+          </v-popover>
           <!--<v-button class="pull-right"-->
-                    <!--v-if="file.uploadFailData.length"-->
-                    <!--type="danger" ghost-->
-                    <!--@click="download">-->
-            <!--下载导入失败住户列表-->
+          <!--v-if="file.uploadFailData.length"-->
+          <!--type="danger" ghost-->
+          <!--@click="download">-->
+          <!--下载导入失败住户列表-->
           <!--</v-button>-->
           <!--<v-upload :name="file.name"-->
-                    <!--:action="file.action"-->
-                    <!--@change="onChange">-->
-            <!--<v-button type="primary" class="m-r-sm">-->
-              <!--导入-->
-            <!--</v-button>-->
+          <!--:action="file.action"-->
+          <!--@change="onChange">-->
+          <!--<v-button type="primary" class="m-r-sm">-->
+          <!--导入-->
+          <!--</v-button>-->
           <!--</v-upload>-->
         </div>
       </div>
@@ -289,68 +300,83 @@
           action: 'http://192.168.23.241:8082/community/resident/import',
           uploadFailData: []
         },
-        selectOptions: [{
-          value: '0',
-          label: '未处理'
-        }, {
-          value: '2',
-          label: '已处理'
-        }],
-        page: {total: 0, value: 1},
+        selectOptions: [
+          {
+            value: '0',
+            label: '未处理'
+          }, {
+            value: '2',
+            label: '已处理'
+          }
+        ],
+        page: {
+          total: 0,
+          value: 1,
+          group: 0
+        },
         householdList: [],
         partitionOptions: [],
         blockOptions: [],
         unitOptions: [],
         roomOptions: [],
-        userTypeOptions: [{
-          value: '0',
-          label: '户主'
-        }, {
-          value: '1',
-          label: '家人'
-        }, {
-          value: '2',
-          label: '租客'
-        }],
-        typeOption: [{
-          value: 0,
-          label: "一般住户"
-        }, {
-          value: 1,
-          label: "空巢老人"
-        }, {
-          value: 2,
-          label: "留守儿童"
-        }, {
-          value: 3,
-          label: "上访人员"
-        }, {
-          value: 4,
-          label: "吸毒人员"
-        }, {
-          value: 5,
-          label: "前科人员"
-        }, {
-          value: 6,
-          label: "新疆"
-        }, {
-          value: 7,
-          label: "西藏"
-        },],
-        userTypeOptionsWuhan: [{
-          value: '1',
-          label: '业主'
-        }, {
-          value: '2',
-          label: '租客'
-        }],
-        statusOptions: [{
-          value: '0',
-          label: '正常'
-        }, {
-          value: '1',
-          label: '已过期'
-        }],
+        roomOptionsOrigin: [],
+        userTypeOptions: [
+          {
+            value: '0',
+            label: '户主'
+          }, {
+            value: '1',
+            label: '家人'
+          }, {
+            value: '2',
+            label: '租客'
+          }
+        ],
+        typeOption: [
+          {
+            value: 0,
+            label: "一般住户"
+          }, {
+            value: 1,
+            label: "空巢老人"
+          }, {
+            value: 2,
+            label: "留守儿童"
+          }, {
+            value: 3,
+            label: "上访人员"
+          }, {
+            value: 4,
+            label: "吸毒人员"
+          }, {
+            value: 5,
+            label: "前科人员"
+          }, {
+            value: 6,
+            label: "新疆"
+          }, {
+            value: 7,
+            label: "西藏"
+          }
+        ],
+        userTypeOptionsWuhan: [
+          {
+            value: '1',
+            label: '业主'
+          }, {
+            value: '2',
+            label: '租客'
+          }
+        ],
+        statusOptions: [
+          {
+            value: '0',
+            label: '正常'
+          }, {
+            value: '1',
+            label: '已过期'
+          }
+        ],
         modalVisible: {
           create: false,
           createWuhan: false,
@@ -568,6 +594,18 @@
         let host = api.exportHost();
         window.open(host + '/community/resident/export?communityId=' + plainText);
       },
+      remoteMethod(query) {
+        if (query !== '') {
+          setTimeout(() => {
+            this.roomOptions = this.roomOptionsOrigin.filter(item => {
+              console.log(item);
+              return item.label.toString().indexOf(query) > -1;
+            });
+          }, 200);
+        } else {
+          this.roomOptions = [];
+        }
+      },
       download() {
         $("#dvjson").excelexportjs({
           containerid: "dvjson",
@@ -579,6 +617,7 @@
           ]
         });
       },
+
       changeBlock(val) {
         api.getBlocks(val)
           .then(res => {
@@ -595,7 +634,6 @@
             this.blockOptions = res.data;
           })
       },
-
       changeUnit(val) {
         api.getUnits(val)
           .then(res => {
@@ -619,8 +657,8 @@
               res.data[i].value = res.data[i].id;
             }
             this.filterList.roomNoId = "";
-            this.roomOptions = [];
-            this.roomOptions = res.data;
+            this.roomOptionsOrigin = this.roomOptions = [];
+            this.roomOptionsOrigin = this.roomOptions = res.data;
           })
       },
       filterTable() {
@@ -647,7 +685,6 @@
     },
     created() {
       document.title = '住户管理';
-      this._getHousehold(1);
       api.getPartitions().then(res => {
         for (let i = 0; i < res.data.length; i++) {
           res.data[i].label = res.data[i].name;
@@ -655,6 +692,92 @@
         }
         this.partitionOptions = res.data;
       });
+
+      api.getResident(1, 10)
+        .then(res => {
+          console.log(res);
+          if (res.success) {
+            if (res.data.list) {
+              for (var i = 0; i < res.data.list.length; i++) {
+                switch (res.data.list[i].status) {
+                  case 0:
+                    res.data.list[i].status_cn = '正常';
+                    break;
+                  case 1:
+                    res.data.list[i].status_cn = '已过期';
+                    break;
+                  default:
+                    res.data.list[i].status_cn = '';
+                }
+              }
+              if (localStorage.vueUserType == 0) {
+                for (var i = 0; i < res.data.list.length; i++) {
+                  switch (res.data.list[i].userType) {
+                    case 0:
+                      res.data.list[i].userType_cn = '户主';
+                      break;
+                    case 1:
+                      res.data.list[i].userType_cn = '家人';
+                      break;
+                    case 2:
+                      res.data.list[i].userType_cn = '租客';
+                      break;
+                    default:
+                      res.data.list[i].userType_cn = '';
+                  }
+                }
+              } else {
+                for (var i = 0; i < res.data.list.length; i++) {
+                  switch (res.data.list[i].userType) {
+                    case 0:
+                      res.data.list[i].userType_cn = '户主';
+                      break;
+                    case 1:
+                      res.data.list[i].userType_cn = '业主';
+                      break;
+                    case 2:
+                      res.data.list[i].userType_cn = '租客';
+                      break;
+                    default:
+                      res.data.list[i].userType_cn = '';
+                  }
+                  switch (res.data.list[i].type) {
+                    case 0:
+                      res.data.list[i].type_cn = '一般住户';
+                      break;
+                    case 1:
+                      res.data.list[i].type_cn = '空巢老人';
+                      break;
+                    case 2:
+                      res.data.list[i].type_cn = '留守儿童';
+                      break;
+                    case 3:
+                      res.data.list[i].type_cn = '上访人员';
+                      break;
+                    case 4:
+                      res.data.list[i].type_cn = '吸毒人员';
+                      break;
+                    case 5:
+                      res.data.list[i].type_cn = '前科人员';
+                      break;
+                    case 6:
+                      res.data.list[i].type_cn = '新疆';
+                      break;
+                    case 7:
+                      res.data.list[i].type_cn = '西藏';
+                      break;
+                    default:
+                      res.data.list[i].type_cn = '';
+                  }
+                }
+              }
+              this.page.total = res.data.total;
+              this.page.group =  Math.ceil(res.data.total/5000);
+              this.householdList = res.data.list;
+              this.listLen = res.data.list.length;
+            }
+          }
+        })
 
       if (sessionStorage.from == '1') {
         this.showModal('create');

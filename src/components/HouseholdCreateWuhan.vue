@@ -9,7 +9,11 @@
                      class="m-b-sm"
                      has-feedback>
           <v-input v-model="model.idCard" placeholder="请输入/选择身份证号码">
-            <span slot="after" class="input-button" @click="searchIdCard(model.idCard)">人证查询</span>
+            <span slot="after"
+                  class="input-button"
+                  @click="searchIdCard(model.idCard)">
+              人证查询
+            </span>
           </v-input>
           <div>
             <a class="m-l-xs" @click="identityToggle">没有身份证？</a>
@@ -17,29 +21,45 @@
         </v-form-item>
       </v-row>
 
-      <v-collapse :active-index="activeIndexMore" :bordered="false" v-if="!idCardInfo||idCardToggle"
-                  style="padding: 0 95px">
-        <v-panel index="1" :style="customPanelStyle" header="身份证列表">
-          <div class="list-box"
-               style="height: 275px;width: 100%;padding: 15px 10px;border: 1px solid #eee;border-radius: 5px;overflow-y: scroll">
+
+      <v-collapse class="collapse-id"
+                  :active-index="activeIndexMore"
+                  :bordered="false"
+                  v-if="!idCardInfo||idCardToggle">
+        <v-panel index="1"
+                 :style="customPanelStyle"
+                 header="身份证列表">
+          <div class="list-box">
             <ul>
-              <li v-for="item in idCardList" style="position: relative;">
-                <a href="javascript:;" @click="searchIdCard(item.identityNum)">
-                  <span class="m-r-sm">{{item.name}}：</span><span>{{item.identityNum}}</span>
+              <li v-for="item in idCardList">
+                <a href="javascript:;"
+                   @click="searchIdCard(item.identityNum)">
+                  <span class="m-r-sm">{{item.name}}：</span>
+                  <span>{{item.identityNum}}</span>
                 </a>
-                <a class="pull-right" @click="deleteIdCard(item.id)" style="position: absolute;top: 0; right: 0; width: 30px; text-align:center;color: rgba(185,70,92,0.65);">
+                <a class="pull-right delete"
+                   @click="deleteIdCard(item.id)">
                   <v-icon type="close-circle"></v-icon>
                 </a>
               </li>
             </ul>
           </div>
-          <a class="pull-right m-t-xs m-r-xs" @click="refreshIdCardList">刷新</a>
-          <a class="pull-right m-t-xs m-r-xs" v-if="idCardInfo" @click="showCardInfo">返回身份证信息</a>
+          <a class="pull-right m-t-xs m-r-xs"
+             @click="refreshIdCardList">
+            刷新
+          </a>
+          <a class="pull-right m-t-xs m-r-xs"
+             v-if="idCardInfo"
+             @click="showCardInfo">
+            返回身份证信息
+          </a>
         </v-panel>
       </v-collapse>
 
-      <v-collapse :active-index="activeIndexMore" :bordered="false" v-if="idCardInfo&&!idCardToggle"
-                  style="padding: 0 95px">
+      <v-collapse class="collapse-id"
+                  :active-index="activeIndexMore"
+                  :bordered="false"
+                  v-if="idCardInfo&&!idCardToggle">
         <v-panel index="1" :style="customPanelStyle" header="身份证信息">
           <div class="idCard-box">
             <div class="id-card p-v-sm p-h-md">
@@ -63,7 +83,6 @@
                 <div class="photo-collection text-center">
                   <div class="m-b-xs photo-box">
                     <img width="77" height="100" :src="idCardInfo.idenImage">
-                    <!--<div>身份证照</div>-->
                   </div>
                 </div>
               </div>
@@ -83,7 +102,6 @@
                 <div class="photo-collection text-center">
                   <div class="m-b-xs photo-box">
                     <img width="77px" height="100" :src="idCardInfo.faceImage">
-                    <!--<div>人脸采集</div>-->
                   </div>
                 </div>
               </div>
@@ -95,7 +113,11 @@
 
     </v-form>
 
-    <v-form class="m-t-md" direction="horizontal" id="householdWuhanForm" :model="model" :rules="rules" v-if="idCardInfo||!identityCheck"
+    <v-form class="m-t-md"
+            direction="horizontal"
+            id="householdWuhanForm"
+            :model="model" :rules="rules"
+            v-if="idCardInfo||!identityCheck"
             ref="householdWuhanForm">
       <div v-if="!identityCheck" class="b-b m-b-md">
         <v-row>
@@ -104,8 +126,13 @@
                        :wrapper-col="{span: 11}"
                        prop="identity"
                        has-feedback>
-            <v-input style="width: 260px;" v-model="model.identity" class="m-r-sm"></v-input>
-            <a class="m-l-xs" style="position:absolute;top: 0px; right: -100px;" @click="identityToggle">返回人证合一认证</a>
+            <v-input style="width: 260px;"
+                     v-model="model.identity"
+                     class="m-r-sm">
+            </v-input>
+            <a class="m-l-xs auth-link" @click="identityToggle">
+              返回人证合一认证
+            </a>
           </v-form-item>
         </v-row>
         <v-row>
@@ -129,15 +156,24 @@
         <v-row>
           <v-form-item label="拍摄照片"
                        :label-col="labelCol"
-                       :wrapper-col="{span: 11}"
+                       :wrapper-col="{span: 19}"
                        class="m-b-sm"
                        prop="photo"
                        has-feedback>
-            <v-button type="primary" @click="getMedia();">打开摄像头</v-button>
-            <video height="180px" autoplay="autoplay" style="border: 1px solid #e3e5e7;"></video>
-            <v-button type="primary" @click="getPhoto()">拍照</v-button>
+            <v-button type="primary"
+                      style="margin-right: 130px"
+                      @click="open_camera()">
+              打开摄像头
+            </v-button>
+            <v-button type="primary"
+                      @click="take_snapshot()">
+              拍照
+            </v-button>
             <br>
-            <canvas id="canvas1" height="180px" width="180px" style="border: 1px solid #e3e5e7;"></canvas>
+            <div id="my_camera" class="pull-left m-r-sm"></div>
+            <div id="results" class="pull-left">
+              <img :src="newImageData" alt="" width="215" height="180">
+            </div>
           </v-form-item>
         </v-row>
       </div>
@@ -158,6 +194,7 @@
           <v-input style="width: 260px;" v-model="model.mobile" class="m-r-sm"></v-input>
           <v-checkbox v-model="mobileChecked" @click="checkAll" style="position:absolute;top: 0; right: -100px;">无手机号
           </v-checkbox>
+          <v-icon v-if="mobileMoreThanOne!=1" v-tooltip.top="msg" type="exclamation-circle" style="position:absolute;top: 8px; right: -105px;font-size: 14px;color:rgba(185, 70, 92, 0.65);"></v-icon>
         </v-form-item>
       </v-row>
       <v-row>
@@ -212,6 +249,8 @@
                     :allowClear="false"
                     :optionOnChange="true"
                     style="width: 90px;"
+                    search
+                    :remote-method="remoteMethod"
                     :data="roomOptions"
                     @change="checkEntranceExist">
           </v-select>
@@ -273,15 +312,15 @@
             </v-radio-group>
           </v-form-item>
         </v-row>
-        <v-row style="padding: 0 95px">
+        <v-row class="padding-o">
           <v-form-item label=""
                        :label-col="labelCol"
                        :wrapper-col="{span: 16}"
                        prop="cardTypeNames"
                        has-feedback>
             <v-input v-model="model.cardTypeNames" disabled>
-              <span slot="after" class="input-button" @click="go" v-if="cardType == 'b'">读卡</span>
-              <span slot="after" class="input-button" @click="go2" v-if="cardType == 'a'">读卡</span>
+              <span slot="after" class="input-button" @click="readCard_ID" v-if="cardType == 'b'">读卡</span>
+              <span slot="after" class="input-button" @click="readCard_IC" v-if="cardType == 'a'">读卡</span>
             </v-input>
           </v-form-item>
         </v-row>
@@ -338,15 +377,37 @@
     .fade-enter-active, .fade-leave-active {
       transition: opacity .5s
     }
-    .fade-enter, .fade-leave-to /* .fade-leave-active in below version 2.1.8 */
-    {
+    .fade-enter, .fade-leave-to {
       opacity: 0
     }
+    .collapse-id {
+      padding: 0 95px
+    }
+    .auth-link {
+      position: absolute;
+      top: 0px;
+      right: -100px;
+    }
     .list-box {
+      height: 275px;
+      width: 100%;
+      padding: 15px 10px;
+      border: 1px solid #eee;
+      border-radius: 5px;
+      overflow-y: scroll;
       li {
+        position: relative;
         font-size: 13px;
         margin-bottom: 5px;
         cursor: pointer;
+        .delete {
+          width: 30px;
+          position: absolute;
+          top: 0;
+          right: 0;
+          text-align: center;
+          color: rgba(185, 70, 92, 0.65);
+        }
         &:hover {
           background: rgba(0, 0, 0, 0.05);
         }
@@ -375,6 +436,7 @@
   import {bus} from '../util/bus.js'
   import cardInit from '../util/card'
   import nationList from '../store/nation'
+  import * as _ from 'lodash';
 
   export default {
     data() {
@@ -448,14 +510,14 @@
             required: true,
             message: '请选择结束时间'
           }],
-          identity:[{
+          identity: [{
             required: true,
             message: '请填写身份证号'
-          },{
+          }, {
             pattern: '(^[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)|(^[1-9]\\d{5}\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{2}$)',
             message: '请输入正确的身份证号码'
           }],
-          name:[{
+          name: [{
             required: true,
             message: '请填写住户姓名'
           }],
@@ -464,52 +526,59 @@
           }]
         },
         nationOption: nationList.data,
-        userTypeOption: [{
-          value: 1,
-          label: "业主"
-        }, {
-          value: 2,
-          label: "租客"
-        }],
-        roomTypeOption: [{
-          value: 0,
-          label: "未登记"
-        }, {
-          value: 1,
-          label: "出租"
-        }, {
-          value: 2,
-          label: "自住"
-        }],
-        typeOption: [{
-          value: 0,
-          label: "一般住户"
-        }, {
-          value: 1,
-          label: "空巢老人"
-        }, {
-          value: 2,
-          label: "留守儿童"
-        }, {
-          value: 3,
-          label: "上访人员"
-        }, {
-          value: 4,
-          label: "吸毒人员"
-        }, {
-          value: 5,
-          label: "前科人员"
-        }, {
-          value: 6,
-          label: "新疆"
-        }, {
-          value: 7,
-          label: "西藏"
-        },],
+        userTypeOption: [
+          {
+            value: 1,
+            label: "业主"
+          }, {
+            value: 2,
+            label: "租客"
+          }
+        ],
+        roomTypeOption: [
+          {
+            value: 0,
+            label: "未登记"
+          }, {
+            value: 1,
+            label: "出租"
+          }, {
+            value: 2,
+            label: "自住"
+          }
+        ],
+        typeOption: [
+          {
+            value: 0,
+            label: "一般住户"
+          }, {
+            value: 1,
+            label: "空巢老人"
+          }, {
+            value: 2,
+            label: "留守儿童"
+          }, {
+            value: 3,
+            label: "上访人员"
+          }, {
+            value: 4,
+            label: "吸毒人员"
+          }, {
+            value: 5,
+            label: "前科人员"
+          }, {
+            value: 6,
+            label: "新疆"
+          }, {
+            value: 7,
+            label: "西藏"
+          }
+        ],
         partitionOptions: [],
         blockOptions: [],
         unitOptions: [],
         roomOptions: [],
+        roomOptionsOrigin: [],
         disabled: false,
         dateShow: false,
         isEntranceExist: false,
@@ -519,16 +588,20 @@
         mobileChecked: false,
         identityCheck: true,
         newImageData: null,
-        blob: null
+        blob: null,
+        isMedia: false,
+        cameraImg: '',
+        mobileMoreThanOne: 1,
+        msg: '该用户有多个手机号，请联系管理员'
       }
     },
     methods: {
-      go() {
+      readCard_ID() {
         cardInit.Repeat = 0;
         cardInit.HaltAfterSuccess = 0;
         cardInit.RequestChinaIDCardNo();
       },
-      go2() {
+      readCard_IC() {
         var OrderID = 0;
         var FormatID = 1;
         cardInit.Repeat = 0;
@@ -547,7 +620,7 @@
 
         }
       },
-      refreshIdCardList(){
+      refreshIdCardList() {
         api.getIdCardList().then(res => {
           console.log(res);
           if (res.success) {
@@ -559,70 +632,6 @@
             });
           }
         })
-      },
-      getMedia() {
-        var video = document.querySelector('video');
-        console.log(navigator.getUserMedia)
-        var exArray = []; //存储设备源ID
-        if (navigator.getUserMedia) {
-          navigator.getUserMedia({
-            'video': {
-              'optional': [{
-                'sourceId': exArray[1]
-              }]
-            },
-          }, successFunc, errorFunc);
-        }
-        else {
-        }
-
-        function successFunc(stream) {
-          if (video.mozSrcObject !== undefined) {
-            video.mozSrcObject = stream;
-          }
-          else {
-            video.src = window.URL && window.URL.createObjectURL(stream) || stream;
-          }
-        }
-
-        function errorFunc(e) {
-          alert('Error！' + e);
-        }
-      },
-      getPhoto() {
-        var video = document.querySelector('video');
-        var canvas1 = document.getElementById('canvas1');
-        var context1 = canvas1.getContext('2d');
-        var that = this;
-
-        context1.drawImage(video, 0, 0, 180, 180);
-        convertCanvasToImage(canvas1);
-
-        function convertCanvasToImage(canvas) {
-          var cvs = document.createElement('canvas')
-          var ctx = cvs.getContext('2d')
-          var img = new window.Image()
-          img.src = canvas.toDataURL("image/png");
-          img.onload = () => {
-            cvs.width = img.width
-            cvs.height = img.height
-            setTimeout(() => {
-              ctx.drawImage(img, 0, 0, cvs.width, cvs.height)
-              that.newImageData = cvs.toDataURL('image/jpeg', 0.5)
-              console.log(that.newImageData);
-              that.blob = getBlobBydataURI(that.newImageData, 'image/jpeg')
-            }, 0)
-          }
-        }
-
-        function getBlobBydataURI(dataURI,type) {
-          var binary = atob(dataURI.split(',')[1]);
-          var array = [];
-          for(var i = 0; i < binary.length; i++) {
-            array.push(binary.charCodeAt(i));
-          }
-          return new Blob([new Uint8Array(array)], {type:type });
-        }
       },
       disabledDate(current) {
         return current && current.valueOf() < Date.now();
@@ -650,10 +659,10 @@
                   userType: this.model.userType,
                   hasIdCard: 0
                 };
-                if(this.mobileChecked){
+                if (this.mobileChecked) {
                   newObj.hasMobile = 1;
                   newObj.mobile = '';
-                }else{
+                } else {
                   newObj.hasMobile = 0;
                 }
                 if (this.model.effectiveEndTime) {
@@ -672,7 +681,7 @@
         } else {
           this.$refs.householdWuhanForm.validate((valid) => {
             if (valid) {
-              if(this.newImageData){
+              if (this.newImageData) {
                 var newObj2 = {
                   idCard: this.model.identity,
                   name: this.model.name,
@@ -680,7 +689,7 @@
                 };
 
                 var formData = new FormData();
-                formData.append("face", this.blob ,"file_"+Date.parse(new Date())+".jpeg");
+                formData.append("face", this.blob, "file_" + Date.parse(new Date()) + ".jpeg");
                 formData.append("name", this.model.name);
                 formData.append("idCard", this.model.identity);
                 formData.append("race", this.model.race);
@@ -706,10 +715,10 @@
                   hasIdCard: 1
                 };
 
-                if(this.mobileChecked){
+                if (this.mobileChecked) {
                   newObj3.hasMobile = 1;
                   newObj3.mobile = '';
-                }else{
+                } else {
                   newObj3.hasMobile = 0;
                 }
                 if (this.model.effectiveEndTime) {
@@ -733,7 +742,15 @@
 //        this.visible.idCard = !this.visible.idCard;
         api.getIdCardInfo(value).then(res => {
           if (res.success) {
-            console.log(res.data)
+            console.log(res.data);
+            if(res.data.mobile){
+              let mobileArr = res.data.mobile.split('/');
+              this.model.mobile = mobileArr[0];
+              this.mobileMoreThanOne = mobileArr.length;
+              console.log(this.mobileMoreThanOne)
+            }else{
+              this.model.mobile = "";
+            }
             this.idCardInfo = res.data;
             this.idCardToggle = false;
           } else {
@@ -746,11 +763,11 @@
           }
         })
       },
-      deleteIdCard(id){
+      deleteIdCard(id) {
         var obj = {id: id};
         api.deleteIdCard(obj).then(res => {
           console.log(res);
-          if(res.success){
+          if (res.success) {
             api.getIdCardList().then(res => {
               console.log(res);
               if (res.success) {
@@ -780,15 +797,32 @@
           this.dateShow = true;
         }
       },
-      checkEntranceExist(value) {
-        console.log(value)
-        this.model.roomType = value.type;
+      checkEntranceExist() {
         api.checkExist(this.model.partitionId, this.model.unitId).then(res => {
           console.log(res)
           if (res.success) {
             this.isEntranceExist = res.data;
           }
-        })
+        });
+        this.getType();
+      },
+      getType() {
+        for (let i in this.roomOptionsOrigin) {
+          if (this.roomOptionsOrigin[i].value === this.model.roomNoId) {
+            this.model.roomType = this.roomOptionsOrigin[i].type;
+          }
+        }
+      },
+      remoteMethod(query) {
+        if (query !== '') {
+          setTimeout(() => {
+            this.roomOptions = this.roomOptionsOrigin.filter(item => {
+              return item.label.toString().indexOf(query) > -1;
+            });
+          }, 200);
+        } else {
+          this.roomOptions = this.roomOptionsOrigin;
+        }
       },
       changeBlock(val) {
         api.getBlocks(val)
@@ -829,14 +863,40 @@
               res.data[i].value = res.data[i].id;
             }
             this.model.roomNoId = "";
-            this.roomOptions = [];
-            this.roomOptions = res.data;
+            this.roomOptionsOrigin = this.roomOptions = [];
+            this.roomOptionsOrigin = this.roomOptions = res.data;
           })
+      },
+      take_snapshot() {
+        // take snapshot and get image data
+        Webcam.snap((data_uri) => {
+          this.newImageData = data_uri;
+          this.blob = getBlobBydataURI(this.newImageData, 'image/jpeg')
+          // this.isMedia = false;
+        });
+
+        function getBlobBydataURI(dataURI, type) {
+          var binary = atob(dataURI.split(',')[1]);
+          var array = [];
+          for (var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+          }
+          return new Blob([new Uint8Array(array)], {type: type});
+        }
+      },
+      open_camera() {
+        Webcam.set({
+          width: 215,
+          height: 180,
+          image_format: 'jpeg',
+          jpeg_quality: 60,
+          swfURL: '../static/webcam.swf'
+        });
+        Webcam.attach('#my_camera');
+        // this.isMedia = true;
       }
     },
     created() {
-      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-      window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
       api.getPartitions()
         .then(res => {
           for (let i = 0; i < res.data.length; i++) {
@@ -856,7 +916,7 @@
             duration: 2
           });
         }
-      })
+      });
 
       if (cardInit) {
 
@@ -891,6 +951,6 @@
         });
 
       }
-    }
+    },
   }
 </script>

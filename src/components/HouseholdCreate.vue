@@ -75,6 +75,8 @@
           <v-select v-model="model.roomNoId"
                     :allowClear="false"
                     style="width: 90px;"
+                    search
+                    :remote-method="remoteMethod"
                     :data="roomOptions"
                     @change="checkEntranceExist">
           </v-select>
@@ -245,6 +247,7 @@
         blockOptions: [],
         unitOptions: [],
         roomOptions: [],
+        roomOptionsOrigin: [],
         disabled: false,
         dateShow: false,
         isEntranceExist : false
@@ -322,6 +325,18 @@
           }
         })
       },
+      remoteMethod(query) {
+        if (query !== '') {
+          setTimeout(() => {
+            this.roomOptions = this.roomOptionsOrigin.filter(item => {
+              console.log(item);
+              return item.label.toString().indexOf(query) > -1;
+            });
+          }, 200);
+        } else {
+          this.roomOptions = [];
+        }
+      },
       changeBlock(val){
         api.getBlocks(val)
           .then(res => {
@@ -361,8 +376,8 @@
               res.data[i].value = res.data[i].id;
             }
             this.model.roomNoId = "";
-            this.roomOptions = [];
-            this.roomOptions = res.data;
+            this.roomOptionsOrigin = this.roomOptions = [];
+            this.roomOptionsOrigin = this.roomOptions = res.data;
           })
       },
     },

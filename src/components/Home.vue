@@ -10,15 +10,15 @@
         <div class="right">
           <ul class="count-list">
             <li>
-              <div class="title">单元数</div>
-              <div class="count">{{statisticsList.blockNum}}</div>
-            </li>
-            <li>
               <div class="title">门口机数</div>
               <div class="count">{{statisticsList.deviceNum}}</div>
             </li>
             <li>
               <div class="title">总户数</div>
+              <div class="count">{{statisticsList.roomNum}}</div>
+            </li>
+            <li>
+              <div class="title">登记户数</div>
               <div class="count">{{statisticsList.residentRoomNum}}</div>
             </li>
             <li>

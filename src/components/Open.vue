@@ -11,8 +11,12 @@
           </v-form-item>
           <v-form-item label="设备类型" class="m-b-sm">
             <v-select v-model="filterList.deviceType"
-                      style="width: 150px;"
+                      style="width: 150px;" v-if="userType == 0"
                       :data="deviceTypeOptions">
+            </v-select>
+            <v-select v-model="filterList.deviceType"
+                      style="width: 150px;" v-if="userType == 1"
+                      :data="deviceTypeOptions2">
             </v-select>
           </v-form-item>
           <v-form-item label="开门类型" class="m-b-sm">
@@ -71,7 +75,7 @@
           <thead class="ant-table-thead">
 
           <tr>
-            <th width="18%">单元信息</th>
+            <th width="18%">位置信息</th>
             <th width="10%">设备类型</th>
             <th width="10%">姓名</th>
             <th width="10%">通话时长</th>
@@ -200,6 +204,16 @@
         deviceTypeOptions: [{
           value: '0',
           label: '围墙机'
+        },{
+          value: '1',
+          label: '单元机'
+        }],
+        deviceTypeOptions2: [{
+          value: '0',
+          label: '围墙机-进'
+        },{
+          value: '2',
+          label: '围墙机-出'
         },{
           value: '1',
           label: '单元机'
@@ -339,10 +353,17 @@
                   }
                   switch (res.data.list[i].deviceType) {
                     case 0:
-                      res.data.list[i].deviceType = '围墙机';
+                      if(this.userType == 0){
+                        res.data.list[i].deviceType = '围墙机';
+                      }else{
+                        res.data.list[i].deviceType = '围墙机-进';
+                      }
                       break;
                     case 1:
                       res.data.list[i].deviceType = '单元机';
+                      break;
+                    case 2:
+                      res.data.list[i].deviceType = '围墙机-出';
                       break;
                     default:
                       res.data.list[i].deviceType = '';
